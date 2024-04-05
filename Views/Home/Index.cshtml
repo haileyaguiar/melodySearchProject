@@ -1,0 +1,523 @@
+﻿@model IEnumerable<melodySearchProject.Models.Mei>
+
+
+
+<body>
+    <br />
+        <!--Search Stuff-->
+        <form asp-action="Search" method="get">
+            <input type="text" name="query" placeholder="Search MEI files">
+            <button type="submit">Search</button>
+        </form>
+
+<!--Keyboard interface:-->
+    <div>
+        <div style="text-align: center;">
+            <div style="display: inline-block; overflow-x: scroll; overflow-y: hidden;">
+                <table>
+
+                    <td>
+                        <map id="piano_map" name="piano_map">
+                            <area shape="rect" coords="17,3,32,52" href="javascript:onpitch('C', 1, 1, 61)">
+                            <area shape="rect" coords="42,3,57,52" href="javascript:onpitch('D', 1, 1, 63)">
+                            <area shape="rect" coords="92,3,107,52" href="javascript:onpitch('F', 1, 1, 66)">
+                            <area shape="rect" coords="117,3,132,52" href="javascript:onpitch('G', 1, 1, 68)">
+                            <area shape="rect" coords="142,3,157,52" href="javascript:onpitch('A', 1, 1, 70)">
+
+                            <area shape="rect" coords="17,53,32,102" href="javascript:onpitch('D', 1, -1, 61)">
+                            <area shape="rect" coords="42,53,57,102" href="javascript:onpitch('E', 1, -1, 63)">
+                            <area shape="rect" coords="92,53,107,102" href="javascript:onpitch('G', 1, -1, 66)">
+                            <area shape="rect" coords="117,53,132,102" href="javascript:onpitch('A', 1, -1, 68)">
+                            <area shape="rect" coords="142,53,157,102" href="javascript:onpitch('B', 1, -1, 70)">
+
+                            <area shape="rect" coords="1,3,25,152" href="javascript:onpitch('C', 1, 0, 60)">
+                            <area shape="rect" coords="26,3,50,152" href="javascript:onpitch('D', 1, 0, 62)">
+                            <area shape="rect" coords="51,3,75,152" href="javascript:onpitch('E', 1, 0, 64)">
+                            <area shape="rect" coords="76,3,100,152" href="javascript:onpitch('F', 1, 0, 65)">
+                            <area shape="rect" coords="101,3,125,152" href="javascript:onpitch('G', 1, 0, 67)">
+                            <area shape="rect" coords="126,3,150,152" href="javascript:onpitch('A', 1, 0, 69)">
+                            <area shape="rect" coords="151,3,175,152" href="javascript:onpitch('B', 1, 0, 71)">
+
+                            <area shape="rect" coords="192,3,207,52" href="javascript:onpitch('C', 2, 1, 73)">
+                            <area shape="rect" coords="217,3,232,52" href="javascript:onpitch('D', 2, 1, 75)">
+                            <area shape="rect" coords="267,3,282,52" href="javascript:onpitch('F', 2, 1, 78)">
+                            <area shape="rect" coords="292,3,307,52" href="javascript:onpitch('G', 2, 1, 80)">
+                            <area shape="rect" coords="317,3,332,52" href="javascript:onpitch('A', 2, 1, 82)">
+
+                            <area shape="rect" coords="192,53,207,102" href="javascript:onpitch('D', 2, -1, 73)">
+                            <area shape="rect" coords="217,53,232,102" href="javascript:onpitch('E', 2, -1, 75)">
+                            <area shape="rect" coords="267,53,282,102" href="javascript:onpitch('G', 2, -1, 78)">
+                            <area shape="rect" coords="292,53,307,102" href="javascript:onpitch('A', 2, -1, 80)">
+                            <area shape="rect" coords="317,53,332,102" href="javascript:onpitch('B', 2, -1, 82)">
+
+                            <area shape="rect" coords="176,3,200,152" href="javascript:onpitch('C', 2, 0, 72)">
+                            <area shape="rect" coords="201,3,225,152" href="javascript:onpitch('D', 2, 0, 74)">
+                            <area shape="rect" coords="226,3,250,152" href="javascript:onpitch('E', 2, 0, 76)">
+                            <area shape="rect" coords="251,3,275,152" href="javascript:onpitch('F', 2, 0, 77)">
+                            <area shape="rect" coords="276,3,300,152" href="javascript:onpitch('G', 2, 0, 79)">
+                            <area shape="rect" coords="301,3,325,152" href="javascript:onpitch('A', 2, 0, 81)">
+                            <area shape="rect" coords="326,3,350,152" href="javascript:onpitch('B', 2, 0, 83)">
+
+
+                            <area shape="rect" coords="367,3,382,52" href="javascript:onpitch('C', 3, 1, 85)">
+                            <area shape="rect" coords="392,3,407,52" href="javascript:onpitch('D', 3, 1, 87)">
+                            <area shape="rect" coords="442,3,457,52" href="javascript:onpitch('F', 3, 1, 90)">
+                            <area shape="rect" coords="467,3,482,52" href="javascript:onpitch('G', 3, 1, 92)">
+                            <area shape="rect" coords="492,3,507,52" href="javascript:onpitch('A', 3, 1, 94)">
+
+                            <area shape="rect" coords="367,53,382,102" href="javascript:onpitch('D', 3, -1, 85)">
+                            <area shape="rect" coords="392,53,407,102" href="javascript:onpitch('E', 3, -1, 87)">
+                            <area shape="rect" coords="442,53,457,102" href="javascript:onpitch('G', 3, -1, 90)">
+                            <area shape="rect" coords="467,53,482,102" href="javascript:onpitch('A', 3, -1, 92)">
+                            <area shape="rect" coords="492,53,507,102" href="javascript:onpitch('B', 3, -1, 94)">
+
+                            <area shape="rect" coords="351,3,375,152" href="javascript:onpitch('C', 3, 0, 84)">
+                            <area shape="rect" coords="376,3,400,152" href="javascript:onpitch('D', 3, 0, 86)">
+                            <area shape="rect" coords="401,3,425,152" href="javascript:onpitch('E', 3, 0, 88)">
+                            <area shape="rect" coords="426,3,450,152" href="javascript:onpitch('F', 3, 0, 89)">
+                            <area shape="rect" coords="451,3,475,152" href="javascript:onpitch('G', 3, 0, 91)">
+                            <area shape="rect" coords="476,3,500,152" href="javascript:onpitch('A', 3, 0, 93)">
+                            <area shape="rect" coords="501,3,525,152" href="javascript:onpitch('B', 3, 0, 95)">
+                        </map>
+                        <img src="~/lib/img/piano.png" usemap="#piano_map"/>
+                        <br>
+                        <br>
+                    </td>
+                    </tr>
+
+                    <!--dropdown menu that chooses the clef-->
+                    <tr>
+                        <td>
+                            <select id="clef_01" name="clef_01" class="form-control">
+                                <option value="G-2" selected="selected">G-2 (treble)</option>
+                                <option value="F-4">F-4 (bass)</option>
+                        </td>
+                    </tr>
+
+                    <!--Creates the Plaine and Easie input field-->
+                    <tr>
+                        <td>
+                            <div>
+                                <div style="margin: 6px 13px;">
+                                    <div style="padding: 0px; border-width: 0px;"></div>
+                                </div>
+                                <textarea type="input" id="incipit_01" name="incipit_01" class="form-control hwt-input hwt-content" placeholder="Plaine &amp; Easie code …" readonly></textarea>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!--MEI output-->
+
+
+                    <tr>
+                        <td>
+                            <div style="text-align: left;  display:inline;" id="render_01">
+                                <svg width="524px" height="63px" version="1.1" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" xmlns:mei="http://www.music-encoding.org/ns/mei" overflow="visible">
+                                    <desc>Engraved by Verovio 4.0.1-a99660b</desc>
+                                    <defs>
+                                        <symbol id="E050-11fu5of" viewBox="0 0 1000 1000" overflow="inherit">
+                                            <path transform="scale(1,-1)" d="M441 -245c-23 -4 -48 -6 -76 -6c-59 0 -102 7 -130 20c-88 42 -150 93 -187 154c-26 44 -43 103 -48 176c0 6 -1 13 -1 19c0 54 15 111 45 170c29 57 65 106 110 148s96 85 153 127c-3 16 -8 46 -13 92c-4 43 -5 73 -5 89c0 117 16 172 69 257c34 54 64 82 89 82 c21 0 43 -30 69 -92s39 -115 41 -159v-15c0 -109 -21 -162 -67 -241c-13 -20 -63 -90 -98 -118c-13 -9 -25 -19 -37 -29l31 -181c8 1 18 2 28 2c58 0 102 -12 133 -35c59 -43 92 -104 98 -184c1 -7 1 -15 1 -22c0 -123 -87 -209 -181 -248c8 -57 17 -110 25 -162 c5 -31 6 -58 6 -80c0 -30 -5 -53 -14 -70c-35 -64 -88 -99 -158 -103c-5 0 -11 -1 -16 -1c-37 0 -72 10 -108 27c-50 24 -77 59 -80 105v11c0 29 7 55 20 76c18 28 45 42 79 44h6c49 0 93 -42 97 -87v-9c0 -51 -34 -86 -105 -106c17 -24 51 -36 102 -36c62 0 116 43 140 85 c9 16 13 41 13 74c0 20 -1 42 -5 67c-8 53 -18 106 -26 159zM461 939c-95 0 -135 -175 -135 -286c0 -24 2 -48 5 -71c50 39 92 82 127 128c40 53 60 100 60 140v8c-4 53 -22 81 -55 81h-2zM406 119l54 -326c73 25 110 78 110 161c0 7 0 15 -1 23c-7 95 -57 142 -151 142h-12 zM382 117c-72 -2 -128 -47 -128 -120v-7c2 -46 43 -99 75 -115c-3 -2 -7 -5 -10 -10c-70 33 -116 88 -123 172v11c0 68 44 126 88 159c23 17 49 29 78 36l-29 170c-21 -13 -52 -37 -92 -73c-50 -44 -86 -84 -109 -119c-45 -69 -67 -130 -67 -182v-13c5 -68 35 -127 93 -176 s125 -73 203 -73c25 0 50 3 75 9c-19 111 -36 221 -54 331z"></path>
+                                        </symbol>
+                                    </defs>
+                                    <style type="text/css">
+                                        g.page-margin {
+                                            font-family: Times,serif;
+                                        }
+
+                                        g.ending, g.fing, g.reh, g.tempo {
+                                            font-weight: bold;
+                                        }
+
+                                        g.dir, g.dynam,
+                                        g.mNum {
+                                            font-style: italic;
+                                        }
+
+                                        g.label {
+                                            font-weight: normal;
+                                        }
+                                    </style>
+                                    <svg class="definition-scale" color="black" viewBox="0 0 10480 1250">
+                                        <g class="page-margin" transform="translate(0, 0)">
+                                            <g id="mmyzslu" class="mdiv pageMilestone"></g>
+                                            <g id="s6ug31v" class="score pageMilestone"></g>
+                                            <g id="s11izfdo" class="system">
+                                                <g id="s1k4iy3e" class="section systemMilestone"></g>
+                                                <g id="mfnjo7e" class="measure">
+                                                    <g id="szosgrv" class="staff">
+                                                        <path d="M0 240 L1995 240" stroke="currentColor" stroke-width="13"></path>
+                                                        <path d="M0 420 L1995 420" stroke="currentColor" stroke-width="13"></path>
+                                                        <path d="M0 600 L1995 600" stroke="currentColor" stroke-width="13"></path>
+                                                        <path d="M0 780 L1995 780" stroke="currentColor" stroke-width="13"></path>
+                                                        <path d="M0 960 L1995 960" stroke="currentColor" stroke-width="13"></path>
+                                                        <g id="c1lbogsu" class="clef">
+                                                            <use xlink:href="#E050-11fu5of" x="90" y="780" height="720px" width="720px"></use>
+                                                        </g>
+                                                        <g id="k9kef4i" class="keySig"></g>
+                                                        <g id="l1q84ocf" class="layer"></g>
+                                                    </g>
+                                                    <g id="b14otqmf" class="barLine"></g>
+                                                </g>
+                                                <g id="sshell2" class="systemMilestoneEnd s1k4iy3e"></g>
+                                            </g>
+                                            <g id="pa734np" class="pageMilestoneEnd s6ug31v"></g>
+                                            <g id="p1cybpcc" class="pageMilestoneEnd mmyzslu"></g>
+                                            <g id="p15wwqth" class="pgHead autogenerated"></g>
+                                        </g>
+                                    </svg>
+                                </svg>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+
+            <div>
+                <pre id="mei_output" style="text-align: left; overflow: auto; width: auto; overflow-wrap: normal;">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+        &lt;?xml-model href="https://music-encoding.org/schema/5.0/mei-all.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?&gt;
+        &lt;?xml-model href="https://music-encoding.org/schema/5.0/mei-all.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?&gt;
+        &lt;mei xmlns="http://www.music-encoding.org/ns/mei" meiversion="5.0"&gt;
+        &lt;meiHead&gt;
+        &lt;fileDesc&gt;
+        &lt;titleStmt&gt;
+        &lt;title /&gt;
+        &lt;/titleStmt&gt;
+        &lt;pubStmt&gt;
+        &lt;date isodate="2023-10-13-10:32:35" /&gt;
+        &lt;/pubStmt&gt;
+        &lt;/fileDesc&gt;
+        &lt;encodingDesc&gt;
+        lt;appInfo&gt;
+        &lt;application xml:id="verovio" version="4.0.1-a99660b"&gt;
+        &lt;name&gt;Verovio (4.0.1-a99660b)&lt;/name&gt;
+        &lt;/application&gt;
+        &lt;/appInfo&gt;
+        &lt;projectDesc&gt;
+        &lt;p&gt;MEI encoded with Verovio&lt;/p&gt;
+        &lt;p&gt;Converted from Plaine and Easie to MEI&lt;/p&gt;
+        &lt;/projectDesc&gt;
+        &lt;/encodingDesc&gt;
+        &lt;/meiHead&gt;
+        &lt;music&gt;
+        &lt;body&gt;
+        &lt;mdiv xml:id="mmyzslu"&gt;
+        &lt;score xml:id="s6ug31v"&gt;
+        &lt;scoreDef xml:id="s1bcu6sn"&gt;
+        &lt;staffGrp xml:id="s1blotdo"&gt;
+        &lt;staffDef xml:id="s98porn" n="1" lines="5" clef.shape="G" clef.line="2" /&gt;
+        &lt;/staffGrp&gt;
+        &lt;/scoreDef&gt;
+        &lt;section xml:id="s1k4iy3e"&gt;
+        &lt;measure xml:id="mfnjo7e" right="invis"&gt;
+        &lt;staff xml:id="szosgrv" n="1"&gt;
+        &lt;layer xml:id="l1q84ocf" n="1" /&gt;
+        &lt;/staff&gt;
+        &lt;/measure&gt;
+        &lt;/section&gt;
+        &lt;/score&gt;
+        &lt;/mdiv&gt;
+        &lt;/body&gt;
+        &lt;/music&gt;
+        &lt;/mei&gt;
+    </pre>
+            </div>
+
+            <button id="saveMeiButton">Save as MEI</button>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+        </div>
+
+        <script>
+            var soundPosition = 0;
+
+            // global variables for the music notation
+            var current_oct = -1;
+            var current_duration = 4;
+            var current_dot = 0;
+            var undos = new Array();
+
+            // reset the incipit
+            function clear_incipit() {
+                $('#incipit_01').val('');
+                $("#incipit_01").trigger("input");
+                current_oct = -1;
+                reset_undos();
+                update_incipit();
+            }
+
+            // function called from the SVG keyboard
+            function onpitch(pitch, oct, alteration, midi) {
+                pitch_str = '';
+                if (oct != current_oct) {
+                    switch (oct) {
+                        case 3:
+                            pitch_str += '\'';
+                        case 2:
+                            pitch_str += '\'';
+                        case 1:
+                            pitch_str += '\'';
+                    }
+                }
+                current_oct = oct;
+
+                pitch_str += current_duration;
+                if (current_dot == 1) {
+                    pitch_str += '.';
+                }
+
+                switch (alteration) {
+                    case 1:
+                        pitch_str += 'x';
+                        break;
+                    case -1:
+                        pitch_str += 'b';
+                        break;
+                }
+
+                pitch_str += pitch;
+                undos.push($('#incipit_01').val());
+                $('#incipit_01').val($('#incipit_01').val() + pitch_str);
+                $("#incipit_01").trigger("input");
+                update_incipit();
+            }
+
+            function reset_undos() {
+                undos = []
+            }
+
+            function onundo() {
+                undo_str = undos.pop()
+                $('#incipit_01').val(undo_str);
+                $("#incipit_01").trigger("input");
+                update_incipit();
+
+            }
+
+            // update the incipit and handle the timer - do not update if already updating
+            function update_incipit() {
+                //$('#incipit_01').val('4'+ $('#incipit_01').val());
+                if ($('#incipit_01').val() == '') {
+                    // reset the octave if nothing in the incipit
+                    current_oct = -1
+                    $('#btn_clear_incipit').hide();
+                } else {
+                    $('#btn_clear_incipit').show();
+                }
+
+                update_display();
+            }
+
+            // actually updating
+            function update_display() {
+                pe_incipit('',
+                    "clef_01",
+                    "keysig_01",
+                    "timesig_01",
+                    "incipit_01",
+                    "render_01");
+            }
+
+            // keyup event for updating when the text input is modified
+            $('#incipit_01').keyup(function (event) {
+                update_incipit();
+            });
+
+            $('#clef_01').change(function (event) {
+                $("#incipit_01").trigger("input");
+                update_incipit();
+            });
+
+            $('#keysig_01').change(function (event) {
+                $("#incipit_01").trigger("input");
+                update_incipit();
+            });
+
+            $('#timesig_01').keyup(function (event) {
+                $("#incipit_01").trigger("input");
+                update_incipit();
+            });
+
+            // keydown events for shortcuts to the buttons - only when #kb_focus (empty) has focus (hacky)
+            $('#kb_focus').keypress(function (event) {
+                if (event.charCode == 57) { onduration(9); } // 9
+                else if (event.charCode == 49) { onduration(1); } // 1
+                else if (event.charCode == 50) { onduration(2); } // 2
+                else if (event.charCode == 52) { onduration(4); } // 4
+                else if (event.charCode == 56) { onduration(8); } // 8
+                else if (event.charCode == 54) { onduration(6); } // 6
+                else if (event.charCode == 51) { onduration(3); } // 3
+                else if (event.charCode == 53) { onduration(5); } // 5
+                // rest
+                else if ((event.charCode == 82) || (event.charCode == 114) || (event.charCode == 45)) { onrest(); }
+                // dot
+                else if ((event.charCode == 68) || (event.charCode == 100) || (event.charCode == 46)) { ondot(); }
+                // barline
+                else if ((event.charCode == 66) || (event.charCode == 98) || (event.charCode == 47)) { onbarline(); }
+                // undo
+                else if ((event.charCode == 85) || (event.charCode == 117)) { onundo(); }
+            });
+
+            if ($('#incipit_01').val() != "") {
+                update_incipit();
+            }
+
+            var vrvToolkit = new verovio.toolkit();
+
+
+            function render_music(music, format) {
+                // The trailing newline is needed so we can read the file lines
+                // correctly if the file does not end with a newline
+                var svg = vrvToolkit.renderData(music + "\n", {
+                    inputFrom: 'pae',
+                    scale: 50,
+                    adjustPageHeight: 1,
+                    pageWidth: 1048,
+                    pageMarginTop: 0,
+                    pageMarginBottom: 0,
+                    pageMarginLeft: 0,
+                    pageMarginRight: 0,
+                    spacingStaff: 2,
+                    xmlIdSeed: 1
+                });
+                document.getElementById('render_01').innerHTML = svg;
+
+                var mei = vrvToolkit.getMEI({ "pageNo": 1, "scoreBased": true });
+                //var parser = new DOMParser();
+                $("#mei_output").show();
+                $("#mei_output").text(mei);
+                //var innerMei = parser.parseFromString(mei, "text/xml");
+                //document.getElementById('mei_output').innerHTML = innerMei;
+                //console.log( mei );
+
+
+            };
+
+            function pe_incipit(destination_column, clef, keysig, timesig, incipit, target) {
+                jquery_clef = clef.replace(/(\[|\])/g, '\\$1');
+                //jquery_keysig = keysig.replace(/(\[|\])/g, '\\$1');
+                //jquery_timesig = timesig.replace(/(\[|\])/g, '\\$1');
+                jquery_incipit = incipit.replace(/(\[|\])/g, '\\$1');
+
+                pae_clef = $('#' + jquery_clef).val();
+                //pae_keysig =  $('#' + jquery_keysig).val();
+                //pae_timesig = $('#' + jquery_timesig).val();
+                pae_incipit = $('#' + jquery_incipit).val();
+
+
+                pae = "@@clef:" + pae_clef + "\n";
+                //pae = pae + "@@keysig:" + pae_keysig + "\n";
+                pae = pae + "@@key:\n";
+                //pae = pae + "@@timesig:" + pae_timesig + "\n";
+                pae = pae + "@@data: " + pae_incipit + "\n";
+                render_music(pae, 'pae');
+
+            }
+
+            function getParameterByName(name) {
+                var match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
+                return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
+            }
+
+            function onValidatePAE(input) {
+
+                if (input == '') {
+                    $('#warnings_01').hide();
+                    return;
+                }
+
+                pae = "@@clef:" + $('#clef_01').val() + "\n";
+                pae = pae + "@@keysig:" + $('#keysig_01').val() + "\n";
+                pae = pae + "@@timesig:" + $('#timesig_01').val() + "\n";
+                pae = pae + "@@data: " + $('#incipit_01').val() + "\n";
+
+                highlights = [];
+                messages = []
+                validation = vrvToolkit.validatePAE(pae);
+                //console.log("Validate", validation);
+                if (validation.hasOwnProperty("clef")) {
+                    messages.push(validation["clef"]["text"]);
+                }
+                if (validation.hasOwnProperty("keysig")) {
+                    messages.push(validation["keysig"]["text"]);
+                }
+                if (validation.hasOwnProperty("timesig")) {
+                    messages.push(validation["timesig"]["text"]);
+                }
+                if (validation.hasOwnProperty("data")) {
+                    data = validation["data"];
+                    //console.log(data);
+                    for (i = 0; i < data.length; i++) {
+                        messages.push(data[i]["text"]);
+                        j = data[i]["column"];
+                        if (j > 0) highlights.push([j - 1, j]);
+                    }
+                }
+                if (messages.length > 0) {
+                    $('#warnings_01').html(messages.join("<br/>"));
+                    $('#warnings_01').show();
+                }
+                else {
+                    $('#warnings_01').hide();
+                }
+                //console.log(highlights);
+                return [highlights];
+            }
+
+            $(document).ready(function () {
+
+                // Load the default file or the file passed in the URL
+                var pae = getParameterByName("pae");
+                //console.log(pae);
+
+                if (pae != "") {
+                    $("#incipit_01").val(pae);
+                    update_incipit();
+                }
+
+                //$("#incipit_01").highlightWithinTextarea({ highlight: onValidatePAE });
+            });
+
+            // Function to trigger the download of the MEI file
+            function saveMeiAsFile() {
+                var meiContent = $("#mei_output").text();
+
+                var blob = new Blob([meiContent], { type: "application/xml" });
+                var url = URL.createObjectURL(blob);
+
+                var a = document.createElement("a");
+                a.href = url;
+                a.download = "MEI_File.mei"; // Change the filename as needed
+                document.body.appendChild(a);
+
+                a.click();
+
+                URL.revokeObjectURL(url);
+            }
+
+            // Add a click event listener to the "Save as MEI" button
+            document.getElementById("saveMeiButton").addEventListener("click", saveMeiAsFile);
+
+        </script>
+
+    </div>
+    </div>
+
+
+
+    <!--Creates the link for the footer-->
+    <script>
+        $(document).ready(function () {
+            var version = vrvToolkit.getVersion();
+            var n = version.lastIndexOf('-');
+            var commit = version.substring(n + 1);
+            $('#version').text(version);
+            $("#version").attr("href", "http://github.com/rism-digital/verovio/commit/" + commit);
+        });
+    </script>
+
+</body>
