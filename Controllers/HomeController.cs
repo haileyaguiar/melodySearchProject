@@ -29,6 +29,16 @@ namespace melodySearchProject.Controllers
             return View(searchResults);
         }
 
+        [HttpPost]
+        public IActionResult MelodySearch(string query)
+        {
+            query
+
+            search_results = 
+
+            return View(search_results);
+        }
+
 
     }
 }

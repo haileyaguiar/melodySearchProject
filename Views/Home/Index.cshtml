@@ -108,7 +108,9 @@
 
                     <!--MEI output-->
 
-
+                    <form asp-action="MelodySearch" method="post">
+                        <input type="text" name="query" placeholder="Search MEI files">
+                        <button type="submit">Search</button>
                     <tr>
                         <td>
                             <div style="text-align: left;  display:inline;" id="render_01">
@@ -169,6 +171,7 @@
                             </div>
                         </td>
                     </tr>
+                    </form>
                     </tbody>
                 </table>
             </div>
