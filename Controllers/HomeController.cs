@@ -1,5 +1,6 @@
 using melodySearchProject.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 using System.Diagnostics;
 
 namespace melodySearchProject.Controllers
@@ -42,12 +43,43 @@ namespace melodySearchProject.Controllers
         public async Task<ActionResult> SaveMeiData(string inputData)
         {
             string javaServerUrl = "http://localhost:5000/searchMusic"; // Replace with your Java server URL
+            MeiRequest mei = new MeiRequest("""
+                   <measure n="7" xml:id="w796839ab1c27">
+                     <staff n="1">
+                        <layer n="1">
+                           <note accid.ges="s"
+                                 dur="4"
+                                 oct="4"
+                                 pname="f"
+                                 stem.dir="up"
+                                 xml:id="w796839ab1c27b1b1"/>
+                           <note dur="4"
+                                 oct="4"
+                                 pname="g"
+                                 stem.dir="up"
+                                 xml:id="w796839ab1c27b1b3"/>
+                           <note dur="4"
+                                 oct="4"
+                                 pname="a"
+                                 stem.dir="up"
+                                 xml:id="w796839ab1c27b1b5"/>
+                           <note accid.ges="s"
+                                 dur="4"
+                                 oct="4"
+                                 pname="f"
+                                 stem.dir="up"
+                                 xml:id="w796839ab1c27b1b7"/>
+                        </layer>
+                     </staff>
+                  </measure>
+                """);
+            var jsonINpout = JsonSerializer.Serialize(mei);
 
             try
             {
                 using (var client = new HttpClient())
                 {
-                    var content = new StringContent(inputData, System.Text.Encoding.UTF8, "application/json");
+                    var content = new StringContent(jsonINpout, System.Text.Encoding.UTF8, "application/json");
 
                     HttpResponseMessage response = await client.PostAsync(javaServerUrl, content);
                     if (response.IsSuccessStatusCode)
@@ -66,6 +98,14 @@ namespace melodySearchProject.Controllers
                 // Log the exception if necessary
                 return Json($"An error occurred: {ex.Message}");
             }
+        }
+
+        public class MeiRequest{
+            public MeiRequest(string v){
+                meiChunk = v;
+            }
+
+            public string meiChunk { get; set; }
         }
 }
 };
