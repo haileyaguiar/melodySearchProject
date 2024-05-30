@@ -37,27 +37,35 @@ namespace melodySearchProject.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> SendData(string inputData)
+        public async Task<ActionResult> MelodySearch(string inputData)
         {
             string javaServerUrl = "http://localhost:5000/searchMusic"; // Replace with your Java server URL
 
-            using (var client = new HttpClient())
+            try
             {
-                var content = new StringContent(inputData, System.Text.Encoding.UTF8, "application/json");
+                using (var client = new HttpClient())
+                {
+                    var content = new StringContent(inputData, System.Text.Encoding.UTF8, "application/json");
 
-                HttpResponseMessage response = await client.PostAsync(javaServerUrl, content);
-                if (response.IsSuccessStatusCode)
-                {
-                    string responseData = await response.Content.ReadAsStringAsync();
-                    return Json(responseData);
-                }
-                else
-                {
-                    return Json("Error occurred while sending data to Java server.");
+                    HttpResponseMessage response = await client.PostAsync(javaServerUrl, content);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string responseData = await response.Content.ReadAsStringAsync();
+                        return Json(responseData);
+                    }
+                    else
+                    {
+                        return Json("Error occurred while sending data to Java server.");
+                    }
                 }
             }
+            catch (Exception ex)
+            {
+                // Log the exception if necessary
+                return Json($"An error occurred: {ex.Message}");
+            }
         }
-    }
+}
 };
 
 
