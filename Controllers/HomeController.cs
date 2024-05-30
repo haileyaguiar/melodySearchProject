@@ -7,8 +7,8 @@ namespace melodySearchProject.Controllers
     public class HomeController : Controller
     {
         public IMelodyRepository _repo;
-  
-        public HomeController(IMelodyRepository temp) 
+
+        public HomeController(IMelodyRepository temp)
         {
             _repo = temp;
         }
@@ -23,8 +23,8 @@ namespace melodySearchProject.Controllers
         {
             // Perform search based on query
             var searchResults = _repo.Meis
-                                          .Where(f => f.FileData.Contains(query))
-                                          .ToList();
+                                .Where(f => f.FileData.Contains(query))
+                                .ToList();
 
             return View(searchResults);
         }
@@ -36,16 +36,28 @@ namespace melodySearchProject.Controllers
             return View();
         }
 
-        //[HttpPost]
-        //public IActionResult MelodySearch(string query)
-        //{
-        //    query
+        [HttpPost]
+        public async Task<ActionResult> SendData(string inputData)
+        {
+            string javaServerUrl = "http://localhost:5000/searchMusic"; // Replace with your Java server URL
 
-        //    search_results = 
+            using (var client = new HttpClient())
+            {
+                var content = new StringContent(inputData, System.Text.Encoding.UTF8, "application/json");
 
-        //    return View(search_results);
-        //}
-
-
+                HttpResponseMessage response = await client.PostAsync(javaServerUrl, content);
+                if (response.IsSuccessStatusCode)
+                {
+                    string responseData = await response.Content.ReadAsStringAsync();
+                    return Json(responseData);
+                }
+                else
+                {
+                    return Json("Error occurred while sending data to Java server.");
+                }
+            }
+        }
     }
-}
+};
+
+

@@ -223,16 +223,29 @@
         &lt;/mei&gt;
     </pre>
             </div>
-            <form asp-action="MelodySearch" method="post">
+            <!--<form asp-action="MelodySearch" method="post">
                 <input type="hidden" name="meiContent" id="meiContent">
 
                 <button type="submit">Search</button>  
-            </form>
+            </form>-->
             <br>
             <br>
             <br>
             <br>
             <br>
+        </div>
+
+
+        <form id="dataForm" method="post">
+            <input type="hidden" id="meiContent" name="meiContent" />
+            <button type="button" onclick="sendData()">Send</button>
+        </form>
+
+        <div id="responseContainer">
+            @if (ViewBag.Response != null)
+            {
+                <p>Response from Java Server: @ViewBag.Response</p>
+            }
         </div>
 
         <script>
@@ -536,3 +549,22 @@
     </script>
 
 </body>
+
+@section scripts {
+    <script>
+        function sendData() {
+            var data = $('#inputData').val();
+            $.ajax({
+                url: '@Url.Action("SendData", "Home")',
+                type: 'POST',
+                data: { inputData: data },
+                success: function (response) {
+                    $('#responseContainer').html('<p>Response from Java Server: ' + response + '</p>');
+                },
+                error: function () {
+                    $('#responseContainer').html('<p>Error occurred while sending data to Java server.</p>');
+                }
+            });
+        }
+    </script>
+}
