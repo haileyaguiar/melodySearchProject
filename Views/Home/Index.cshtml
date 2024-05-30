@@ -228,6 +228,10 @@
 
                 <button type="submit">Search</button>  
             </form>-->
+            <form id="dataForm" method="post">
+                <input type="hidden" id="meiContent" name="meiContent" />
+                <button type="button" onclick="sendData()">Send</button>
+            </form>
             <br>
             <br>
             <br>
@@ -235,11 +239,6 @@
             <br>
         </div>
 
-
-        <form id="dataForm" method="post">
-            <input type="hidden" id="meiContent" name="meiContent" />
-            <button type="button" onclick="sendData()">Send</button>
-        </form>
 
         <div id="responseContainer">
             @if (ViewBag.Response != null)
