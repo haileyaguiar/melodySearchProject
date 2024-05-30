@@ -36,8 +36,10 @@ namespace melodySearchProject.Controllers
             return View();
         }
 
+
+
         [HttpPost]
-        public async Task<ActionResult> MelodySearch(string inputData)
+        public async Task<ActionResult> SaveMeiData(string inputData)
         {
             string javaServerUrl = "http://localhost:5000/searchMusic"; // Replace with your Java server URL
 

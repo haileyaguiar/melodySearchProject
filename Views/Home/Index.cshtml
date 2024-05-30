@@ -223,11 +223,8 @@
         &lt;/mei&gt;
     </pre>
             </div>
-            <form asp-action="MelodySearch" method="post">
-                <input type="hidden" name="meiContent" id="meiContent">
-                <button type="submit">Search</button>  
-            </form>
-
+  
+            <button onclick="saveMeiAsFile()">Download MEI File</button>
             <br>
             <br>
             <br>
@@ -235,13 +232,6 @@
             <br>
         </div>
 
-
-        <div id="responseContainer">
-            @if (ViewBag.Response != null)
-            {
-                <p>Response from Java Server: @ViewBag.Response</p>
-            }
-        </div>
 
         <script>
             var soundPosition = 0;
@@ -494,21 +484,45 @@
             });
 
             // Function to trigger the download of the MEI file
+            // function saveMeiAsFile() {
+            //     var meiContent = $("#mei_output").text();
+
+            //     var blob = new Blob([meiContent], { type: "application/xml" });
+            //     var url = URL.createObjectURL(blob);
+
+            //     var a = document.createElement("a");
+            //     a.href = url;
+            //     a.download = "MEI_File.mei"; // Change the filename as needed
+            //     document.body.appendChild(a);
+
+            //     a.click();
+
+            //     URL.revokeObjectURL(url);
+            // }
+
             function saveMeiAsFile() {
                 var meiContent = $("#mei_output").text();
 
-                var blob = new Blob([meiContent], { type: "application/xml" });
-                var url = URL.createObjectURL(blob);
+                // Log the MEI content to the browser console
+                console.log("MEI Content:", meiContent);
 
-                var a = document.createElement("a");
-                a.href = url;
-                a.download = "MEI_File.mei"; // Change the filename as needed
-                document.body.appendChild(a);
-
-                a.click();
-
-                URL.revokeObjectURL(url);
+                $.ajax({
+                    url: "/Home/SaveMeiData",
+                    type: "POST",
+                    data: { inputData: meiContent },
+                    success: function (response) {
+                        // Handle success response if needed
+                        console.log("Response from server:", response);
+                        alert("MEI content sent successfully!");
+                    },
+                    error: function (xhr, status, error) {
+                        // Handle error if needed
+                        console.error("Error sending MEI data:", error);
+                        alert("Error occurred while sending MEI content: " + error);
+                    }
+                });
             }
+
 
             // Add a click event listener to the "Save as MEI" button
             document.getElementById("saveMeiButton").addEventListener("click", saveMeiAsFile);
@@ -545,21 +559,3 @@
 
 </body>
 
-@section scripts {
-    <script>
-        function sendData() {
-            var data = $('#inputData').val();
-            $.ajax({
-                url: '@Url.Action("SendData", "Home")',
-                type: 'POST',
-                data: { inputData: data },
-                success: function (response) {
-                    $('#responseContainer').html('<p>Response from Java Server: ' + response + '</p>');
-                },
-                error: function () {
-                    $('#responseContainer').html('<p>Error occurred while sending data to Java server.</p>');
-                }
-            });
-        }
-    </script>
-}
