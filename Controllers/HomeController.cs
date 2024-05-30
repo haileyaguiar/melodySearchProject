@@ -79,7 +79,7 @@ namespace melodySearchProject.Controllers
         {
             // Pass the response data to the view
             ViewBag.ResponseData = responseData;
-            return View();
+            return View(responseData);
         }
 
     }
