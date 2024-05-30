@@ -43,36 +43,7 @@ namespace melodySearchProject.Controllers
         public async Task<ActionResult> SaveMeiData(string inputData)
         {
             string javaServerUrl = "http://localhost:5000/searchMusic"; // Replace with your Java server URL
-            MeiRequest mei = new MeiRequest("""
-                   <measure n="7" xml:id="w796839ab1c27">
-                     <staff n="1">
-                        <layer n="1">
-                           <note accid.ges="s"
-                                 dur="4"
-                                 oct="4"
-                                 pname="f"
-                                 stem.dir="up"
-                                 xml:id="w796839ab1c27b1b1"/>
-                           <note dur="4"
-                                 oct="4"
-                                 pname="g"
-                                 stem.dir="up"
-                                 xml:id="w796839ab1c27b1b3"/>
-                           <note dur="4"
-                                 oct="4"
-                                 pname="a"
-                                 stem.dir="up"
-                                 xml:id="w796839ab1c27b1b5"/>
-                           <note accid.ges="s"
-                                 dur="4"
-                                 oct="4"
-                                 pname="f"
-                                 stem.dir="up"
-                                 xml:id="w796839ab1c27b1b7"/>
-                        </layer>
-                     </staff>
-                  </measure>
-                """);
+            MeiRequest mei = new MeiRequest(inputData);
             var jsonINpout = JsonSerializer.Serialize(mei);
 
             try
