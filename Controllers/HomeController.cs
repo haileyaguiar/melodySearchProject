@@ -85,7 +85,9 @@ namespace melodySearchProject.Controllers
                     if (response.IsSuccessStatusCode)
                     {
                         string responseData = await response.Content.ReadAsStringAsync();
-                        return Json(responseData);
+
+                        // Redirect to a new action with the response data as a query parameter
+                        return RedirectToAction("DisplayResponse", new { responseData = responseData });
                     }
                     else
                     {
@@ -100,14 +102,23 @@ namespace melodySearchProject.Controllers
             }
         }
 
+
+
+        public ActionResult DisplayResponse(string responseData)
+        {
+            // Pass the response data to the view
+            ViewBag.ResponseData = responseData;
+            return View();
+        }
+
+    }
+
         public class MeiRequest{
             public MeiRequest(string v){
                 meiChunk = v;
             }
-
             public string meiChunk { get; set; }
         }
-}
 };
 
 
