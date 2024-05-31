@@ -180,6 +180,12 @@ public class HomeController : Controller
         }
     }
 
+    public ActionResult Index()
+    {
+
+    return View(); }
+
+
     public ActionResult DisplayResponse(string responseData)
     {
         // Pass the response data to the view
