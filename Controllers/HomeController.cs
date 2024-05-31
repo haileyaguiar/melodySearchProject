@@ -160,8 +160,8 @@ public class HomeController : Controller
                                     string listToString = string.Join("\n", names);
                                     Console.WriteLine($"Names: {listToString}");
                                     Debug.WriteLine($"Names: {listToString}");
-                                    return Json(listToString);
-                                    //return RedirectToAction("DisplayResponse", new { responseData = listToString });
+                                    //return Json(listToString);
+                                    return RedirectToAction("DisplayResponse", new { responseData = listToString });
                                 }
                                 else
                                 {
