@@ -216,9 +216,11 @@ public class HomeController : Controller
 
     public ActionResult DisplayResponse(string responseData)
     {
-        ViewBag.ResponseData = System.Net.WebUtility.UrlDecode(responseData);
+        string decodedData = System.Net.WebUtility.UrlDecode(responseData);
+        ViewBag.ResponseData = decodedData;
         return View();
     }
+
 
 
 };

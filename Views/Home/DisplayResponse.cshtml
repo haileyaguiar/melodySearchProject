@@ -1,11 +1,15 @@
 ﻿@{
-    Layout = null; // To use a blank layout for this view
+    ViewBag.Title = "Display Response";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<head>
-    <title>Response Data</title>
-</head>
-<body>
-    <h2>Response from Java Server</h2>
-    <p>@ViewBag.ResponseData</p>
-</body>
+<h2>Response Data</h2>
+
+@if (ViewBag.ResponseData != null)
+{
+    <pre>@ViewBag.ResponseData</pre>
+}
+else
+{
+    <p>No data received.</p>
+}
