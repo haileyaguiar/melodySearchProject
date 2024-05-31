@@ -112,55 +112,97 @@ public class MeiRequest
 // };
 
 public class Response {
-    public List<string> Names {get; set;}
-    public string Message { get; set; }
+    [JsonPropertyName("names")]
+    public List<string>? Names {get; set;}
+    [JsonPropertyName("message")]
+    public string? Message { get; set; }
+    [JsonPropertyName("success")]
     public bool Success { get; set; }
 
-}
+};
 
 public class HomeController : Controller
 {
     private string javaServerUrl = "http://localhost:5000/searchMusic";
 
     [HttpPost]
-    public async Task<ActionResult> SaveMeiData(string inputData){
+    public async Task<ActionResult> SaveMeiData(string inputData)
+    {
         MeiRequest mei = new MeiRequest(inputData);
         var jsonINpout = JsonSerializer.Serialize(mei);
 
-        try{
-            using (var client = new HttpClient()){
+        try
+        {
+            using (var client = new HttpClient())
+            {
                 var content = new StringContent(jsonINpout, System.Text.Encoding.UTF8, "application/json");
                 HttpResponseMessage response = await client.PostAsync(javaServerUrl, content);
 
-                if (response.IsSuccessStatusCode){
+                if (response.IsSuccessStatusCode)
+                {
                     string responseData = await response.Content.ReadAsStringAsync();
-                    if (!string.IsNullOrEmpty(responseData)){
-                        Response responseObj = JsonSerializer.Deserialize<Response>(responseData);
-                        if (responseObj != null && responseObj.Names != null){
-                            List<string> names = responseObj.Names;
-                            // Redirect to a new action with the response data as a query parameter
-                            string listToString = string.Join("\n", names);
-                            Console.WriteLine(listToString);
-                            Debug.WriteLine(listToString);
-                            return Json(listToString);
-                            //return RedirectToAction("DisplayResponse", new { responseData = listToString });
-                        }else{
-                            string objNull = "Deserialized object or Hits property was null!\n";
-                            Console.WriteLine(objNull);
-                            Debug.WriteLine(objNull);
-                            return Json(objNull);
+                    Console.WriteLine($"Response Data: {responseData}");
+                    Debug.WriteLine($"Response Data: {responseData}");
+
+                    if (!string.IsNullOrEmpty(responseData))
+                    {
+                        try
+                        {
+                            Response responseObj = JsonSerializer.Deserialize<Response>(responseData);
+                            if (responseObj != null)
+                            {
+                                Console.WriteLine($"Response Object: {responseObj}");
+                                Debug.WriteLine($"Response Object: {responseObj}");
+
+                                if (responseObj.Names != null)
+                                {
+                                    List<string> names = responseObj.Names;
+                                    string listToString = string.Join("\n", names);
+                                    Console.WriteLine($"Names: {listToString}");
+                                    Debug.WriteLine($"Names: {listToString}");
+                                    return Json(listToString);
+                                    //return RedirectToAction("DisplayResponse", new { responseData = listToString });
+                                }
+                                else
+                                {
+                                    string objNull = "Names property was null!\n";
+                                    Console.WriteLine(objNull);
+                                    Debug.WriteLine(objNull);
+                                    return Json(objNull);
+                                }
+                            }
+                            else
+                            {
+                                string objNull = "Deserialized object was null!\n";
+                                Console.WriteLine(objNull);
+                                Debug.WriteLine(objNull);
+                                return Json(objNull);
+                            }
                         }
-                    }else{
+                        catch (Exception ex)
+                        {
+                            string deserializationError = $"Error during deserialization: {ex.Message}";
+                            Console.WriteLine(deserializationError);
+                            Debug.WriteLine(deserializationError);
+                            return Json(deserializationError);
+                        }
+                    }
+                    else
+                    {
                         string responseNull = "Response data was null or empty!\n";
                         Console.WriteLine(responseNull);
                         Debug.WriteLine(responseNull);
                         return Json(responseNull);
                     }
-                }else{
+                }
+                else
+                {
                     return Json("Error occurred while sending data to Java server.");
                 }
             }
-        }catch (Exception ex){
+        }
+        catch (Exception ex)
+        {
             // Log the exception if necessary
             return Json($"An error occurred: {ex.Message}");
         }
@@ -168,12 +210,11 @@ public class HomeController : Controller
 
     public ActionResult Index()
     {
+        return View();
+    }
 
-    return View(); }
-
-
-    public ActionResult DisplayResponse(string responseData){
-        // Pass the response data to the view
+    public ActionResult DisplayResponse(string responseData)
+    {
         ViewBag.ResponseData = responseData;
         return View(responseData);
     }
