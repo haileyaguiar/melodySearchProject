@@ -2,10 +2,12 @@ using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 public class HomeController : Controller
 {
-    private string javaServerUrl = "http://localhost:5000/searchMusic";
+    private string javaServerUrl = "http://18.226.34.115:5000/searchMusic";
 
     [HttpPost]
     public async Task<ActionResult> SaveMeiData(string inputData)
@@ -18,8 +20,10 @@ public class HomeController : Controller
             using (var client = new HttpClient())
             {
                 var content = new StringContent(jsonInput, System.Text.Encoding.UTF8, "application/json");
+                Debug.WriteLine($"Sending POST request to {javaServerUrl} with content: {jsonInput}");
                 HttpResponseMessage response = await client.PostAsync(javaServerUrl, content);
 
+                Debug.WriteLine($"Received response: {response.StatusCode}");
                 if (response.IsSuccessStatusCode)
                 {
                     string responseData = await response.Content.ReadAsStringAsync();
@@ -42,6 +46,7 @@ public class HomeController : Controller
                         }
                         catch (Exception ex)
                         {
+                            Debug.WriteLine($"Deserialization error: {ex.Message}");
                             return Json($"Error during deserialization: {ex.Message}");
                         }
                     }
@@ -52,12 +57,19 @@ public class HomeController : Controller
                 }
                 else
                 {
-                    return Json("Error occurred while sending data to Java server.");
+                    Debug.WriteLine($"Error: {response.ReasonPhrase}");
+                    return Json($"Error occurred while sending data to Java server: {response.ReasonPhrase}");
                 }
             }
         }
+        catch (HttpRequestException ex)
+        {
+            Debug.WriteLine($"Request error: {ex.Message}");
+            return Json($"An error occurred: {ex.Message}");
+        }
         catch (Exception ex)
         {
+            Debug.WriteLine($"General error: {ex.Message}");
             return Json($"An error occurred: {ex.Message}");
         }
     }
@@ -82,14 +94,15 @@ public class HomeController : Controller
         public string? Message { get; set; }
         [JsonPropertyName("success")]
         public bool Success { get; set; }
-
-    };
+    }
 
     public class MeiRequest
     {
         public MeiRequest(string v) => meiChunk = v;
         public string meiChunk { get; set; }
     }
+}
+
 
     // public class Record
     // {
@@ -189,4 +202,4 @@ public class HomeController : Controller
     //         throw new NotImplementedException("Serialization not implemented for Hit<T>[]");
     //     }
     // };
-}
+
