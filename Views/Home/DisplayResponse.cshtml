@@ -2,14 +2,19 @@
     ViewBag.Title = "Display Response";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
+<body>
 <h2>Response Data</h2>
 
 @if (ViewBag.ResponseData != null)
 {
-    <pre>@ViewBag.ResponseData</pre>
+    <p>@ViewBag.ResponseData</p>
+    <div id="resultContainer"></div>
+
 }
 else
 {
     <p>No data received.</p>
 }
+
+<div id="resultContainer"></div>
+</body>

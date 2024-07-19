@@ -1,14 +1,17 @@
-﻿
+﻿using System.Collections.Generic;
+using System.Linq;
+
 namespace melodySearchProject.Models
 {
     public class EFMelodyRepository : IMelodyRepository
     {
-        private TestMelodiesContext _context;
+        private ApplicationDbContext _context;
 
-        public EFMelodyRepository(TestMelodiesContext temp) 
+        public EFMelodyRepository(ApplicationDbContext context)
         {
-            _context = temp;
+            _context = context;
         }
-        public List<Mei> Meis => _context.Meis.ToList();
+
+        public List<MeiFile> Meis => _context.MeiFiles.ToList();
     }
 }
