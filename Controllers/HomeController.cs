@@ -6,6 +6,11 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using melodySearchProject.Models;
 using Microsoft.EntityFrameworkCore;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.IO;
+using System.Reflection;
+using System.Linq;
+using System.Collections.Generic;
 
 public class HomeController : Controller
 {
@@ -119,24 +124,40 @@ public class HomeController : Controller
         public string meiChunk { get; set; }
     }
 
+
+    [HttpGet]
     public async Task<IActionResult> Search(string query)
     {
         if (string.IsNullOrWhiteSpace(query))
         {
-            return View(Enumerable.Empty<MeiFile>());
+            return View("SearchResults", new List<MeiFile>());
         }
 
-        // Define the SQL query for searching within the XML content
-        var sql = @"
-            SELECT * 
-            FROM meiFiles
-            WHERE xpath('//*[contains(text(), {0})]', file_content::xml) IS NOT NULL";
-
-        // Execute the SQL query
         var results = await _context.MeiFiles
-            .FromSqlRaw(sql, query)
+            .FromSqlRaw("SELECT file_id, file_name FROM public.\"meiFiles\" WHERE CAST(file_content AS TEXT) LIKE {0}", $"%{query}%")
+            .Select(m => new MeiFile { file_id = m.file_id, file_name = m.file_name })
             .ToListAsync();
 
-        return View(results);
+        return View("SearchResults", results);
     }
 }
+
+
+
+    //public async Task<IActionResult> Search(string query)
+    //{
+    //    if (string.IsNullOrWhiteSpace(query))
+    //    {
+    //        return View(Enumerable.Empty<MeiFile>());
+    //    }
+
+    //    var sql = "SELECT * FROM search_meifiles({0})";
+    //    var results = await _context.MeiFiles
+    //        .FromSqlRaw(sql, query)
+    //        .ToListAsync();
+
+    //    return View(results);
+    //}
+
+
+
