@@ -11,7 +11,9 @@ else
     <ul>
         @foreach (var file in Model)
         {
-            <li>@file.file_name</li>
+            <li>
+                <a href="@Url.Action("DisplayFile", "Home", new { id = file.file_id })">@file.file_name</a>
+            </li>
         }
     </ul>
 }

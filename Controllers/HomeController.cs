@@ -134,30 +134,51 @@ public class HomeController : Controller
         }
 
         var results = await _context.MeiFiles
-            .FromSqlRaw("SELECT file_id, file_name FROM public.\"meiFiles\" WHERE CAST(file_content AS TEXT) LIKE {0}", $"%{query}%")
+            .FromSqlRaw("SELECT file_id, file_name, file_content FROM public.\"meiFiles\" WHERE CAST(file_content AS TEXT) LIKE {0}", $"%{query}%")
             .Select(m => new MeiFile { file_id = m.file_id, file_name = m.file_name })
             .ToListAsync();
 
         return View("SearchResults", results);
     }
+
+    [HttpGet]
+    public async Task<IActionResult> DisplayFile(int id)
+    {
+        var file = await _context.MeiFiles
+            .FromSqlRaw("SELECT file_id, file_name, file_content FROM public.\"meiFiles\" WHERE file_id = {0}", id)
+            .Select(m => new { m.file_name, m.file_content })
+            .FirstOrDefaultAsync();
+
+        if (file == null)
+        {
+            return NotFound(); // File doesn't exist
+        }
+
+        ViewBag.FileName = file.file_name;
+        return View("DisplayFile", file.file_content); // Passing file content as model
+    }
+
+
+
+
 }
 
 
 
-    //public async Task<IActionResult> Search(string query)
-    //{
-    //    if (string.IsNullOrWhiteSpace(query))
-    //    {
-    //        return View(Enumerable.Empty<MeiFile>());
-    //    }
+//public async Task<IActionResult> Search(string query)
+//{
+//    if (string.IsNullOrWhiteSpace(query))
+//    {
+//        return View(Enumerable.Empty<MeiFile>());
+//    }
 
-    //    var sql = "SELECT * FROM search_meifiles({0})";
-    //    var results = await _context.MeiFiles
-    //        .FromSqlRaw(sql, query)
-    //        .ToListAsync();
+//    var sql = "SELECT * FROM search_meifiles({0})";
+//    var results = await _context.MeiFiles
+//        .FromSqlRaw(sql, query)
+//        .ToListAsync();
 
-    //    return View(results);
-    //}
+//    return View(results);
+//}
 
 
 
