@@ -11,6 +11,7 @@ using System.IO;
 using System.Reflection;
 using System.Linq;
 using System.Collections.Generic;
+using System.Xml.Linq;
 
 public class HomeController : Controller
 {
@@ -155,30 +156,81 @@ public class HomeController : Controller
         }
 
         ViewBag.FileName = file.file_name;
-        return View("DisplayFile", file.file_content); // Passing file content as model
+        ViewBag.FileContent = file.file_content; // Pass raw MEI content to the view
+
+        return View("DisplayFile");
     }
 
 
 
+    //[HttpGet]
+    //public async Task<IActionResult> DisplayFile(int id)
+    //{
+    //    var file = await _context.MeiFiles
+    //        .FromSqlRaw("SELECT file_id, file_name, file_content FROM public.\"meiFiles\" WHERE file_id = {0}", id)
+    //        .Select(m => new { m.file_name, m.file_content })
+    //        .FirstOrDefaultAsync();
+
+    //    if (file == null)
+    //    {
+    //        return NotFound(); // File doesn't exist
+    //    }
+
+    //    // Encode MEI content as Base64
+    //    string base64Content = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(file.file_content));
+
+    //    ViewBag.FileName = file.file_name;
+    //    ViewBag.Base64Content = base64Content;
+    //    return View("DisplayFile");
+    //}
+
+    //[HttpGet]
+    //public async Task<IActionResult> DisplayFile(int id)
+    //{
+    //    var file = await _context.MeiFiles
+    //        .FromSqlRaw("SELECT file_id, file_name, file_content FROM public.\"meiFiles\" WHERE file_id = {0}", id)
+    //        .Select(m => new { m.file_name, m.file_content })
+    //        .FirstOrDefaultAsync();
+
+    //    if (file == null)
+    //    {
+    //        return NotFound(); // File doesn't exist
+    //    }
+
+    //    System.Diagnostics.Debug.WriteLine(file.file_content); 
+
+    //    // Format the XML content
+    //    XDocument doc = XDocument.Parse(file.file_content);
+    //    string formattedXml = doc.ToString();
+
+    //    ViewBag.FileName = file.file_name;
+    //    return View("DisplayFile", formattedXml); // Pass formatted XML to the view
+    //}
+
+
+    [HttpGet]
+    public IActionResult DownloadFile(string fileName)
+    {
+        // Fetch the file content from the database
+        var file = _context.MeiFiles
+            .FromSqlRaw("SELECT file_id, file_name, file_content FROM public.\"meiFiles\" WHERE file_name = {0}", fileName)
+            .Select(m => new { m.file_name, m.file_content })
+            .FirstOrDefault();
+
+        if (file == null)
+        {
+            return NotFound(); // Handle the case where the file doesn't exist
+        }
+
+        // Convert the file content to a byte array
+        var fileBytes = System.Text.Encoding.UTF8.GetBytes(file.file_content);
+
+        // Set the content disposition header to prompt download
+        return File(fileBytes, "text/plain", $"{file.file_name}");
+    }
+
 
 }
-
-
-
-//public async Task<IActionResult> Search(string query)
-//{
-//    if (string.IsNullOrWhiteSpace(query))
-//    {
-//        return View(Enumerable.Empty<MeiFile>());
-//    }
-
-//    var sql = "SELECT * FROM search_meifiles({0})";
-//    var results = await _context.MeiFiles
-//        .FromSqlRaw(sql, query)
-//        .ToListAsync();
-
-//    return View(results);
-//}
 
 
 

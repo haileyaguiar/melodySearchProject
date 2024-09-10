@@ -1,10 +1,126 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
+
 }
-@model string
+
+<!-- Add the back button -->
+<div style="margin-top: 20px;">
+    <button onclick="history.back()" class="btn btn-secondary">Back</button>
+</div>
 
 <h2>@ViewBag.FileName</h2>
 
-<pre>@Html.Raw(Model)</pre>
+
+<!-- Metadata table -->
+<h3>Metadata</h3>
+<table class="table table-bordered" id="metadata-table">
+    <thead>
+        <tr>
+            <th>Field</th>
+            <th>Value</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Metadata rows will be added here via JavaScript -->
+    </tbody>
+</table>
+
+<!-- Add a download button -->
+<div>
+    <a href="@Url.Action("DownloadFile", "Home", new { fileName = ViewBag.FileName })" class="btn btn-primary">Download MEI File</a>
+</div>
+
+<div id="notation"></div>
+
+
+<!-- Store the MEI content in a hidden textarea -->
+<textarea id="mei-data" style="display:none;">@Html.Raw(ViewBag.FileContent)</textarea>
+
+<!-- Verovio and rendering the MEI content -->
+<script src="https://www.verovio.org/javascript/latest/verovio-toolkit.js"></script>
+
+<script>
+    // Function to extract content between MEI tags and handle attributes
+    function extractMetadataTag(meiDoc, tagName, attributeName = null, attributeValue = null) {
+        var tags = meiDoc.getElementsByTagName(tagName);
+
+        // Loop through all tags matching the tagName
+        for (var i = 0; i < tags.length; i++) {
+            var tag = tags[i];
+
+            // If attributeName and attributeValue are provided, check them
+            if (attributeName && attributeValue) {
+                if (tag.getAttribute(attributeName) === attributeValue) {
+                    return tag.textContent.trim();  // Return text if attribute matches
+                }
+            } else {
+                return tag.textContent.trim();  // Return text if no attribute filtering is needed
+            }
+        }
+
+        return null;  // Return null if no match
+    }
+
+    function renderNotation() {
+        var meiContent = document.getElementById('mei-data').value.trim();
+        var vrvToolkit = new verovio.toolkit();
+
+        // Get the width of the container (notation div)
+        var screenWidth = document.getElementById('notation').clientWidth;
+        var options = {
+            pageWidth: screenWidth,
+            scale: Math.min(30, screenWidth / 20),
+            pageHeight: 1000
+        };
+
+        vrvToolkit.loadData(meiContent);
+        var svg = vrvToolkit.renderToSVG(1, options);
+        document.getElementById("notation").innerHTML = svg;
+
+        // Parse MEI content as XML and extract metadata tags
+        var parser = new DOMParser();
+        var meiDoc = parser.parseFromString(meiContent, "application/xml");
+
+        // Extract metadata with consideration for attributes
+        var metadata = {
+            "Title": extractMetadataTag(meiDoc, "title"),  // Regular title
+            "Collection Title": extractMetadataTag(meiDoc, "title", "type", "collection"),  // Title with type="collection"
+            "First Line": extractMetadataTag(meiDoc, "first line"),
+            "Composer": extractMetadataTag(meiDoc, "composer"),
+            "Librettist": extractMetadataTag(meiDoc, "librettist"),
+            "Editor": extractMetadataTag(meiDoc, "editor"),
+            "Encoding Date": extractMetadataTag(meiDoc, "date", "type", "encoding-date"),
+            "Notes": extractMetadataTag(meiDoc, "notes"),
+            "Collection Number": extractMetadataTag(meiDoc, "collection", "type", "number"),  // Title with type="collection"
+            "Publisher": extractMetadataTag(meiDoc, "publisher"),
+            "Place of Publication": extractMetadataTag(meiDoc, "pubPlace"),
+            "Publication Date": extractMetadataTag(meiDoc, "date", "type", "publication"),
+            "Edition": extractMetadataTag(meiDoc, "edition"),
+            "Source Type": extractMetadataTag(meiDoc, "sourceType")
+        };
+
+        displayMetadata(metadata);
+    }
+
+    // Function to display metadata in the table
+    function displayMetadata(metadata) {
+        var metadataTable = document.getElementById("metadata-table").getElementsByTagName("tbody")[0];
+        metadataTable.innerHTML = "";  // Clear existing rows
+
+        // Iterate over metadata and add rows to the table
+        for (var field in metadata) {
+            if (metadata[field]) {
+                var row = metadataTable.insertRow();
+                var cell1 = row.insertCell(0);
+                var cell2 = row.insertCell(1);
+                cell1.innerHTML = field;
+                cell2.innerHTML = metadata[field];
+            }
+        }
+    }
+
+    // Initial rendering
+    renderNotation();
+
+    // Redraw the notation when the window is resized
+    window.addEventListener('resize', renderNotation);
+</script>
