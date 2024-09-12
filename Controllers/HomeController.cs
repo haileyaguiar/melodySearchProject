@@ -163,51 +163,6 @@ public class HomeController : Controller
 
 
 
-    //[HttpGet]
-    //public async Task<IActionResult> DisplayFile(int id)
-    //{
-    //    var file = await _context.MeiFiles
-    //        .FromSqlRaw("SELECT file_id, file_name, file_content FROM public.\"meiFiles\" WHERE file_id = {0}", id)
-    //        .Select(m => new { m.file_name, m.file_content })
-    //        .FirstOrDefaultAsync();
-
-    //    if (file == null)
-    //    {
-    //        return NotFound(); // File doesn't exist
-    //    }
-
-    //    // Encode MEI content as Base64
-    //    string base64Content = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(file.file_content));
-
-    //    ViewBag.FileName = file.file_name;
-    //    ViewBag.Base64Content = base64Content;
-    //    return View("DisplayFile");
-    //}
-
-    //[HttpGet]
-    //public async Task<IActionResult> DisplayFile(int id)
-    //{
-    //    var file = await _context.MeiFiles
-    //        .FromSqlRaw("SELECT file_id, file_name, file_content FROM public.\"meiFiles\" WHERE file_id = {0}", id)
-    //        .Select(m => new { m.file_name, m.file_content })
-    //        .FirstOrDefaultAsync();
-
-    //    if (file == null)
-    //    {
-    //        return NotFound(); // File doesn't exist
-    //    }
-
-    //    System.Diagnostics.Debug.WriteLine(file.file_content); 
-
-    //    // Format the XML content
-    //    XDocument doc = XDocument.Parse(file.file_content);
-    //    string formattedXml = doc.ToString();
-
-    //    ViewBag.FileName = file.file_name;
-    //    return View("DisplayFile", formattedXml); // Pass formatted XML to the view
-    //}
-
-
     [HttpGet]
     public IActionResult DownloadFile(string fileName)
     {

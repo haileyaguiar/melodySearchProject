@@ -66,16 +66,20 @@
         var vrvToolkit = new verovio.toolkit();
 
         // Get the width of the container (notation div)
-        var screenWidth = document.getElementById('notation').clientWidth;
+        var screenWidth = document.getElementById('notation').clientWidth || window.innerWidth;
+
+
         var options = {
-            pageWidth: screenWidth,
-            scale: Math.min(30, screenWidth / 20),
-            pageHeight: 1000
+            pageWidth: 800, // Use 90% of the window's width
+            scale: 5,                    // Smaller scale value to make notation more compact
+            pageHeight: 1000              // Keep the height as needed
         };
+
 
         vrvToolkit.loadData(meiContent);
         var svg = vrvToolkit.renderToSVG(1, options);
         document.getElementById("notation").innerHTML = svg;
+
 
         // Parse MEI content as XML and extract metadata tags
         var parser = new DOMParser();
@@ -131,3 +135,4 @@
     // Redraw the notation when the window is resized
     window.addEventListener('resize', renderNotation);
 </script>
+
