@@ -249,7 +249,7 @@
         <h2>Results:</h2>
           <div id="resultContainer"></div>  <!-- This will contain the hits and buttons -->
 
-        <div id="partialMusicContainer"></div>  <!-- This will display the partial sheet music -->
+            <div id="partialMusicContainer"></div>  <!-- This will display the partial sheet music -->
 
         <br>
         <br>
@@ -507,22 +507,7 @@
                 //$("#incipit_01").highlightWithinTextarea({ highlight: onValidatePAE });
             });
 
-            // Function to trigger the download of the MEI file
-            // function saveMeiAsFile() {
-            //     var meiContent = $("#mei_output").text();
 
-            //     var blob = new Blob([meiContent], { type: "application/xml" });
-            //     var url = URL.createObjectURL(blob);
-
-            //     var a = document.createElement("a");
-            //     a.href = url;
-            //     a.download = "MEI_File.mei"; // Change the filename as needed
-            //     document.body.appendChild(a);
-
-            //     a.click();
-
-            //     URL.revokeObjectURL(url);
-            // }
             function resetIncipit() {
                 $('#incipit_01').val(''); // Clear the textarea
                 current_oct = -1; // Reset any associated variables
@@ -530,71 +515,10 @@
                 update_incipit(); // Update the display or perform any necessary actions
             }
 
-            //function saveMeiAsFile() {
-            //     var meiContent = $("#mei_output").text();
-
-            //     // Log the MEI content to the browser console
-            //     console.log("MEI Content:", meiContent);
-
-            //     $.ajax({
-            //         url: "/Home/SaveMeiData",
-            //         type: "POST",
-            //         data: { inputData: meiContent },
-            //         success: function (response) {
-            //             console.log("Response from server:", response.responseData);
-            //             // Split the response into an array of names
-            //             var namesArray = response.responseData.split("\n");
-
-            //             // Join the names with <br> tags to display them on separate lines
-            //             var formattedNames = namesArray.join("<br>");
-
-            //             // Display the formatted names in your result container
-            //             $("#resultContainer").html(formattedNames);
-            //             //$("#resultContainer").text(response.responseData); // Assuming you have a container in your HTML to display the result
-            //             alert("MEI content sent successfully!");
-            //         },
-
-            //         error: function (xhr, status, error) {
-            //             // Handle error if needed
-            //             console.error("Error sending MEI data:", error);
-            //             alert("Error occurred while sending MEI content: " + error);
-            //         }
-            //     });
-            // }
 
 
 
 
-
-//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            // function saveMeiAsFile() {
-            //     var meiContent = $("#mei_output").text();
-
-            //     console.log("MEI Content:", meiContent);
-
-            //     $.ajax({
-            //         url: "/Home/SaveMeiData",
-            //         type: "POST",
-            //         data: { inputData: meiContent },
-            //         success: function (response) {
-            //             console.log("Response from server:", response); // Log the entire response
-
-            //             if (response && response.responseData) {
-            //                 var namesArray = response.responseData.split("\n");
-            //                 var formattedNames = namesArray.join("<br>");
-            //                 $("#resultContainer").html(formattedNames);
-            //                 alert("MEI content sent successfully!");
-            //             } else {
-            //                 alert("Unexpected response format or empty response data.");
-            //             }
-            //         },
-            //         error: function (xhr, status, error) {
-            //             console.error("Error sending MEI data:", error);
-            //             alert("Error occurred while sending MEI content: " + error);
-            //         }
-            //     });
-            // }
-//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
             function saveMeiAsFile() {
                 var meiContent = $("#mei_output").text();
