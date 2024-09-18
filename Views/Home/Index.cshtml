@@ -1,7 +1,9 @@
 ﻿@* @model IEnumerable<melodySearchProject.Models.Mei>
  *@
 
-
+ <head>
+     <title>Home</title>
+ </head>
 <body>
     <br />
         <!--Search Stuff-->
@@ -184,9 +186,10 @@
                 </table>
             </div>
 
-
+            <!--"text-align: left; overflow: auto; width: auto; overflow-wrap: normal;"-->
             <div>
-                <pre id="mei_output" style="text-align: left; overflow: auto; width: auto; overflow-wrap: normal;">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+                <pre id="mei_output" style="text-align: left; overflow: auto; width: auto; overflow-wrap: normal;">
+        &lt;?xml version="1.0" encoding="UTF-8"?&gt;
         &lt;?xml-model href="https://music-encoding.org/schema/5.0/mei-all.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?&gt;
         &lt;?xml-model href="https://music-encoding.org/schema/5.0/mei-all.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?&gt;
         &lt;mei xmlns="http://www.music-encoding.org/ns/mei" meiversion="5.0"&gt;
@@ -244,7 +247,10 @@
         </div>
 
         <h2>Results:</h2>
-        <div id="resultContainer"></div>
+          <div id="resultContainer"></div>  <!-- This will contain the hits and buttons -->
+
+        <div id="partialMusicContainer"></div>  <!-- This will display the partial sheet music -->
+
         <br>
         <br>
         <br>
@@ -555,6 +561,41 @@
             //         }
             //     });
             // }
+
+
+
+
+
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            // function saveMeiAsFile() {
+            //     var meiContent = $("#mei_output").text();
+
+            //     console.log("MEI Content:", meiContent);
+
+            //     $.ajax({
+            //         url: "/Home/SaveMeiData",
+            //         type: "POST",
+            //         data: { inputData: meiContent },
+            //         success: function (response) {
+            //             console.log("Response from server:", response); // Log the entire response
+
+            //             if (response && response.responseData) {
+            //                 var namesArray = response.responseData.split("\n");
+            //                 var formattedNames = namesArray.join("<br>");
+            //                 $("#resultContainer").html(formattedNames);
+            //                 alert("MEI content sent successfully!");
+            //             } else {
+            //                 alert("Unexpected response format or empty response data.");
+            //             }
+            //         },
+            //         error: function (xhr, status, error) {
+            //             console.error("Error sending MEI data:", error);
+            //             alert("Error occurred while sending MEI content: " + error);
+            //         }
+            //     });
+            // }
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
             function saveMeiAsFile() {
                 var meiContent = $("#mei_output").text();
 
@@ -571,6 +612,20 @@
                             var namesArray = response.responseData.split("\n");
                             var formattedNames = namesArray.join("<br>");
                             $("#resultContainer").html(formattedNames);
+
+                            // Create clickable elements for each hit (if hits are available)
+                            if (response.hits && response.hits.length > 0) {
+                                response.hits.forEach(hit => {
+                                    // Add a button or link for each hit with a data attribute for hit ID
+                                    var hitElement = $('<button/>', {
+                                        text: 'Get Partial Music for Hit ID: ' + hit.Id,
+                                        class: 'get-partial',
+                                        'data-hit-id': hit.Id
+                                    });
+                                    $("#resultContainer").append(hitElement).append('<br/>');
+                                });
+                            }
+
                             alert("MEI content sent successfully!");
                         } else {
                             alert("Unexpected response format or empty response data.");
@@ -582,6 +637,40 @@
                     }
                 });
             }
+
+            // Function to get partial sheet music for a selected hit
+            $(document).on('click', '.get-partial', function () {
+                var hitId = $(this).data('hit-id');
+
+                console.log("Requesting partial sheet music for hitId:", hitId);
+
+                $.ajax({
+                    url: '/Home/GetPartialSheetMusic',  // This is the new method in HomeController
+                    type: 'POST',
+                    data: { hitId: hitId },
+                    success: function (response) {
+                        if (response && response.responseData) {
+                            console.log("Partial sheet music data:", response.responseData);
+                            // Display or process the partial sheet music data
+                            $("#partialMusicContainer").html(response.responseData);
+                        } else {
+                            alert("Failed to retrieve partial sheet music or response was empty.");
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error fetching partial sheet music:", error);
+                        alert("Error occurred while fetching partial sheet music: " + error);
+                    }
+                });
+            });
+
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+
+
+
+
 
 
 
@@ -604,19 +693,6 @@
 
     </div>
     </div>
-
-
-
-    <!--Creates the link for the footer-->
-    <script>
-        $(document).ready(function () {
-            var version = vrvToolkit.getVersion();
-            var n = version.lastIndexOf('-');
-            var commit = version.substring(n + 1);
-            $('#version').text(version);
-            $("#version").attr("href", "http://github.com/rism-digital/verovio/commit/" + commit);
-        });
-    </script>
 
 </body>
 
