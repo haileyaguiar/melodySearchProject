@@ -15,7 +15,7 @@ using System.Xml.Linq;
 
 public class HomeController : Controller
 {
-    private string javaServerUrl = "http://13.59.226.235:5000/searchMusic";
+    private string javaServerUrl = "http://18.216.198.21:5000/searchMusic";
     private readonly ApplicationDbContext _context;
 
     public HomeController(ApplicationDbContext context)
