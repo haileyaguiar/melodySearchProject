@@ -23,4 +23,8 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.4" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="Views\Home\DisplayFileView.cshtml" />
+  </ItemGroup>
+
 </Project>

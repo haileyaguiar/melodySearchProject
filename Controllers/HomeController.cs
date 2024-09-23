@@ -12,11 +12,10 @@ using System.Reflection;
 using System.Linq;
 using System.Collections.Generic;
 using System.Xml.Linq;
-using Elastic.Clients.Elasticsearch.Core.Search;
 
 public class HomeController : Controller
 {
-    private string javaServerUrl = "http://18.216.198.21:5000/searchMusic";
+    private string javaServerUrl = "http://13.59.226.235:5000/searchMusic";
     private readonly ApplicationDbContext _context;
 
     public HomeController(ApplicationDbContext context)
@@ -49,19 +48,16 @@ public class HomeController : Controller
                         try
                         {
                             Response responseObj = JsonSerializer.Deserialize<Response>(responseData);
-
-                            if (responseObj != null && responseObj.Hits != null)
+                            if (responseObj != null && responseObj.Names != null)
                             {
-                                // Stringify the indices from each hit object
-                                string listToString = string.Join("\n", responseObj.Hits.Select(hit => hit.Id));
-
+                                string listToString = string.Join("\n", responseObj.Names);
                                 Debug.WriteLine("It got here!");
 
                                 return Json(new { responseData = listToString });
                             }
                             else
                             {
-                                return Json("Hits property was null or deserialized object was null!");
+                                return Json("Names property was null or deserialized object was null!");
                             }
                         }
                         catch (Exception ex)
@@ -69,7 +65,6 @@ public class HomeController : Controller
                             Debug.WriteLine($"Deserialization error: {ex.Message}");
                             return Json($"Error during deserialization: {ex.Message}");
                         }
-
                     }
                     else
                     {
@@ -95,10 +90,6 @@ public class HomeController : Controller
         }
     }
 
-
-
-
-
     public IActionResult Index()
     {
         return View();
@@ -120,96 +111,13 @@ public class HomeController : Controller
 
     public class Response
     {
-        [JsonPropertyName("hits")]
-        public List<Hit> Hits { get; set; }
+        [JsonPropertyName("names")]
+        public List<string>? Names { get; set; }
+        [JsonPropertyName("message")]
+        public string? Message { get; set; }
+        [JsonPropertyName("success")]
+        public bool Success { get; set; }
     }
-
-
-    public class Hit
-    {
-        [JsonPropertyName("index")]
-        public string Index { get; set; }
-
-        [JsonPropertyName("id")]
-        public string Id { get; set; }
-
-        [JsonPropertyName("score")]
-        public double Score { get; set; }
-
-        [JsonPropertyName("explanation")]
-        public string? Explanation { get; set; }
-
-        [JsonPropertyName("fields")]
-        public Dictionary<string, object>? Fields { get; set; }
-
-        [JsonPropertyName("highlight")]
-        public Highlight? Highlight { get; set; }
-
-        [JsonPropertyName("innerHits")]
-        public Dictionary<string, object>? InnerHits { get; set; }
-
-        [JsonPropertyName("matchedQueries")]
-        public List<string>? MatchedQueries { get; set; }
-
-        [JsonPropertyName("nested")]
-        public object? Nested { get; set; }
-
-        [JsonPropertyName("ignored")]
-        public List<string>? Ignored { get; set; }
-
-        [JsonPropertyName("ignoredFieldValues")]
-        public Dictionary<string, object>? IgnoredFieldValues { get; set; }
-
-        [JsonPropertyName("shard")]
-        public object? Shard { get; set; }
-
-        [JsonPropertyName("node")]
-        public object? Node { get; set; }
-
-        [JsonPropertyName("routing")]
-        public object? Routing { get; set; }
-
-        [JsonPropertyName("source")]
-        public Record? Record { get; set; }
-
-        [JsonPropertyName("seqNo")]
-        public int? SeqNo { get; set; }
-
-        [JsonPropertyName("primaryTerm")]
-        public int? PrimaryTerm { get; set; }
-
-        [JsonPropertyName("version")]
-        public int? Version { get; set; }
-
-        [JsonPropertyName("sort")]
-        public List<string>? Sort { get; set; }
-    }
-
-    public class Highlight
-    {
-        [JsonPropertyName("intervals_text")]
-        public List<string>? IntervalsText { get; set; }
-    }
-
-    public class Record
-    {
-        [JsonPropertyName("name")]
-        public string Name { get; set; }
-
-        [JsonPropertyName("intervals_text")]
-        public string IntervalsText { get; set; }
-
-        [JsonPropertyName("measure_map")]
-        public string MeasureMap { get; set; }
-
-        [JsonPropertyName("intervals_as_array")]
-        public List<int>? IntervalsAsArray { get; set; }
-
-        [JsonPropertyName("measure_map_as_array")]
-        public List<int>? MeasureMapAsArray { get; set; }
-    }
-
-
 
     public class MeiRequest
     {
