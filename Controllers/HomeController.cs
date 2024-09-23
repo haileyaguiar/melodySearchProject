@@ -135,7 +135,7 @@ public class HomeController : Controller
         }
 
         var results = await _context.MeiFiles
-            .FromSqlRaw("SELECT file_id, file_name, file_content FROM public.\"meiFiles\" WHERE CAST(file_content AS TEXT) LIKE {0} ORDER BY file_name", $"%{query}%")
+            .FromSqlRaw("SELECT file_id, file_name, file_content FROM public.\"meiFiles\" WHERE CAST(file_content AS TEXT) ILIKE {0} ORDER BY file_name", $"%{query}%")
             .Select(m => new MeiFile { file_id = m.file_id, file_name = m.file_name })
             .ToListAsync();
 
