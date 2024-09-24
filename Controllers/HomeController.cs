@@ -52,12 +52,13 @@ public class HomeController : Controller
                             Response responseObj = JsonSerializer.Deserialize<Response>(responseData);
                             if (responseObj != null && responseObj.Hits != null)
                             {
-                                // Use the 'id' property of each 'Hit' object in 'Hits' to build the list
-                                string listToString = string.Join("\n", responseObj.Hits.Select(hit => hit.id));
+                                // Create clickable links
+                                var links = responseObj.Hits.Select(hit =>
+                                    $"<a href='#' class='hit-link' data-id='{hit.id}' data-name='{hit.source.name}' " +
+                                    $"data-intervals='{hit.source.intervals_text}'>ID: {hit.id}</a><br/>");
 
-                                Debug.WriteLine("It got here!");
-
-                                return Json(new { responseData = listToString });
+                                string linksHtml = string.Join("\n", links);
+                                return Json(new { responseData = linksHtml });
                             }
                         }
                         catch (Exception ex)
@@ -89,9 +90,11 @@ public class HomeController : Controller
             return Json($"An error occurred: {ex.Message}");
         }
 
-        // Ensure there's always a return statement in case other conditions aren't met
         return Json("Unexpected error occurred. No data processed.");
     }
+
+
+
 
 
     public IActionResult Index()
@@ -134,18 +137,6 @@ public class HomeController : Controller
         public List<Hit> Hits { get; set; }
     }
 
-
-
-
-    //public class Response
-    //{
-    //    [JsonPropertyName("names")]
-    //    public List<string>? Names { get; set; }
-    //    [JsonPropertyName("message")]
-    //    public string? Message { get; set; }
-    //    [JsonPropertyName("success")]
-    //    public bool Success { get; set; }
-    //}
 
     public class MeiRequest
     {
@@ -211,6 +202,40 @@ public class HomeController : Controller
         // Set the content disposition header to prompt download
         return File(fileBytes, "text/plain", $"{file.file_name}");
     }
+
+
+
+    [HttpPost]
+    public async Task<IActionResult> PartialSheetMusic([FromBody] ReqPartialMusic request)
+    {
+        // Use the request data to fetch or process the partial sheet music
+        Debug.WriteLine($"Received source: {request.Source.Name}, highlight: {string.Join(",", request.Highlight)}");
+
+        // Simulate processing and return response
+        // Here you could query your database or external service to get partial sheet music data
+        var sheetMusicData = "Partial sheet music based on request...";
+
+        return Json(new { sheetMusic = sheetMusicData });
+    }
+
+
+    public class ReqPartialMusic
+    {
+        public Record Source { get; set; }
+        public Dictionary<string, List<string>> Highlight { get; set; }
+    }
+
+    public class Record
+    {
+        public string Name { get; set; }
+        public string Intervals_Text { get; set; }
+        public string Measure_Map { get; set; }
+        public int[] Intervals_As_Array { get; set; }
+        public int[] Measure_Map_As_Array { get; set; }
+    }
+
+
+
 
 
 }

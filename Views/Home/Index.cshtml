@@ -509,37 +509,6 @@
                 update_incipit(); // Update the display or perform any necessary actions
             }
 
-            //function saveMeiAsFile() {
-            //     var meiContent = $("#mei_output").text();
-
-            //     // Log the MEI content to the browser console
-            //     console.log("MEI Content:", meiContent);
-
-            //     $.ajax({
-            //         url: "/Home/SaveMeiData",
-            //         type: "POST",
-            //         data: { inputData: meiContent },
-            //         success: function (response) {
-            //             console.log("Response from server:", response.responseData);
-            //             // Split the response into an array of names
-            //             var namesArray = response.responseData.split("\n");
-
-            //             // Join the names with <br> tags to display them on separate lines
-            //             var formattedNames = namesArray.join("<br>");
-
-            //             // Display the formatted names in your result container
-            //             $("#resultContainer").html(formattedNames);
-            //             //$("#resultContainer").text(response.responseData); // Assuming you have a container in your HTML to display the result
-            //             alert("MEI content sent successfully!");
-            //         },
-
-            //         error: function (xhr, status, error) {
-            //             // Handle error if needed
-            //             console.error("Error sending MEI data:", error);
-            //             alert("Error occurred while sending MEI content: " + error);
-            //         }
-            //     });
-            // }
             function saveMeiAsFile() {
                 var meiContent = $("#mei_output").text();
 
@@ -585,7 +554,62 @@
                 populateMeiContent();
             });
 
+
+
+            // partial sheet music
+            // Ensure this code runs after the links have been generated
+            document.getElementById('resultContainer').addEventListener('click', function (e) {
+                // Check if the clicked element is a .hit-link
+                if (e.target && e.target.matches('.hit-link')) {
+                    e.preventDefault(); // Prevent the default anchor behavior
+
+                    console.log("Hit link clicked!"); // Log when a link is clicked
+
+                    // Collect data from the link
+                    var hitId = e.target.getAttribute('data-id');
+                    var sourceName = e.target.getAttribute('data-name');
+                    var intervalsText = e.target.getAttribute('data-intervals');
+
+                    console.log("Data collected: ", { hitId, sourceName, intervalsText }); // Log collected data
+
+                    // Prepare the data for the POST request
+                    var requestData = {
+                        source: {
+                            name: sourceName,
+                            intervals_text: intervalsText
+                        },
+                        highlight: {
+                            id: [hitId] // Example highlight based on ID
+                        }
+                    };
+
+                    // Send the data to /Home/PartialSheetMusic via AJAX
+                    fetch('/Home/PartialSheetMusic', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(requestData)
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log("Response received: ", data); // Log the response data
+                            // Handle the response (e.g., display the partial sheet music)
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('An error occurred while fetching partial sheet music.'); // Alert on error
+                        });
+                }
+            });
+
+
+
+
+
         </script>
+
+
 
     </div>
     </div>
