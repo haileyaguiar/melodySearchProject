@@ -23,6 +23,8 @@ public class HomeController : Controller
         _context = context;
     }
 
+
+
     [HttpPost]
     public async Task<ActionResult> SaveMeiData(string inputData)
     {
@@ -48,21 +50,19 @@ public class HomeController : Controller
                         try
                         {
                             Response responseObj = JsonSerializer.Deserialize<Response>(responseData);
-                            if (responseObj != null && responseObj.Names != null)
+                            if (responseObj != null && responseObj.Hits != null)
                             {
-                                string listToString = string.Join("\n", responseObj.Names);
+                                // Use the 'id' property of each 'Hit' object in 'Hits' to build the list
+                                string listToString = string.Join("\n", responseObj.Hits.Select(hit => hit.id));
+
                                 Debug.WriteLine("It got here!");
 
                                 return Json(new { responseData = listToString });
                             }
-                            else
-                            {
-                                return Json("Names property was null or deserialized object was null!");
-                            }
                         }
                         catch (Exception ex)
                         {
-                            Debug.WriteLine($"Deserialization error: {ex.Message}");
+                            Debug.WriteLine($"Error during deserialization: {ex.Message}");
                             return Json($"Error during deserialization: {ex.Message}");
                         }
                     }
@@ -88,7 +88,11 @@ public class HomeController : Controller
             Debug.WriteLine($"General error: {ex.Message}");
             return Json($"An error occurred: {ex.Message}");
         }
+
+        // Ensure there's always a return statement in case other conditions aren't met
+        return Json("Unexpected error occurred. No data processed.");
     }
+
 
     public IActionResult Index()
     {
@@ -109,15 +113,39 @@ public class HomeController : Controller
         return View("DisplayResponse", ViewBag);
     }
 
+
+
+    public class Hit
+    {
+        public string id { get; set; }
+        public float score { get; set; }
+        public Source source { get; set; }
+    }
+
+    public class Source
+    {
+        public string name { get; set; }
+        public string intervals_text { get; set; }
+    }
+
     public class Response
     {
-        [JsonPropertyName("names")]
-        public List<string>? Names { get; set; }
-        [JsonPropertyName("message")]
-        public string? Message { get; set; }
-        [JsonPropertyName("success")]
-        public bool Success { get; set; }
+        [JsonPropertyName("hits")]
+        public List<Hit> Hits { get; set; }
     }
+
+
+
+
+    //public class Response
+    //{
+    //    [JsonPropertyName("names")]
+    //    public List<string>? Names { get; set; }
+    //    [JsonPropertyName("message")]
+    //    public string? Message { get; set; }
+    //    [JsonPropertyName("success")]
+    //    public bool Success { get; set; }
+    //}
 
     public class MeiRequest
     {
