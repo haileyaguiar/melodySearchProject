@@ -14,3 +14,5 @@ public class Record {
     private int[] intervals_as_array;
     private int[] measure_map_as_array;
 }
+
+Note that we find the record and highlight from the server response when we "/searchMusic"

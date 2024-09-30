@@ -118,7 +118,7 @@ public class HomeController : Controller
     }
 
 
-    //Start deserialization server response objects
+    //Start server deserialization response objects
     public class Response
     {
         [JsonPropertyName("hits")]
@@ -172,10 +172,10 @@ public class HomeController : Controller
         [JsonPropertyName("measure_map_as_array")]
         public int[] measure_map_as_array { get; set; }
     }
-    //End deserialization server response objects
+    //End server deserialization response objects
 
 
-    //Start server serialization req objects
+    //Start server serialization request objects
     public class ReqSearchMusic
     {
         //This is a constructor I think
@@ -193,7 +193,7 @@ public class HomeController : Controller
         [JsonPropertyName("highlight")]
         public Highlight highlight { get; set; }
     }
-    //End server serialization req objects
+    //End server serialization request objects
 
 
     [HttpGet]
@@ -287,11 +287,4 @@ public class HomeController : Controller
         return Json(new { sheetMusic = sheetMusicData });
     }
 
-
-
-
-
 }
-
-
-
