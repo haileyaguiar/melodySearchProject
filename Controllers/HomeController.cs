@@ -55,7 +55,7 @@ public class HomeController : Controller
                                 // Create clickable links
                                 var links = responseObj.Hits.Select(hit =>
                                     $"<a href='#' class='hit-link' data-id='{hit.id}' data-name='{hit.source.name}' " +
-                                    $"data-intervals='{hit.source.intervals_text}'>ID: {hit.id}</a><br/>");
+                                    $"data-intervals='{hit.source.intervals_text}'>{hit.id}</a><br/>");
 
                                 string linksHtml = string.Join("\n", links);
                                 return Json(new { responseData = linksHtml });
@@ -153,13 +153,15 @@ public class HomeController : Controller
             return View("SearchResults", new List<MeiFile>());
         }
 
+        var parameter = $"%{query}%";
         var results = await _context.MeiFiles
-            .FromSqlRaw("SELECT file_id, file_name, file_content FROM public.\"meiFiles\" WHERE CAST(file_content AS TEXT) ILIKE {0} ORDER BY file_name", $"%{query}%")
+            .FromSqlRaw("SELECT file_id, file_name, file_content FROM public.\"meiFiles\" WHERE CAST(file_content AS TEXT) ILIKE {0} ORDER BY file_name", parameter)
             .Select(m => new MeiFile { file_id = m.file_id, file_name = m.file_name })
             .ToListAsync();
 
         return View("SearchResults", results);
     }
+
 
     [HttpGet]
     public async Task<IActionResult> DisplayFile(int id)
