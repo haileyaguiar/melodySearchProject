@@ -118,25 +118,60 @@ public class HomeController : Controller
     }
 
 
+    public class Response
+    {
+        [JsonPropertyName("hits")]
+        public Hit[] Hits { get; set; }
+
+        [JsonPropertyName("message")]
+        public string message {get; set;}
+
+        [JsonPropertyName("success")]
+        public bool success {get; set;}
+    }
 
     public class Hit
     {
+        [JsonPropertyName("index")]
+        public string index {get; set;}
+
+        [JsonPropertyName("id")]
         public string id { get; set; }
+
+        [JsonPropertyName("score")]
         public float score { get; set; }
+
+        [JsonPropertyName("highlight")]
+        public Highlight highlight {get; set;}
+
+        [JsonPropertyName("source")]
         public Source source { get; set; }
+    }
+
+    public class Highlight
+    {
+        [JsonPropertyName("intervals_text")]
+        public string[] intervals_text {get; set;}
     }
 
     public class Source
     {
+        [JsonPropertyName("name")]
         public string name { get; set; }
+
+        [JsonPropertyName("intervals_text")]
         public string intervals_text { get; set; }
+        
+        [JsonPropertyName("measure_map")]
+        public string measure_map { get; set; }
+
+        [JsonPropertyName("intervals_as_array")]
+        public int[] intervals_as_array { get; set; }
+
+        [JsonPropertyName("measure_map_as_array")]
+        public int[] measure_map_as_array { get; set; }
     }
 
-    public class Response
-    {
-        [JsonPropertyName("hits")]
-        public List<Hit> Hits { get; set; }
-    }
 
 
     public class MeiRequest
@@ -243,16 +278,6 @@ public class HomeController : Controller
         public Record Source { get; set; }
         public Dictionary<string, List<string>> Highlight { get; set; }
     }
-
-    public class Record
-    {
-        public string Name { get; set; }
-        public string Intervals_Text { get; set; }
-        public string Measure_Map { get; set; }
-        public int[] Intervals_As_Array { get; set; }
-        public int[] Measure_Map_As_Array { get; set; }
-    }
-
 
 
 
