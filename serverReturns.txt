@@ -1,5 +1,30 @@
-Returns a response of:
-{"hits":[<Hit>],"message":null,"success":true}
+A server response looks like:
+Response = {"hits":[<Hit>],"message":null,"success":true}
+    properties:
+        "hits" = an array of Hits, the main meat of the response we are looking for
+        "message" = string, a message of what, if anything, went wrong
+        "success" = bool, whether or not we were successful
 
 A hit looks like:
-Hit = {"index":"music","id":"Clé_du_caveau_1850_No.0016.mei","score":0.22609992,"explanation":null,"fields":{},"highlight":{"intervals_text":["2 2 \u003cem\u003e1 2 -3\u003c/em\u003e 1 2 -2 4 \u003cem\u003e1 2 -3\u003c/em\u003e -4 2 -2 4 0 0 1 -1 1 -1 -2 2 1 2 -7 2 -2 2 -7 0 2 2 \u003cem\u003e1 2 -3\u003c/em\u003e 1 2 -2 4 1 2 -3"]},"innerHits":{},"matchedQueries":[],"nested":null,"ignored":[],"ignoredFieldValues":{},"shard":null,"node":null,"routing":null,"source":{"name":"Clé_du_caveau_1850_No.0016.mei","intervals_text":"2 2 1 2 -3 1 2 -2 4 1 2 -3 -4 2 -2 4 0 0 1 -1 1 -1 -2 2 1 2 -7 2 -2 2 -7 0 2 2 1 2 -3 1 2 -2 4 1 2 -3 -4 2 -2","measure_map":"0 0 0 1 1 1 1 2 2 2 2 3 3 3 3 4 4 4 4 5 5 5 5 6 6 6 6 7 7 7 7 8 8 8 8 9 9 9 9 10 10 10 10 11 11 11 11 12","intervals_as_array":[2,2,1,2,-3,1,2,-2,4,1,2,-3,-4,2,-2,4,0,0,1,-1,1,-1,-2,2,1,2,-7,2,-2,2,-7,0,2,2,1,2,-3,1,2,-2,4,1,2,-3,-4,2,-2],"measure_map_as_array":[0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,6,6,6,6,7,7,7,7,8,8,8,8,9,9,9,9,10,10,10,10,11,11,11,11,12]},"seqNo":null,"primaryTerm":null,"version":null,"sort":[],"tDocumentSerializer":null}
+Hit = {"index":"music","id":"Clé_du_caveau_1850_No.0016.mei","score":0.22609992,"explanation":null,"fields":{},"highlight":<Hightlight>,"innerHits":{},"matchedQueries":[],"nested":null,"ignored":[],"ignoredFieldValues":{},"shard":null,"node":null,"routing":null,"source":<Source>,"seqNo":null,"primaryTerm":null,"version":null,"sort":[],"tDocumentSerializer":null}
+    properties:
+        "index" = string, the index in elastic search we used
+        "id" = string, the id of the document
+        "score" = float, how closely it matched our search
+        "highlight" = a Highlight, of where it matched in the source
+        "source" = a Source, the document it found that matched the search
+        All other properties are null / empty and unused
+
+A highlight looks like:
+Hightlight = {"intervals_text":["2 2 \u003cem\u003e1 2 -3\u003c/em\u003e 1 2 -2 4 \u003cem\u003e1 2 -3\u003c/em\u003e -4 2 -2 4 0 0 1 -1 1 -1 -2 2 1 2 -7 2 -2 2 -7 0 2 2 \u003cem\u003e1 2 -3\u003c/em\u003e 1 2 -2 4 1 2 -3"]}
+    properties:
+        "intervals_text" = an array of strings, where the search matched in the document, if in multiple places there will be multiple strings
+
+A source looks like
+Source = {"name":"Clé_du_caveau_1850_No.0016.mei", "intervals_text":"2 2 1 2 -3 1 2 -2 4 1 2 -3 -4 2 -2 4 0 0 1 -1 1 -1 -2 2 1 2 -7 2 -2 2 -7 0 2 2 1 2 -3 1 2 -2 4 1 2 -3 -4 2 -2", "measure_map":"0 0 0 1 1 1 1 2 2 2 2 3 3 3 3 4 4 4 4 5 5 5 5 6 6 6 6 7 7 7 7 8 8 8 8 9 9 9 9 10 10 10 10 11 11 11 11 12", "intervals_as_array":[2,2,1,2,-3,1,2,-2,4,1,2,-3,-4,2,-2,4,0,0,1,-1,1,-1,-2,2,1,2,-7,2,-2,2,-7,0,2,2,1,2,-3,1,2,-2,4,1,2,-3,-4,2,-2], "measure_map_as_array":[0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,6,6,6,6,7,7,7,7,8,8,8,8,9,9,9,9,10,10,10,10,11,11,11,11,12]}
+    properties: 
+        "name" = string, the name of the mei file
+        "intervals_text" = string, the intervals between the notes in the file
+        "measure_map" = string, contains in positional order the corresponding measure number of a note. For example, if you want to find what measure note 45 is in, go to the 45th number in this list.
+        "intervals_as_array" = an array of ints, the intervals between the notes in the file
+        "measure_map_as_array" = an array of ints, contains in positional order the corresponding measure number of a note. For example, if you want to find what measure note 45 is in, go to the 45th number in this list.
