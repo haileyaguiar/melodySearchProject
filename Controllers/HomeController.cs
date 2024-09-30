@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Linq;
 using System.Collections.Generic;
 using System.Xml.Linq;
+using System.Text.RegularExpressions;
 
 public class HomeController : Controller
 {
@@ -148,6 +149,20 @@ public class HomeController : Controller
     [HttpGet]
     public async Task<IActionResult> Search(string query)
     {
+        // Allow letters (including accented), digits, and spaces
+        if (!Regex.IsMatch(query, @"^[\p{L}\p{N}\s]*$", RegexOptions.Compiled))
+        {
+            return BadRequest("Invalid characters in search query.");
+        }
+
+        query = query?.Trim();
+
+        // Limit the length of the search query to prevent overly long input
+        if (query.Length > 100)
+        {
+            return BadRequest("Query is too long.");
+        }
+
         if (string.IsNullOrWhiteSpace(query))
         {
             return View("SearchResults", new List<MeiFile>());
@@ -161,6 +176,8 @@ public class HomeController : Controller
 
         return View("SearchResults", results);
     }
+
+
 
 
     [HttpGet]
