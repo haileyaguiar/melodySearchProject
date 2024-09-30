@@ -29,7 +29,7 @@ public class HomeController : Controller
     [HttpPost]
     public async Task<ActionResult> SaveMeiData(string inputData)
     {
-        MeiRequest mei = new MeiRequest(inputData);
+        ReqSearchMusic mei = new ReqSearchMusic(inputData);
         var jsonInput = JsonSerializer.Serialize(mei);
 
         try
@@ -118,22 +118,23 @@ public class HomeController : Controller
     }
 
 
+    //Start deserialization server response objects
     public class Response
     {
         [JsonPropertyName("hits")]
-        public Hit[] Hits { get; set; }
+        public Hit[] hits { get; set; }
 
         [JsonPropertyName("message")]
-        public string message {get; set;}
+        public string message { get; set; }
 
         [JsonPropertyName("success")]
-        public bool success {get; set;}
+        public bool success { get; set; }
     }
 
     public class Hit
     {
         [JsonPropertyName("index")]
-        public string index {get; set;}
+        public string index { get; set; }
 
         [JsonPropertyName("id")]
         public string id { get; set; }
@@ -142,7 +143,7 @@ public class HomeController : Controller
         public float score { get; set; }
 
         [JsonPropertyName("highlight")]
-        public Highlight highlight {get; set;}
+        public Highlight highlight { get; set; }
 
         [JsonPropertyName("source")]
         public Source source { get; set; }
@@ -151,7 +152,7 @@ public class HomeController : Controller
     public class Highlight
     {
         [JsonPropertyName("intervals_text")]
-        public string[] intervals_text {get; set;}
+        public string[] intervals_text { get; set; }
     }
 
     public class Source
@@ -161,7 +162,7 @@ public class HomeController : Controller
 
         [JsonPropertyName("intervals_text")]
         public string intervals_text { get; set; }
-        
+
         [JsonPropertyName("measure_map")]
         public string measure_map { get; set; }
 
@@ -171,14 +172,28 @@ public class HomeController : Controller
         [JsonPropertyName("measure_map_as_array")]
         public int[] measure_map_as_array { get; set; }
     }
+    //End deserialization server response objects
 
 
-
-    public class MeiRequest
+    //Start server serialization req objects
+    public class ReqSearchMusic
     {
-        public MeiRequest(string v) => meiChunk = v;
+        //This is a constructor I think
+        public ReqSearchMusic(string v) => meiChunk = v;
+
+        [JsonPropertyName("meiChunk")]
         public string meiChunk { get; set; }
     }
+
+    public class ReqPartialMusic
+    {
+        [JsonPropertyName("source")]
+        public Source source { get; set; }
+
+        [JsonPropertyName("highlight")]
+        public Highlight highlight { get; set; }
+    }
+    //End server serialization req objects
 
 
     [HttpGet]
@@ -272,12 +287,6 @@ public class HomeController : Controller
         return Json(new { sheetMusic = sheetMusicData });
     }
 
-
-    public class ReqPartialMusic
-    {
-        public Record Source { get; set; }
-        public Dictionary<string, List<string>> Highlight { get; set; }
-    }
 
 
 

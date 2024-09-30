@@ -1,0 +1,16 @@
+Here is the object the server is expecting when it deserializes the http request body:
+
+public class ReqPartialMusic {
+   Record source;
+   Map<String, List<String>> highlight;
+}
+
+Here is the Record object:
+
+public class Record {
+    private String name;
+    private String intervals_text;
+    private String measure_map;
+    private int[] intervals_as_array;
+    private int[] measure_map_as_array;
+}
