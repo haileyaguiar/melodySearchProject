@@ -51,10 +51,10 @@ public class HomeController : Controller
                         try
                         {
                             Response responseObj = JsonSerializer.Deserialize<Response>(responseData);
-                            if (responseObj != null && responseObj.Hits != null)
+                            if (responseObj != null && responseObj.hits != null)
                             {
                                 // Create clickable links
-                                var links = responseObj.Hits.Select(hit =>
+                                var links = responseObj.hits.Select(hit =>
                                     $"<a href='#' class='hit-link' data-id='{hit.id}' data-name='{hit.source.name}' " +
                                     $"data-intervals='{hit.source.intervals_text}'>{hit.id}</a><br/>");
 
@@ -278,7 +278,7 @@ public class HomeController : Controller
     public async Task<IActionResult> PartialSheetMusic([FromBody] ReqPartialMusic request)
     {
         // Use the request data to fetch or process the partial sheet music
-        Debug.WriteLine($"Received source: {request.Source.Name}, highlight: {string.Join(",", request.Highlight)}");
+        Debug.WriteLine($"Received source: {request.source.name}, highlight: {string.Join(",", request.highlight)}");
 
         // Simulate processing and return response
         // Here you could query your database or external service to get partial sheet music data
