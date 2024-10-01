@@ -538,7 +538,7 @@
 
                             // Add event listener for each dynamically generated link
                             $(".hit-link").on("click", function (event) {
-                                event.preventDefault(); // Prevent default link behavior
+                                event.preventDefault(); // Don't you dare scroll to the top 
 
                                 // Extract data attributes from the clicked link
                                 var hitId = $(this).data("id");
@@ -558,8 +558,9 @@
 
 
                                 // Send the data to the server via another AJAX request
+                                // yep, I had to nest it *eye roll* duh
                                 $.ajax({
-                                    url: "/Home/HandleLinkClick",  // Create a new action to handle this click
+                                    url: "/Home/HandleLinkClick",  
                                     type: "POST",
                                     data: { id: hitId, name: hitName, intervals: intervals },
                                     success: function (response) {
@@ -573,6 +574,7 @@
                                 });
                             });
 
+                            // Message for the first AJAX request
                             alert("MEI content sent successfully!");
                         } else {
                             alert("Unexpected response format or empty response data.");
