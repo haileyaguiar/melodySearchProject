@@ -509,6 +509,15 @@
                 update_incipit(); // Update the display or perform any necessary actions
             }
 
+
+
+
+
+
+
+
+
+
             function saveMeiAsFile() {
                 var meiContent = $("#mei_output").text();
 
@@ -522,9 +531,48 @@
                         console.log("Response from server:", response); // Log the entire response
 
                         if (response && response.responseData) {
+                            // Format and display the returned HTML links
                             var namesArray = response.responseData.split("\n");
                             var formattedNames = namesArray.join("<br>");
                             $("#resultContainer").html(formattedNames);
+
+                            // Add event listener for each dynamically generated link
+                            $(".hit-link").on("click", function (event) {
+                                event.preventDefault(); // Prevent default link behavior
+
+                                // Extract data attributes from the clicked link
+                                var hitId = $(this).data("id");
+                                var hitName = $(this).data("name");
+                                var intervals = $(this).data("intervals");
+
+
+
+
+                                // Log the data that will be sent to the HomeController
+                                console.log("Link clicked. Data being sent to HomeController:", {
+                                    id: hitId,
+                                    name: hitName,
+                                    intervals: intervals
+                                });
+
+
+
+                                // Send the data to the server via another AJAX request
+                                $.ajax({
+                                    url: "/Home/HandleLinkClick",  // Create a new action to handle this click
+                                    type: "POST",
+                                    data: { id: hitId, name: hitName, intervals: intervals },
+                                    success: function (response) {
+                                        alert("Data sent successfully!");
+                                        console.log("Response from server:", response);
+                                    },
+                                    error: function (xhr, status, error) {
+                                        console.error("Error sending link data:", error);
+                                        alert("Error occurred while sending data: " + error);
+                                    }
+                                });
+                            });
+
                             alert("MEI content sent successfully!");
                         } else {
                             alert("Unexpected response format or empty response data.");
@@ -536,6 +584,7 @@
                     }
                 });
             }
+
 
 
 
@@ -556,52 +605,6 @@
 
 
 
-            // partial sheet music
-            // Ensure this code runs after the links have been generated
-            document.getElementById('resultContainer').addEventListener('click', function (e) {
-                // Check if the clicked element is a .hit-link
-                if (e.target && e.target.matches('.hit-link')) {
-                    e.preventDefault(); // Prevent the default anchor behavior
-
-                    console.log("Hit link clicked!"); // Log when a link is clicked
-
-                    // Collect data from the link
-                    var hitId = e.target.getAttribute('data-id');
-                    var sourceName = e.target.getAttribute('data-name');
-                    var intervalsText = e.target.getAttribute('data-intervals');
-
-                    console.log("Data collected: ", { hitId, sourceName, intervalsText }); // Log collected data
-
-                    // Prepare the data for the POST request
-                    var requestData = {
-                        source: {
-                            name: sourceName,
-                            intervals_text: intervalsText
-                        },
-                        highlight: {
-                            id: [hitId] 
-                        }
-                    };
-
-                    // Send the data to /Home/PartialSheetMusic via AJAX
-                    fetch('/Home/PartialSheetMusic', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(requestData)
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                            console.log("Response received: ", data); // Log the response data
-                            // Handle the response (e.g., display the partial sheet music)
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            alert('An error occurred while fetching partial sheet music.'); // Alert on error
-                        });
-                }
-            });
 
 
 

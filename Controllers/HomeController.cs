@@ -274,17 +274,81 @@ public class HomeController : Controller
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     [HttpPost]
-    public async Task<IActionResult> PartialSheetMusic([FromBody] ReqPartialMusic request)
+    public async Task<ActionResult> HandleLinkClick(string id, string name, string intervals)
     {
-        // Use the request data to fetch or process the partial sheet music
-        Debug.WriteLine($"Received source: {request.source.name}, highlight: {string.Join(",", request.highlight)}");
+        // Create an object with the data received from the clicked link
+        var hitData = new HitData
+        {
+            Id = id,
+            Name = name,
+            Intervals = intervals
+        };
 
-        // Simulate processing and return response
-        // Here you could query your database or external service to get partial sheet music data
-        var sheetMusicData = "Partial sheet music based on request...";
+        var jsonInput = JsonSerializer.Serialize(hitData);
 
-        return Json(new { sheetMusic = sheetMusicData });
+        try
+        {
+            using (var client = new HttpClient())
+            {
+                var content = new StringContent(jsonInput, System.Text.Encoding.UTF8, "application/json");
+
+                // New API URL instead of the previous one
+                string targetUrl = "http://18.216.198.21:5000/partialSheetMusic";
+
+                // Send the POST request to the new API
+                Debug.WriteLine($"Sending POST request to {targetUrl} with content: {jsonInput}");
+                HttpResponseMessage response = await client.PostAsync(targetUrl, content);
+
+                Debug.WriteLine($"Received response: {response.StatusCode}");
+                if (response.IsSuccessStatusCode)
+                {
+                    string responseData = await response.Content.ReadAsStringAsync();
+                    Debug.WriteLine($"Response Data: {responseData}");
+
+                    // Return the response from the new API back to the frontend
+                    return Json(new { success = true, response = responseData });
+                }
+                else
+                {
+                    Debug.WriteLine($"Error: {response.ReasonPhrase}");
+                    return Json(new { success = false, error = response.ReasonPhrase });
+                }
+            }
+        }
+        catch (HttpRequestException ex)
+        {
+            Debug.WriteLine($"Request error: {ex.Message}");
+            return Json(new { success = false, error = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"General error: {ex.Message}");
+            return Json(new { success = false, error = ex.Message });
+        }
     }
+
+
+    public class HitData
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string Intervals { get; set; }
+    }
+
 
 }
