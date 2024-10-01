@@ -284,9 +284,8 @@ public class HomeController : Controller
 
 
 
-
-
-
+    // Here's the method that handles the links being clicked. It sends the data from inside the a tags to the server
+    // with the endpoint /partialSheetMusic
 
     [HttpPost]
     public async Task<ActionResult> HandleLinkClick(string id, string name, string intervals)
@@ -307,7 +306,6 @@ public class HomeController : Controller
             {
                 var content = new StringContent(jsonInput, System.Text.Encoding.UTF8, "application/json");
 
-                // New API URL instead of the previous one
                 string targetUrl = "http://18.216.198.21:5000/partialSheetMusic";
 
                 // Send the POST request to the new API
@@ -343,6 +341,11 @@ public class HomeController : Controller
     }
 
 
+
+    // Here's the class that the method above uses. I know it's probably not correct, but IDK what it's supposed to be
+    // Note: You may have to change the data that is saved in those a tags in the SaveMeiData method at the top because
+    // all the data you need may not be there. If you do have to do that, you'll have to change the Javascript in the 
+    // Index.cshtml file and this class. 
     public class HitData
     {
         public string Id { get; set; }
