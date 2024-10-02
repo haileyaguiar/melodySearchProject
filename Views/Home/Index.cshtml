@@ -528,41 +528,55 @@
                     type: "POST",
                     data: { inputData: meiContent },
                     success: function (response) {
-                        console.log("Response from server:", response); // Log the entire response
+                        console.log("Response from server:", response);
 
                         if (response && response.responseData) {
-                            // Format and display the returned HTML links
                             var namesArray = response.responseData.split("\n");
                             var formattedNames = namesArray.join("<br>");
                             $("#resultContainer").html(formattedNames);
 
                             // Add event listener for each dynamically generated link
                             $(".hit-link").on("click", function (event) {
-                                event.preventDefault(); // Don't you dare scroll to the top 
+                                event.preventDefault(); 
 
                                 // Extract data attributes from the clicked link
                                 var hitId = $(this).data("id");
                                 var hitName = $(this).data("name");
                                 var intervals = $(this).data("intervals");
 
-
-
-
-                                // Log the data that will be sent to the HomeController
-                                console.log("Link clicked. Data being sent to HomeController:", {
+                                // Log the data that will be sent to the server
+                                console.log("Link clicked. Data being sent:", {
                                     id: hitId,
                                     name: hitName,
                                     intervals: intervals
                                 });
 
+                                // Now, capture more data for the Record object
+                                var source = {
+                                    name: hitName,
+                                    intervals_text: intervals,
+                                    measure_map: $(this).data("measure_map"),
+                                    intervals_as_array: $(this).data("intervals_as_array"),
+                                    measure_map_as_array: $(this).data("measure_map_as_array")
+                                };
 
+                                var highlight = {
+                                    intervals_text: $(this).data("highlight_intervals_text")
+                                };
+
+                                var requestData = {
+                                    source: source,
+                                    highlight: highlight
+                                };
+
+                                console.log("Request data:", requestData);
 
                                 // Send the data to the server via another AJAX request
-                                // yep, I had to nest it *eye roll* duh
                                 $.ajax({
-                                    url: "/Home/HandleLinkClick",  
+                                    url: "/Home/HandleLinkClick",
                                     type: "POST",
-                                    data: { id: hitId, name: hitName, intervals: intervals },
+                                    contentType: "application/json",
+                                    data: JSON.stringify(requestData),
                                     success: function (response) {
                                         alert("Data sent successfully!");
                                         console.log("Response from server:", response);
@@ -574,7 +588,6 @@
                                 });
                             });
 
-                            // Message for the first AJAX request
                             alert("MEI content sent successfully!");
                         } else {
                             alert("Unexpected response format or empty response data.");

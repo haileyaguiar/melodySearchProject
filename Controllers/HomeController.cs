@@ -288,17 +288,9 @@ public class HomeController : Controller
     // with the endpoint /partialSheetMusic
 
     [HttpPost]
-    public async Task<ActionResult> HandleLinkClick(string id, string name, string intervals)
+    public async Task<ActionResult> HandleLinkClick([FromBody] ReqPartialMusic requestData)
     {
-        // Create an object with the data received from the clicked link
-        var hitData = new HitData
-        {
-            Id = id,
-            Name = name,
-            Intervals = intervals
-        };
-
-        var jsonInput = JsonSerializer.Serialize(hitData);
+        var jsonInput = JsonSerializer.Serialize(requestData);
 
         try
         {
@@ -308,7 +300,6 @@ public class HomeController : Controller
 
                 string targetUrl = "http://18.216.198.21:5000/partialSheetMusic";
 
-                // Send the POST request to the new API
                 Debug.WriteLine($"Sending POST request to {targetUrl} with content: {jsonInput}");
                 HttpResponseMessage response = await client.PostAsync(targetUrl, content);
 
@@ -339,7 +330,6 @@ public class HomeController : Controller
             return Json(new { success = false, error = ex.Message });
         }
     }
-
 
 
     // Here's the class that the method above uses. I know it's probably not correct, but IDK what it's supposed to be
