@@ -542,13 +542,22 @@
                                 // Extract data attributes from the clicked link
                                 var hitId = $(this).data("id");
                                 var hitName = $(this).data("name");
-                                var intervals = $(this).data("intervals");
+                                var intervalsText = $(this).data("intervals-text");
+                                var intervalsAsArray = $(this).data("intervals-as-array");
+                                var measureMap = $(this).data("measure-map");
+                                var measureMapAsArray = $(this).data("measure-map-as-array");
+                                var highlight = $(this).data("highlight");
 
                                 // Log the data that will be sent to the server
                                 console.log("Link clicked. Data being sent:", {
                                     id: hitId,
                                     name: hitName,
-                                    intervals: intervals
+                                    intervals_text: intervalsText,
+                                    intervals_as_array: intervalsAsArray,
+                                    measure_map: measureMap,
+                                    measure_map_as_array: measureMapAsArray,
+                                    highlight: highlight,
+
                                 });
 
                                 // Now, capture more data for the Record object
@@ -617,11 +626,6 @@
                 // Before submitting the form, populate the MEI content
                 populateMeiContent();
             });
-
-
-
-
-
 
 
 
