@@ -537,7 +537,7 @@
 
                             // Add event listener for each dynamically generated link
                             $(".hit-link").on("click", function (event) {
-                                event.preventDefault(); 
+                                event.preventDefault();
 
                                 // Extract data attributes from the clicked link
                                 var hitId = $(this).data("id");
@@ -557,10 +557,20 @@
                                     measure_map: measureMap,
                                     measure_map_as_array: measureMapAsArray,
                                     highlight: highlight,
-
                                 });
 
-                                console.log("Request data:", requestData);
+                                // Prepare request data
+                                var requestData = {
+                                    source: {
+                                        id: hitId,
+                                        name: hitName,
+                                        intervals_text: intervalsText,
+                                        intervals_as_array: intervalsAsArray,
+                                        measure_map: measureMap,
+                                        measure_map_as_array: measureMapAsArray
+                                    },
+                                    highlight: highlight
+                                };
 
                                 // Send the data to the server via another AJAX request
                                 $.ajax({

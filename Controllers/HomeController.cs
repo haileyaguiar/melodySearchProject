@@ -56,9 +56,11 @@ public class HomeController : Controller
                                 // Create clickable links
                                 var links = responseObj.hits.Select(hit =>
                                     $"<a href='#' class='hit-link' data-id='{hit.id}' data-name='{hit.source.name}' " +
-                                    $"intervals-text='{hit.source.intervals_text}' intervals-as-array='{hit.source.intervals_as_array}'" +
-                                    $"measure-map='{hit.source.measure_map}' measure-map-as-array='{hit.source.measure_map_as_array}'" +
-                                    $"highlight='{hit.highlight}'>{hit.id}</a><br/>");
+                                    $"data-intervals-text='{string.Join(" ", hit.source.intervals_text)}' " +
+                                    $"data-intervals-as-array='{string.Join(",", hit.source.intervals_as_array)}' " +
+                                    $"data-measure-map='{string.Join(" ", hit.source.measure_map)}' " +
+                                    $"data-measure-map-as-array='{string.Join(",", hit.source.measure_map_as_array)}' " +
+                                    $"data-highlight='{JsonSerializer.Serialize(hit.highlight)}'>{hit.id}</a><br/>");
 
                                 string linksHtml = string.Join("\n", links);
                                 return Json(new { responseData = linksHtml });
