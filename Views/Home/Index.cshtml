@@ -560,24 +560,6 @@
 
                                 });
 
-                                // Now, capture more data for the Record object
-                                var source = {
-                                    name: hitName,
-                                    intervals_text: intervals,
-                                    measure_map: $(this).data("measure_map"),
-                                    intervals_as_array: $(this).data("intervals_as_array"),
-                                    measure_map_as_array: $(this).data("measure_map_as_array")
-                                };
-
-                                var highlight = {
-                                    intervals_text: $(this).data("highlight_intervals_text")
-                                };
-
-                                var requestData = {
-                                    source: source,
-                                    highlight: highlight
-                                };
-
                                 console.log("Request data:", requestData);
 
                                 // Send the data to the server via another AJAX request

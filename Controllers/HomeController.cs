@@ -97,26 +97,63 @@ public class HomeController : Controller
     }
 
 
+    // Here's the method that handles the links being clicked. It sends the data from inside the a tags to the server
+    // with the endpoint /partialSheetMusic
 
-
-
-    public IActionResult Index()
+    [HttpPost]
+    public async Task<ActionResult> HandleLinkClick([FromBody] ReqPartialMusic requestData)
     {
-        return View();
+        var jsonInput = JsonSerializer.Serialize(requestData);
+
+        try
+        {
+            using (var client = new HttpClient())
+            {
+                var content = new StringContent(jsonInput, System.Text.Encoding.UTF8, "application/json");
+
+                string targetUrl = "http://18.216.198.21:5000/partialSheetMusic";
+
+                Debug.WriteLine($"Sending POST request to {targetUrl} with content: {jsonInput}");
+                HttpResponseMessage response = await client.PostAsync(targetUrl, content);
+
+                Debug.WriteLine($"Received response: {response.StatusCode}");
+                if (response.IsSuccessStatusCode)
+                {
+                    string responseData = await response.Content.ReadAsStringAsync();
+                    Debug.WriteLine($"Response Data: {responseData}");
+
+                    // Return the response from the new API back to the frontend
+                    return Json(new { success = true, response = responseData });
+                }
+                else
+                {
+                    Debug.WriteLine($"Error: {response.ReasonPhrase}");
+                    return Json(new { success = false, error = response.ReasonPhrase });
+                }
+            }
+        }
+        catch (HttpRequestException ex)
+        {
+            Debug.WriteLine($"Request error: {ex.Message}");
+            return Json(new { success = false, error = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"General error: {ex.Message}");
+            return Json(new { success = false, error = ex.Message });
+        }
     }
 
-    // FOR TESTING::
-    public IActionResult Data()
-    {
-        var melodies = _context.MeiFiles.ToList();
-        return View(melodies); // Ensure you have a corresponding view
-    }
 
-    public IActionResult DisplayResponse(string responseData)
+    // Here's the class that the method above uses. I know it's probably not correct, but IDK what it's supposed to be
+    // Note: You may have to change the data that is saved in those a tags in the SaveMeiData method at the top because
+    // all the data you need may not be there. If you do have to do that, you'll have to change the Javascript in the 
+    // Index.cshtml file and this class. 
+    public class HitData
     {
-        string decodedData = System.Net.WebUtility.UrlDecode(responseData);
-        ViewBag.ResponseData = decodedData;
-        return View("DisplayResponse", ViewBag);
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string Intervals { get; set; }
     }
 
 
@@ -198,6 +235,21 @@ public class HomeController : Controller
     //End server serialization request objects
 
 
+
+
+
+
+
+    // DONT BOTHER ANYTHING BEYOND THIS POINT!!!!! THEY ARE WORKING!!!!!!!!!!
+
+
+    public IActionResult Index()
+    {
+        return View();
+    }
+
+
+
     [HttpGet]
     public async Task<IActionResult> Search(string query)
     {
@@ -272,77 +324,6 @@ public class HomeController : Controller
 
         // Set the content disposition header to prompt download
         return File(fileBytes, "text/plain", $"{file.file_name}");
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // Here's the method that handles the links being clicked. It sends the data from inside the a tags to the server
-    // with the endpoint /partialSheetMusic
-
-    [HttpPost]
-    public async Task<ActionResult> HandleLinkClick([FromBody] ReqPartialMusic requestData)
-    {
-        var jsonInput = JsonSerializer.Serialize(requestData);
-
-        try
-        {
-            using (var client = new HttpClient())
-            {
-                var content = new StringContent(jsonInput, System.Text.Encoding.UTF8, "application/json");
-
-                string targetUrl = "http://18.216.198.21:5000/partialSheetMusic";
-
-                Debug.WriteLine($"Sending POST request to {targetUrl} with content: {jsonInput}");
-                HttpResponseMessage response = await client.PostAsync(targetUrl, content);
-
-                Debug.WriteLine($"Received response: {response.StatusCode}");
-                if (response.IsSuccessStatusCode)
-                {
-                    string responseData = await response.Content.ReadAsStringAsync();
-                    Debug.WriteLine($"Response Data: {responseData}");
-
-                    // Return the response from the new API back to the frontend
-                    return Json(new { success = true, response = responseData });
-                }
-                else
-                {
-                    Debug.WriteLine($"Error: {response.ReasonPhrase}");
-                    return Json(new { success = false, error = response.ReasonPhrase });
-                }
-            }
-        }
-        catch (HttpRequestException ex)
-        {
-            Debug.WriteLine($"Request error: {ex.Message}");
-            return Json(new { success = false, error = ex.Message });
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine($"General error: {ex.Message}");
-            return Json(new { success = false, error = ex.Message });
-        }
-    }
-
-
-    // Here's the class that the method above uses. I know it's probably not correct, but IDK what it's supposed to be
-    // Note: You may have to change the data that is saved in those a tags in the SaveMeiData method at the top because
-    // all the data you need may not be there. If you do have to do that, you'll have to change the Javascript in the 
-    // Index.cshtml file and this class. 
-    public class HitData
-    {
-        public string Id { get; set; }
-        public string Name { get; set; }
-        public string Intervals { get; set; }
     }
 
 
