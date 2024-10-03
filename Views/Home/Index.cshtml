@@ -548,33 +548,35 @@
                                 var measureMapAsArray = $(this).data("measure-map-as-array");
                                 var highlight = $(this).data("highlight");
 
-                                // Log the data that will be sent to the server
-                                console.log("Link clicked. Data being sent:", {
-                                    id: hitId,
-                                    name: hitName,
-                                    intervals_text: intervalsText,
-                                    intervals_as_array: intervalsAsArray,
-                                    measure_map: measureMap,
-                                    measure_map_as_array: measureMapAsArray,
-                                    highlight: highlight,
-                                });
+                                // Log extracted data
+                                console.log("Hit ID:", hitId);
+                                console.log("Hit Name:", hitName);
+                                console.log("Intervals Text:", intervalsText);
+                                console.log("Intervals as Array:", intervalsAsArray);
+                                console.log("Measure Map:", measureMap);
+                                console.log("Measure Map as Array:", measureMapAsArray);
+                                console.log("Highlight:", highlight);
 
                                 // Prepare request data
                                 var requestData = {
                                     source: {
-                                        id: hitId,
                                         name: hitName,
                                         intervals_text: intervalsText,
-                                        intervals_as_array: intervalsAsArray,
                                         measure_map: measureMap,
-                                        measure_map_as_array: measureMapAsArray
+                                        intervals_as_array: intervalsAsArray.split(',').map(Number), // Ensure conversion to integers
+                                        measure_map_as_array: measureMapAsArray.split(',').map(Number) // Ensure conversion to integers
                                     },
-                                    highlight: highlight
+                                    highlight: {
+                                        intervals_text: highlight.intervals_text[0].split(' ') // Assuming highlight.intervals_text is an array of strings
+                                    }
                                 };
+
+                                // Log the structured request data
+                                console.log("Request Data:", JSON.stringify(requestData, null, 2)); // Pretty print the JSON
 
                                 // Send the data to the server via another AJAX request
                                 $.ajax({
-                                    url: "/Home/HandleLinkClick",
+                                    url: "/Home/HandleLinkClick", // Ensure this URL matches your server endpoint
                                     type: "POST",
                                     contentType: "application/json",
                                     data: JSON.stringify(requestData),
@@ -584,10 +586,18 @@
                                     },
                                     error: function (xhr, status, error) {
                                         console.error("Error sending link data:", error);
+                                        console.error("Response status:", status);
+                                        console.error("Response text:", xhr.responseText); // This could give you more context
                                         alert("Error occurred while sending data: " + error);
                                     }
+
                                 });
+
                             });
+
+
+
+
 
                             alert("MEI content sent successfully!");
                         } else {

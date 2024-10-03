@@ -213,10 +213,8 @@ public class HomeController : Controller
         [JsonPropertyName("measure_map_as_array")]
         public int[] measure_map_as_array { get; set; }
     }
-    //End server deserialization response objects
 
 
-    //Start server serialization request objects
     public class ReqSearchMusic
     {
         //This is a constructor I think
@@ -229,11 +227,30 @@ public class HomeController : Controller
     public class ReqPartialMusic
     {
         [JsonPropertyName("source")]
-        public Source source { get; set; }
+        public Record Source { get; set; }
 
         [JsonPropertyName("highlight")]
-        public Highlight highlight { get; set; }
+        public Dictionary<string, List<string>> Highlight { get; set; } // Change from Highlight class to Dictionary
     }
+
+    public class Record
+    {
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
+
+        [JsonPropertyName("intervals_text")]
+        public string IntervalsText { get; set; }
+
+        [JsonPropertyName("measure_map")]
+        public string MeasureMap { get; set; }
+
+        [JsonPropertyName("intervals_as_array")]
+        public int[] IntervalsAsArray { get; set; }
+
+        [JsonPropertyName("measure_map_as_array")]
+        public int[] MeasureMapAsArray { get; set; }
+    }
+
     //End server serialization request objects
 
 
