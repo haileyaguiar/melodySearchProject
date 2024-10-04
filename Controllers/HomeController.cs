@@ -51,6 +51,18 @@ public class HomeController : Controller
                         try
                         {
                             Response responseObj = JsonSerializer.Deserialize<Response>(responseData);
+                            foreach(Hit hit in responseObj.hits){
+                                string hit_highlight = "{";
+                                foreach(var pair in hit.highlight){
+                                    hit_highlight += "\"";
+                                    hit_highlight += pair.Key;
+                                    hit_highlight += "\": [";
+                                    hit_highlight += (string.Join(", ", pair.Value));
+                                    hit_highlight += "], ";
+                                }
+                                hit_highlight += "}";
+                                Console.WriteLine(hit_highlight);
+                            }
                             if (responseObj != null && responseObj.hits != null)
                             {
                                 // Create clickable links
@@ -60,7 +72,7 @@ public class HomeController : Controller
                                     $"data-intervals-as-array='{string.Join(",", hit.source.intervals_as_array)}' " +
                                     $"data-measure-map='{string.Join(" ", hit.source.measure_map)}' " +
                                     $"data-measure-map-as-array='{string.Join(",", hit.source.measure_map_as_array)}' " +
-                                    $"data-highlight='{JsonSerializer.Serialize(hit.highlight)}'>{hit.id}</a><br/>");
+                                    $"data-highlight='{string.Join(" ", hit.highlight["intervals_text"])}'>{hit.id}</a><br/>");
 
                                 string linksHtml = string.Join("\n", links);
                                 return Json(new { responseData = linksHtml });
@@ -146,19 +158,6 @@ public class HomeController : Controller
         }
     }
 
-
-    // Here's the class that the method above uses. I know it's probably not correct, but IDK what it's supposed to be
-    // Note: You may have to change the data that is saved in those a tags in the SaveMeiData method at the top because
-    // all the data you need may not be there. If you do have to do that, you'll have to change the Javascript in the 
-    // Index.cshtml file and this class. 
-    public class HitData
-    {
-        public string Id { get; set; }
-        public string Name { get; set; }
-        public string Intervals { get; set; }
-    }
-
-
     //Start server deserialization response objects
     public class Response
     {
@@ -184,16 +183,10 @@ public class HomeController : Controller
         public float score { get; set; }
 
         [JsonPropertyName("highlight")]
-        public Highlight highlight { get; set; }
+        public Dictionary<string, string[]> highlight { get; set; }
 
         [JsonPropertyName("source")]
         public Source source { get; set; }
-    }
-
-    public class Highlight
-    {
-        [JsonPropertyName("intervals_text")]
-        public string[] intervals_text { get; set; }
     }
 
     public class Source
@@ -213,11 +206,11 @@ public class HomeController : Controller
         [JsonPropertyName("measure_map_as_array")]
         public int[] measure_map_as_array { get; set; }
     }
+    //End server deserialization response objects
 
-
+    //Start server serialization request objects
     public class ReqSearchMusic
     {
-        //This is a constructor I think
         public ReqSearchMusic(string v) => meiChunk = v;
 
         [JsonPropertyName("meiChunk")]
@@ -227,30 +220,11 @@ public class HomeController : Controller
     public class ReqPartialMusic
     {
         [JsonPropertyName("source")]
-        public Record Source { get; set; }
+        public Source source { get; set; }
 
         [JsonPropertyName("highlight")]
-        public Dictionary<string, List<string>> Highlight { get; set; } // Change from Highlight class to Dictionary
+        public Dictionary<string, string[]> highlight { get; set; }
     }
-
-    public class Record
-    {
-        [JsonPropertyName("name")]
-        public string Name { get; set; }
-
-        [JsonPropertyName("intervals_text")]
-        public string IntervalsText { get; set; }
-
-        [JsonPropertyName("measure_map")]
-        public string MeasureMap { get; set; }
-
-        [JsonPropertyName("intervals_as_array")]
-        public int[] IntervalsAsArray { get; set; }
-
-        [JsonPropertyName("measure_map_as_array")]
-        public int[] MeasureMapAsArray { get; set; }
-    }
-
     //End server serialization request objects
 
 

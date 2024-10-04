@@ -15,7 +15,7 @@ Hit = {"index":"music","id":"Clé_du_caveau_1850_No.0016.mei","score":0.2260999
         "source" = a Source, the document it found that matched the search
         All other properties are null / empty and unused
 
-A json highlight looks like:
+A json highlight is a Map<string, List<string>>:
 Hightlight = {"intervals_text":["2 2 \u003cem\u003e1 2 -3\u003c/em\u003e 1 2 -2 4 \u003cem\u003e1 2 -3\u003c/em\u003e -4 2 -2 4 0 0 1 -1 1 -1 -2 2 1 2 -7 2 -2 2 -7 0 2 2 \u003cem\u003e1 2 -3\u003c/em\u003e 1 2 -2 4 1 2 -3"]}
     properties:
         "intervals_text" = an array of strings, where the search matched in the document, if in multiple places there will be multiple strings

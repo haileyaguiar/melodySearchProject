@@ -16,3 +16,20 @@ public class Record {
 }
 
 Note that we find the record and highlight from the server response when we "/searchMusic"
+
+Here is the proper JSON using serverReturns.txt:
+
+{
+    "source": {
+        "name": "Clé_du_caveau_1850_No.0016.mei",
+        "intervals_text": "2 2 1 2 -3 1 2 -2 4 1 2 -3 -4 2 -2 4 0 0 1 -1 1 -1 -2 2 1 2 -7 2 -2 2 -7 0 2 2 1 2 -3 1 2 -2 4 1 2 -3 -4 2 -2",
+        "measure_map": "0 0 0 1 1 1 1 2 2 2 2 3 3 3 3 4 4 4 4 5 5 5 5 6 6 6 6 7 7 7 7 8 8 8 8 9 9 9 9 10 10 10 10 11 11 11 11 12",
+        "intervals_as_array": [2,2,1,2,-3,1,2,-2,4,1,2,-3,-4,2,-2,4,0,0,1,-1,1,-1,-2,2,1,2,-7,2,-2,2,-7,0,2,2,1,2,-3,1,2,-2,4,1,2,-3,-4,2,-2],
+        "measure_map_as_array": [0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,6,6,6,6,7,7,7,7,8,8,8,8,9,9,9,9,10,10,10,10,11,11,11,11,12]
+    },
+    "highlight": {
+        "intervals_text": [
+            "2 2 <em>1 2 -3</em> 1 2 -2 4 <em>1 2 -3</em> -4 2 -2 4 0 0 1 -1 1 -1 -2 2 1 2 -7 2 -2 2 -7 0 2 2 <em>1 2 -3</em> 1 2 -2 4 1 2 -3"
+        ]
+    }
+}

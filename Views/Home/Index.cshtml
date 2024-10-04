@@ -547,6 +547,7 @@
                                 var measureMap = $(this).data("measure-map");
                                 var measureMapAsArray = $(this).data("measure-map-as-array");
                                 var highlight = $(this).data("highlight");
+                                var highlightData = highlight.split(',');
 
                                 // Log extracted data
                                 console.log("Hit ID:", hitId);
@@ -555,7 +556,7 @@
                                 console.log("Intervals as Array:", intervalsAsArray);
                                 console.log("Measure Map:", measureMap);
                                 console.log("Measure Map as Array:", measureMapAsArray);
-                                console.log("Highlight:", highlight);
+                                console.log("Highlight:", highlightData); // Use parsed highlight data
 
                                 // Prepare request data
                                 var requestData = {
@@ -567,7 +568,7 @@
                                         measure_map_as_array: measureMapAsArray.split(',').map(Number) // Ensure conversion to integers
                                     },
                                     highlight: {
-                                        intervals_text: highlight.intervals_text[0].split(' ') // Assuming highlight.intervals_text is an array of strings
+                                        intervals_text: highlightData // Use the parsed highlightData array
                                     }
                                 };
 
@@ -590,14 +591,9 @@
                                         console.error("Response text:", xhr.responseText); // This could give you more context
                                         alert("Error occurred while sending data: " + error);
                                     }
-
                                 });
 
                             });
-
-
-
-
 
                             alert("MEI content sent successfully!");
                         } else {
