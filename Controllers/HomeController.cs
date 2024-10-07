@@ -276,6 +276,27 @@ public class HomeController : Controller
 
 
 
+    [HttpGet]
+    public async Task<IActionResult> SearchName(string query)
+    {
+
+
+        if (string.IsNullOrWhiteSpace(query))
+        {
+            return View("SearchResults", new List<MeiFile>());
+        }
+
+        var parameter = $"%{query}%";
+        var results = await _context.MeiFiles
+            .FromSqlRaw("SELECT file_id, file_name, file_content FROM public.\"meiFiles\" WHERE CAST(file_content AS TEXT) ILIKE {0} ORDER BY file_name", parameter)
+            .Select(m => new MeiFile { file_id = m.file_id, file_name = m.file_name })
+            .ToListAsync();
+
+        return View("SearchResults", results);
+    }
+
+
+
 
     [HttpGet]
     public async Task<IActionResult> DisplayFile(int id)

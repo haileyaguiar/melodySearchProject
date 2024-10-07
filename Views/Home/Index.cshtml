@@ -244,6 +244,13 @@
         <h2>Results:</h2>
         <div id="resultContainer"></div>
         <div id="mei-rendering"></div>
+        
+@*        for when we maybe want to get that matching file
+    <form id="searchForm" action="/Home/SearchName" method="get" target="_blank">
+            <input type="text" id="nameBar" name="query" placeholder="" readonly/>
+            <button type="submit">Get Full File</button>
+        </form> *@
+
         <br>
         <br>
         <br>
@@ -557,6 +564,10 @@
                                 console.log("Measure Map as Array:", measureMapAsArray);
                                 console.log("Highlight:", highlightData); // Use parsed highlight data
 
+                                // Remove the ".mei" extension from the hitName if it exists
+                                var cleanName = hitName.replace(/\.mei$/i, ''); // This removes ".mei" at the end, case-insensitive
+
+
                                 // Prepare request data
                                 var requestData = {
                                     source: {
@@ -572,7 +583,7 @@
                                 };
 
                                 // Log the structured request data
-                                console.log("Request Data:", JSON.stringify(requestData, null, 2)); // Pretty print the JSON
+                                //console.log("Request Data:", JSON.stringify(requestData, null, 2)); // Pretty print the JSON
 
                                 // Send the data to the server via another AJAX request
                                 $.ajax({
@@ -587,10 +598,12 @@
                                             var meiData = response.response;
 
                                             // Log the received MEI data
-                                            console.log("MEI Data:", meiData);
+                                            //console.log("MEI Data:", meiData);
 
                                             // Call the function to render MEI data using Verovio
                                             renderMei(meiData);
+                                            // Prepopulate the search bar with the hitName
+                                            $("#nameBar").val(cleanName);
                                         } else {
                                             console.error("Error:", response.error);
                                             alert("Failed to load MEI data: " + response.error);
