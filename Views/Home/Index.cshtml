@@ -245,6 +245,7 @@
 
         <h2>Results:</h2>
         <div id="resultContainer"></div>
+        <div id="mei-rendering"></div>
         <br>
         <br>
         <br>
@@ -584,6 +585,18 @@
                                     success: function (response) {
                                         alert("Data sent successfully!");
                                         console.log("Response from server:", response);
+                                        if (response.success) {
+                                            var meiData = response.response;
+
+                                            // Log the received MEI data
+                                            console.log("MEI Data:", meiData);
+
+                                            // Call the function to render MEI data using Verovio
+                                            renderMei(meiData);
+                                        } else {
+                                            console.error("Error:", response.error);
+                                            alert("Failed to load MEI data: " + response.error);
+                                        }
                                     },
                                     error: function (xhr, status, error) {
                                         console.error("Error sending link data:", error);
@@ -606,6 +619,51 @@
                     }
                 });
             }
+
+
+
+
+
+            // Function to render MEI data using Verovio
+            function renderMei(meiData) {
+                // Ensure the Verovio toolkit is included and ready
+                const vrvToolkit = new verovio.toolkit();
+
+                try {
+                    // Parse the response to extract the MEI content
+                    var parsedData = JSON.parse(meiData);
+
+                    // Assuming the MEI content is inside an array as "partialMusic"
+                    var meiContent = parsedData.partialMusic.join("\n");
+
+                    // Decode any escaped HTML entities (e.g., &lt; to <)
+                    var decodedMeiContent = $("<textarea/>").html(meiContent).val();
+
+                    // Log the cleaned-up MEI content for verification
+                    console.log("Decoded MEI Content:", decodedMeiContent);
+
+                    // Load the MEI data into the toolkit
+                    vrvToolkit.loadData(decodedMeiContent, {});
+
+                    // Render the MEI data as SVG
+                    const svg = vrvToolkit.renderToSVG(1); // Renders the first page of the MEI data
+
+                    // Display the SVG inside the container
+                    $("#mei-rendering").html(svg);
+                } catch (error) {
+                    console.error("Error rendering MEI with Verovio:", error);
+                    alert("Failed to render MEI data.");
+                }
+            }
+
+
+
+
+
+
+
+
+
 
 
 
