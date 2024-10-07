@@ -103,18 +103,15 @@
                                 </div>
                                 <textarea type="input" id="incipit_01" name="incipit_01" class="form-control hwt-input hwt-content" placeholder="Plaine &amp; Easie code …" readonly></textarea>
                             </div>
-                        </td>
-                    </tr>
+                            <div>
+                                <div style="margin: 6px 13px;">
+                                    <div style="padding: 0px; border-width: 0px;">
+                                        <button type="button" onclick="resetIncipit()">Reset</button>
 
-                    <tr>
-                        <div>
-                            <div style="margin: 6px 13px;">
-                                <div style="padding: 0px; border-width: 0px;">
-                                    <button type="button" onclick="resetIncipit()">Reset</button>
-
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        </td>
                     </tr>
 
                     <!--MEI output-->
@@ -186,6 +183,7 @@
 
 
             <div>
+                <!---->
                 <pre id="mei_output" style="text-align: left; overflow: auto; width: auto; overflow-wrap: normal;">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
         &lt;?xml-model href="https://music-encoding.org/schema/5.0/mei-all.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?&gt;
         &lt;?xml-model href="https://music-encoding.org/schema/5.0/mei-all.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?&gt;
@@ -529,7 +527,7 @@
                     type: "POST",
                     data: { inputData: meiContent },
                     success: function (response) {
-                        console.log("Response from server:", response);
+                        //console.log("Response from server:", response);
 
                         if (response && response.responseData) {
                             var namesArray = response.responseData.split("\n");
@@ -583,8 +581,8 @@
                                     contentType: "application/json",
                                     data: JSON.stringify(requestData),
                                     success: function (response) {
-                                        alert("Data sent successfully!");
-                                        console.log("Response from server:", response);
+                                        //alert("Data sent successfully!");
+                                        //console.log("Response from server:", response);
                                         if (response.success) {
                                             var meiData = response.response;
 
@@ -608,7 +606,7 @@
 
                             });
 
-                            alert("MEI content sent successfully!");
+                            //alert("MEI content sent successfully!");
                         } else {
                             alert("Unexpected response format or empty response data.");
                         }
@@ -640,7 +638,7 @@
                     var decodedMeiContent = $("<textarea/>").html(meiContent).val();
 
                     // Log the cleaned-up MEI content for verification
-                    console.log("Decoded MEI Content:", decodedMeiContent);
+                    //console.log("Decoded MEI Content:", decodedMeiContent);
 
                     // Load the MEI data into the toolkit
                     vrvToolkit.loadData(decodedMeiContent, {});

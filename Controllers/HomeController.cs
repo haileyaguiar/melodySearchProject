@@ -127,33 +127,33 @@ public class HomeController : Controller
 
                 string targetUrl = "http://18.216.198.21:5000/partialSheetMusic";
 
-                Debug.WriteLine($"Sending POST request to {targetUrl} with content: {jsonInput}");
+                //Debug.WriteLine($"Sending POST request to {targetUrl} with content: {jsonInput}");
                 HttpResponseMessage response = await client.PostAsync(targetUrl, content);
 
-                Debug.WriteLine($"Received response: {response.StatusCode}");
+                //Debug.WriteLine($"Received response: {response.StatusCode}");
                 if (response.IsSuccessStatusCode)
                 {
                     string responseData = await response.Content.ReadAsStringAsync();
-                    Debug.WriteLine($"Response Data: {responseData}");
+                    //Debug.WriteLine($"Response Data: {responseData}");
 
                     // Return the response from the new API back to the frontend
                     return Json(new { success = true, response = responseData });
                 }
                 else
                 {
-                    Debug.WriteLine($"Error: {response.ReasonPhrase}");
+                    //Debug.WriteLine($"Error: {response.ReasonPhrase}");
                     return Json(new { success = false, error = response.ReasonPhrase });
                 }
             }
         }
         catch (HttpRequestException ex)
         {
-            Debug.WriteLine($"Request error: {ex.Message}");
+            //Debug.WriteLine($"Request error: {ex.Message}");
             return Json(new { success = false, error = ex.Message });
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"General error: {ex.Message}");
+            //Debug.WriteLine($"General error: {ex.Message}");
             return Json(new { success = false, error = ex.Message });
         }
     }
