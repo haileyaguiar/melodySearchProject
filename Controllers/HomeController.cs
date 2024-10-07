@@ -238,6 +238,9 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
+        HttpContext.Response.Headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
+        HttpContext.Response.Headers["Pragma"] = "no-cache";
+        HttpContext.Response.Headers["Expires"] = "0";
         return View();
     }
 
