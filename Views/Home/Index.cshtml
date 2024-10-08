@@ -1,15 +1,19 @@
-﻿@* @model IEnumerable<melodySearchProject.Models.Mei>
- *@
+﻿@*
 
+ *@
 
 <body>
     <br />
+    <h1>Search the Database:</h1>
+    <br />
+    <h2>By text:</h2>
         <!--Search Stuff-->
         <form asp-action="Search" method="get">
             <input type="text" name="query" placeholder="Search MEI files">
             <button type="submit">Search</button>
         </form>
-
+<br />
+<h2>By melody:</h2>
 <!--Keyboard interface:-->
     <div>
         <div style="text-align: center;">
@@ -183,56 +187,57 @@
 
 
             <div>
-                <!---->
+                <!-- MEI text rendering-->
                 <pre id="mei_output" style="text-align: left; overflow: auto; width: auto; overflow-wrap: normal;">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
-        &lt;?xml-model href="https://music-encoding.org/schema/5.0/mei-all.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?&gt;
-        &lt;?xml-model href="https://music-encoding.org/schema/5.0/mei-all.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?&gt;
-        &lt;mei xmlns="http://www.music-encoding.org/ns/mei" meiversion="5.0"&gt;
-        &lt;meiHead&gt;
-        &lt;fileDesc&gt;
-        &lt;titleStmt&gt;
-        &lt;title /&gt;
-        &lt;/titleStmt&gt;
-        &lt;pubStmt&gt;
-        &lt;date isodate="2023-10-13-10:32:35" /&gt;
-        &lt;/pubStmt&gt;
-        &lt;/fileDesc&gt;
-        &lt;encodingDesc&gt;
-        lt;appInfo&gt;
-        &lt;application xml:id="verovio" version="4.0.1-a99660b"&gt;
-        &lt;name&gt;Verovio (4.0.1-a99660b)&lt;/name&gt;
-        &lt;/application&gt;
-        &lt;/appInfo&gt;
-        &lt;projectDesc&gt;
-        &lt;p&gt;MEI encoded with Verovio&lt;/p&gt;
-        &lt;p&gt;Converted from Plaine and Easie to MEI&lt;/p&gt;
-        &lt;/projectDesc&gt;
-        &lt;/encodingDesc&gt;
-        &lt;/meiHead&gt;
-        &lt;music&gt;
-        &lt;body&gt;
-        &lt;mdiv xml:id="mmyzslu"&gt;
-        &lt;score xml:id="s6ug31v"&gt;
-        &lt;scoreDef xml:id="s1bcu6sn"&gt;
-        &lt;staffGrp xml:id="s1blotdo"&gt;
-        &lt;staffDef xml:id="s98porn" n="1" lines="5" clef.shape="G" clef.line="2" /&gt;
-        &lt;/staffGrp&gt;
-        &lt;/scoreDef&gt;
-        &lt;section xml:id="s1k4iy3e"&gt;
-        &lt;measure xml:id="mfnjo7e" right="invis"&gt;
-        &lt;staff xml:id="szosgrv" n="1"&gt;
-        &lt;layer xml:id="l1q84ocf" n="1" /&gt;
-        &lt;/staff&gt;
-        &lt;/measure&gt;
-        &lt;/section&gt;
-        &lt;/score&gt;
-        &lt;/mdiv&gt;
-        &lt;/body&gt;
-        &lt;/music&gt;
-        &lt;/mei&gt;
-    </pre>
+                    &lt;?xml-model href="https://music-encoding.org/schema/5.0/mei-all.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?&gt;
+                    &lt;?xml-model href="https://music-encoding.org/schema/5.0/mei-all.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?&gt;
+                    &lt;mei xmlns="http://www.music-encoding.org/ns/mei" meiversion="5.0"&gt;
+                    &lt;meiHead&gt;
+                    &lt;fileDesc&gt;
+                    &lt;titleStmt&gt;
+                    &lt;title /&gt;
+                    &lt;/titleStmt&gt;
+                    &lt;pubStmt&gt;
+                    &lt;date isodate="2023-10-13-10:32:35" /&gt;
+                    &lt;/pubStmt&gt;
+                    &lt;/fileDesc&gt;
+                    &lt;encodingDesc&gt;
+                    lt;appInfo&gt;
+                    &lt;application xml:id="verovio" version="4.0.1-a99660b"&gt;
+                    &lt;name&gt;Verovio (4.0.1-a99660b)&lt;/name&gt;
+                    &lt;/application&gt;
+                    &lt;/appInfo&gt;
+                    &lt;projectDesc&gt;
+                    &lt;p&gt;MEI encoded with Verovio&lt;/p&gt;
+                    &lt;p&gt;Converted from Plaine and Easie to MEI&lt;/p&gt;
+                    &lt;/projectDesc&gt;
+                    &lt;/encodingDesc&gt;
+                    &lt;/meiHead&gt;
+                    &lt;music&gt;
+                    &lt;body&gt;
+                    &lt;mdiv xml:id="mmyzslu"&gt;
+                    &lt;score xml:id="s6ug31v"&gt;
+                    &lt;scoreDef xml:id="s1bcu6sn"&gt;
+                    &lt;staffGrp xml:id="s1blotdo"&gt;
+                    &lt;staffDef xml:id="s98porn" n="1" lines="5" clef.shape="G" clef.line="2" /&gt;
+                    &lt;/staffGrp&gt;
+                    &lt;/scoreDef&gt;
+                    &lt;section xml:id="s1k4iy3e"&gt;
+                    &lt;measure xml:id="mfnjo7e" right="invis"&gt;
+                    &lt;staff xml:id="szosgrv" n="1"&gt;
+                    &lt;layer xml:id="l1q84ocf" n="1" /&gt;
+                    &lt;/staff&gt;
+                    &lt;/measure&gt;
+                    &lt;/section&gt;
+                    &lt;/score&gt;
+                    &lt;/mdiv&gt;
+                    &lt;/body&gt;
+                    &lt;/music&gt;
+                    &lt;/mei&gt;
+                </pre>
             </div>
   
+            <!-- Search the MEI incipit button-->
             <button onclick="saveMeiAsFile()">Search MEI</button>
             <br>
             <br>
@@ -241,12 +246,16 @@
             <br>
         </div>
 
+        <!-- Result links and rendering window-->
         <h2>Results:</h2>
+        <p>Click on a link to see the matching measures.</p>
         <div id="resultContainer"></div>
+        <br />
+        <h3>Matching Measures:</h3>
         <div id="mei-rendering"></div>
         
-@*        for when we maybe want to get that matching file
-    <form id="searchForm" action="/Home/SearchName" method="get" target="_blank">
+        @*for when we maybe want to get that matching file
+        <form id="searchForm" action="/Home/SearchName" method="get" target="_blank">
             <input type="text" id="nameBar" name="query" placeholder="" readonly/>
             <button type="submit">Get Full File</button>
         </form> *@
@@ -507,7 +516,7 @@
                 //$("#incipit_01").highlightWithinTextarea({ highlight: onValidatePAE });
             });
 
-
+            // Reset incipit
             function resetIncipit() {
                 $('#incipit_01').val(''); // Clear the textarea
                 current_oct = -1; // Reset any associated variables
@@ -516,18 +525,11 @@
             }
 
 
-
-
-
-
-
-
-
-
+            // Send MEI data to server to make links
             function saveMeiAsFile() {
                 var meiContent = $("#mei_output").text();
 
-                console.log("MEI Content:", meiContent);
+                //console.log("MEI Content:", meiContent);
 
                 $.ajax({
                     url: "/Home/SaveMeiData",
@@ -556,13 +558,13 @@
                                 var highlightData = highlight.split(',');
 
                                 // Log extracted data
-                                console.log("Hit ID:", hitId);
-                                console.log("Hit Name:", hitName);
-                                console.log("Intervals Text:", intervalsText);
-                                console.log("Intervals as Array:", intervalsAsArray);
-                                console.log("Measure Map:", measureMap);
-                                console.log("Measure Map as Array:", measureMapAsArray);
-                                console.log("Highlight:", highlightData); // Use parsed highlight data
+                                //console.log("Hit ID:", hitId);
+                                //console.log("Hit Name:", hitName);
+                                //console.log("Intervals Text:", intervalsText);
+                                //console.log("Intervals as Array:", intervalsAsArray);
+                                //console.log("Measure Map:", measureMap);
+                                //console.log("Measure Map as Array:", measureMapAsArray);
+                                //console.log("Highlight:", highlightData); // Use parsed highlight data
 
                                 // Remove the ".mei" extension from the hitName if it exists
                                 var cleanName = hitName.replace(/\.mei$/i, ''); // This removes ".mei" at the end, case-insensitive
@@ -633,8 +635,6 @@
 
 
 
-
-
             // Function to render MEI data using Verovio
             function renderMei(meiData) {
                 // Ensure the Verovio toolkit is included and ready
@@ -669,16 +669,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
             // Add a click event listener to the "Save as MEI" button
             document.getElementById("saveMeiButton").addEventListener("click", saveMeiAsFile);
 
@@ -694,15 +684,8 @@
                 populateMeiContent();
             });
 
-
-
         </script>
 
-
-
     </div>
-    </div>
-
-
 </body>
 

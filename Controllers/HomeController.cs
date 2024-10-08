@@ -2,20 +2,13 @@ using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Net.Http;
-using System.Threading.Tasks;
 using melodySearchProject.Models;
 using Microsoft.EntityFrameworkCore;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using System.IO;
-using System.Reflection;
-using System.Linq;
-using System.Collections.Generic;
-using System.Xml.Linq;
 using System.Text.RegularExpressions;
 
 public class HomeController : Controller
 {
+    // Java server URL and endpoint for initial POST
     private string javaServerUrl = "http://18.216.198.21:5000/searchMusic";
     private readonly ApplicationDbContext _context;
 
@@ -25,7 +18,7 @@ public class HomeController : Controller
     }
 
 
-
+    // Post called when MEI is searched to make dynamic links
     [HttpPost]
     public async Task<ActionResult> SaveMeiData(string inputData)
     {
@@ -37,14 +30,14 @@ public class HomeController : Controller
             using (var client = new HttpClient())
             {
                 var content = new StringContent(jsonInput, System.Text.Encoding.UTF8, "application/json");
-                Debug.WriteLine($"Sending POST request to {javaServerUrl} with content: {jsonInput}");
+                //Debug.WriteLine($"Sending POST request to {javaServerUrl} with content: {jsonInput}");
                 HttpResponseMessage response = await client.PostAsync(javaServerUrl, content);
 
-                Debug.WriteLine($"Received response: {response.StatusCode}");
+                //Debug.WriteLine($"Received response: {response.StatusCode}");
                 if (response.IsSuccessStatusCode)
                 {
                     string responseData = await response.Content.ReadAsStringAsync();
-                    Debug.WriteLine($"Response Data: {responseData}");
+                    //Debug.WriteLine($"Response Data: {responseData}");
 
                     if (!string.IsNullOrEmpty(responseData))
                     {
@@ -61,7 +54,7 @@ public class HomeController : Controller
                                     hit_highlight += "], ";
                                 }
                                 hit_highlight += "}";
-                                Console.WriteLine(hit_highlight);
+                                //Console.WriteLine(hit_highlight);
                             }
                             if (responseObj != null && responseObj.hits != null)
                             {
@@ -158,7 +151,7 @@ public class HomeController : Controller
         }
     }
 
-    //Start server deserialization response objects
+    // Server deserialization response objects
     public class Response
     {
         [JsonPropertyName("hits")]
@@ -206,9 +199,7 @@ public class HomeController : Controller
         [JsonPropertyName("measure_map_as_array")]
         public int[] measure_map_as_array { get; set; }
     }
-    //End server deserialization response objects
 
-    //Start server serialization request objects
     public class ReqSearchMusic
     {
         public ReqSearchMusic(string v) => meiChunk = v;
@@ -225,15 +216,7 @@ public class HomeController : Controller
         [JsonPropertyName("highlight")]
         public Dictionary<string, string[]> highlight { get; set; }
     }
-    //End server serialization request objects
 
-
-
-
-
-
-
-    // DONT BOTHER ANYTHING BEYOND THIS POINT!!!!! THEY ARE WORKING!!!!!!!!!!
 
 
     public IActionResult Index()
@@ -245,7 +228,7 @@ public class HomeController : Controller
     }
 
 
-
+    // Text search method
     [HttpGet]
     public async Task<IActionResult> Search(string query)
     {
@@ -278,12 +261,11 @@ public class HomeController : Controller
     }
 
 
-
+    // Method called when the Name search bar is used
+    // Currently the name search bar is not in use
     [HttpGet]
     public async Task<IActionResult> SearchName(string query)
     {
-
-
         if (string.IsNullOrWhiteSpace(query))
         {
             return View("SearchResults", new List<MeiFile>());
@@ -300,7 +282,7 @@ public class HomeController : Controller
 
 
 
-
+    // Displays the MEI file when a text search link is clicked
     [HttpGet]
     public async Task<IActionResult> DisplayFile(int id)
     {
@@ -321,7 +303,7 @@ public class HomeController : Controller
     }
 
 
-
+    // Downloads the file to the user's computer
     [HttpGet]
     public IActionResult DownloadFile(string fileName)
     {
@@ -342,6 +324,4 @@ public class HomeController : Controller
         // Set the content disposition header to prompt download
         return File(fileBytes, "text/plain", $"{file.file_name}");
     }
-
-
 }
