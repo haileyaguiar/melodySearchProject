@@ -39,3 +39,12 @@ body {
     position: fixed;
     bottom: 0;
 }
+
+#mei-rendering {
+    width: 100%;
+    height: 50vh; /* Use viewport height for better full-page fit */
+    overflow: auto; /* Allows scrolling if content exceeds height */
+    display: flex;
+    justify-content: center; /* Centers the SVG horizontally */
+    align-items: center; /* Centers the SVG vertically */
+}

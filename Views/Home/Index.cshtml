@@ -12,6 +12,25 @@
             <input type="text" name="query" placeholder="Search MEI files">
             <button type="submit">Search</button>
         </form>
+        <br />
+        <h4>Search by title only:</h4>
+        <!--SEARCH TITLE-->
+    <!--Search Stuff-->
+    <form asp-action="SearchTitle" method="get">
+        <input type="text" name="query" placeholder="Search MEI files">
+        <button type="submit">Search Title</button>
+    </form>
+    <br />
+    <h4>Search by composer only:</h4>
+    <!--SEARCH COMPOSER-->
+    <!--Search Stuff-->
+    <form asp-action="SearchComposer" method="get">
+        <input type="text" name="query" placeholder="Search MEI files">
+        <button type="submit">Search Composer</button>
+    </form>
+
+
+
 <br />
 <h2>By melody:</h2>
 <!--Keyboard interface:-->
@@ -651,17 +670,28 @@
                     // Decode any escaped HTML entities (e.g., &lt; to <)
                     var decodedMeiContent = $("<textarea/>").html(meiContent).val();
 
-                    // Log the cleaned-up MEI content for verification
-                    //console.log("Decoded MEI Content:", decodedMeiContent);
-
                     // Load the MEI data into the toolkit
                     vrvToolkit.loadData(decodedMeiContent, {});
 
                     // Render the MEI data as SVG
                     const svg = vrvToolkit.renderToSVG(1); // Renders the first page of the MEI data
 
-                    // Display the SVG inside the container
-                    $("#mei-rendering").html(svg);
+                    // Modify the SVG to include viewBox for scaling
+                    const $svg = $(svg);
+                    const width = $svg.attr("width").replace("px", ""); // Remove 'px' if present
+                    const height = $svg.attr("height").replace("px", ""); // Remove 'px' if present
+
+                    // Set the viewBox attribute without 'px'
+                    $svg.attr("viewBox", `0 0 ${width} ${height}`);
+
+                    // Optionally, set a CSS width and height to ensure the SVG fits its container
+                    $svg.css({
+                        width: "100%",
+                        height: "100%"
+                    });
+
+                    // Display the modified SVG inside the container
+                    $("#mei-rendering").html($svg);
                 } catch (error) {
                     console.error("Error rendering MEI with Verovio:", error);
                     alert("Failed to render MEI data.");

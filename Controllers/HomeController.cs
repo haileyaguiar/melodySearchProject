@@ -261,6 +261,126 @@ public class HomeController : Controller
     }
 
 
+    //TESTING BELOW
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    [HttpGet]
+    public async Task<IActionResult> SearchTitle(string query)
+    {
+        // Allow letters (including accented), digits, and spaces
+        if (!Regex.IsMatch(query, @"^[\p{L}\p{N}\s]*$", RegexOptions.Compiled))
+        {
+            return BadRequest("Invalid characters in search query.");
+        }
+
+        query = query?.Trim();
+
+        // Limit the length of the search query to prevent overly long input
+        if (query.Length > 100)
+        {
+            return BadRequest("Query is too long.");
+        }
+
+        if (string.IsNullOrWhiteSpace(query))
+        {
+            return View("SearchResults", new List<MeiFile>());
+        }
+
+        var parameter = $"%{query}%";
+
+        var results = await _context.MeiFiles
+            .FromSqlRaw(@"
+            SELECT file_id, file_name, file_content
+            FROM public.""meiFiles""
+            WHERE EXISTS (
+                SELECT 1
+                FROM unnest(xpath(
+                    '//ns:title/text()',
+                    file_content::xml,
+                    ARRAY[ARRAY['ns', 'http://www.music-encoding.org/ns/mei']]
+                )) AS title_text
+                WHERE title_text::text ILIKE {0}
+            )
+            ORDER BY file_name", parameter)
+            .Select(m => new MeiFile { file_id = m.file_id, file_name = m.file_name })
+            .ToListAsync();
+
+        return View("SearchResults", results);
+    }
+
+
+
+
+
+
+
+
+
+    [HttpGet]
+    public async Task<IActionResult> SearchComposer(string query)
+    {
+        // Allow letters (including accented), digits, and spaces
+        if (!Regex.IsMatch(query, @"^[\p{L}\p{N}\s]*$", RegexOptions.Compiled))
+        {
+            return BadRequest("Invalid characters in search query.");
+        }
+
+        query = query?.Trim();
+
+        // Limit the length of the search query to prevent overly long input
+        if (query.Length > 100)
+        {
+            return BadRequest("Query is too long.");
+        }
+
+        if (string.IsNullOrWhiteSpace(query))
+        {
+            return View("SearchResults", new List<MeiFile>());
+        }
+
+        var parameter = $"%{query}%";
+
+        var results = await _context.MeiFiles
+            .FromSqlRaw(@"
+            SELECT file_id, file_name, file_content
+            FROM public.""meiFiles""
+            WHERE EXISTS (
+                SELECT 1
+                FROM unnest(xpath(
+                    '//ns:composer/text()',
+                    file_content::xml,
+                    ARRAY[ARRAY['ns', 'http://www.music-encoding.org/ns/mei']]
+                )) AS composer_text
+                WHERE composer_text::text ILIKE {0}
+            )
+            ORDER BY file_name", parameter)
+            .Select(m => new MeiFile { file_id = m.file_id, file_name = m.file_name })
+            .ToListAsync();
+
+        return View("SearchResults", results);
+    }
+
+
+
+
+
+
+
+
     // Method called when the Name search bar is used
     // Currently the name search bar is not in use
     [HttpGet]

@@ -65,23 +65,45 @@
         var meiContent = document.getElementById('mei-data').value.trim();
         var vrvToolkit = new verovio.toolkit();
 
-        // Get the width of the container (notation div)
-        var screenWidth = document.getElementById('notation').clientWidth || window.innerWidth;
+        // Get the container (notation div)
+        var notationContainer = document.getElementById('notation');
 
+        // Get the dimensions of the container
+        var containerWidth = notationContainer.clientWidth * 0.9; // 90% of the container's width
+        var containerHeight = notationContainer.clientHeight * 0.9; // 90% of the container's height
 
         var options = {
-            pageWidth: 800, // Use 90% of the window's width
-            scale: 5,                    // Smaller scale value to make notation more compact
-            pageHeight: 1000              // Keep the height as needed
+            pageWidth: containerWidth, // Use 90% of the container's width
+            scale: 5,                  // Smaller scale value to make notation more compact
+            pageHeight: containerHeight  // Use 90% of the container's height
         };
 
-
+        // Load MEI content into the toolkit
         vrvToolkit.loadData(meiContent);
-        var svg = vrvToolkit.renderToSVG(1, options);
-        document.getElementById("notation").innerHTML = svg;
+        var svgString = vrvToolkit.renderToSVG(1, options);
 
+        // Parse the SVG string into an SVG element
+        var parser = new DOMParser();
+        var svgDoc = parser.parseFromString(svgString, "image/svg+xml");
+        var svgElement = svgDoc.documentElement;
 
-        // Parse MEI content as XML and extract metadata tags
+        // Set viewBox attribute based on the dimensions of the SVG
+        var width = svgElement.getAttribute('width').replace('px', '');
+        var height = svgElement.getAttribute('height').replace('px', '');
+        svgElement.setAttribute('viewBox', `0 0 ${width} ${height}`);
+
+        // Set the SVG style to fill the container
+        svgElement.style.width = "100%";
+        svgElement.style.height = "100%";
+
+        // Clear the innerHTML of the notation container before appending new SVG
+        notationContainer.innerHTML = '';
+        notationContainer.appendChild(svgElement); // Append the SVG element
+    }
+
+    // Parse MEI content as XML and extract metadata tags
+    function processMetadata() {
+        var meiContent = document.getElementById('mei-data').value.trim();
         var parser = new DOMParser();
         var meiDoc = parser.parseFromString(meiContent, "application/xml");
 
@@ -94,15 +116,15 @@
             "Collection Editor": extractMetadataTag(meiDoc, "editor", "type", "collection"),
             "Encoding Date": extractMetadataTag(meiDoc, "date", "type", "encoding-date"),
             "Notes": extractMetadataTag(meiDoc, "notes"),
-            "Collection Title": extractMetadataTag(meiDoc, "title", "type", "collection"),// Title with type="collection"
-            "Collection Number": extractMetadataTag(meiDoc, "collection", "type", "number"),  
+            "Collection Title": extractMetadataTag(meiDoc, "title", "type", "collection"),
+            "Collection Number": extractMetadataTag(meiDoc, "collection", "type", "number"),
             "Publisher": extractMetadataTag(meiDoc, "publisher"),
             "Place of Publication": extractMetadataTag(meiDoc, "pubPlace"),
             "Publication Date": extractMetadataTag(meiDoc, "date", "type", "publication"),
             "Edition": extractMetadataTag(meiDoc, "edition"),
             "Source Type": extractMetadataTag(meiDoc, "sourceType"),
-            "Series Title": extractMetadataTag(meiDoc, "title", "type", "series"),//change these when the tags are actually created and used. For now, I've just made my best guesses of what the tags will be
-            "Series Editor": extractMetadataTag(meiDoc, "editor", "type", "series"), 
+            "Series Title": extractMetadataTag(meiDoc, "title", "type", "series"),
+            "Series Editor": extractMetadataTag(meiDoc, "editor", "type", "series"),
             "Publisher Plate Number": extractMetadataTag(meiDoc, "publisherPlateNumber"),
             "Manuscript Library Location": extractMetadataTag(meiDoc, "manuscriptLibraryLocation"),
             "Manuscript Library Call Number": extractMetadataTag(meiDoc, "manuscriptLibraryCallNumber"),
@@ -131,8 +153,10 @@
 
     // Initial rendering
     renderNotation();
+    processMetadata(); // Call processMetadata after rendering
 
     // Redraw the notation when the window is resized
     window.addEventListener('resize', renderNotation);
 </script>
+
 
