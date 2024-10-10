@@ -1,0 +1,174 @@
+## PARTIAL_SHEET_MUSIC endpoint results
+
+A json server response in looks like:
+Response = {"partialMusic":[<string>],"message":null,"success":true}
+
+Where the strings are chunks of the mei. If you ssh into the server and input 'docker logs app',
+it will show the toString method of the ResPartialSheetMusic, which looks like below. The toString
+function puts a <!__> between every item in the list for our readability when it outputs a string, 
+but they aren't actually there in the response.
+
+ResPartialSheetMusic{
+message='null'
+success=true
+partialMusic(3 sequence(s) found)=
+<!__________________________________________________________________________________________________>
+<?xml-model href="https://music-encoding.org/schema/dev/mei-all.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?><?xml-model href="https://music-encoding.org/schema/dev/mei-all.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?><mei meiversion="5.0.0-dev" xmlns="http://www.music-encoding.org/ns/mei">
+<meiHead>
+<fileDesc>
+<titleStmt>
+<title>
+     Clé_du_caveau_1850_No.0849
+    </title>
+<respStmt>
+<persName role="composer">
+      Clé_du_caveau_1850
+     </persName>
+<composer>Doche</composer><editor type="collection">Capelle, M. (Pierre Adolphe), 1772-1851, compiler</editor></respStmt>
+<title type="main">Air du vaudeville des Fiancés</title><title type="main">Air du vaudeville dès mon printemps naïve et confiante</title><title type="first line">Ces postillons sont d'une maladresse</title><title type="first line">Chacun de son côté</title><title type="collection">La clé du Caveau : à l'usage des chansonniers français et étrangers, des acteurs, amateurs, auteurs, chefs d'orchestre et revuistes, et de tous les amis du vaudeville et de la chanson</title></titleStmt>
+<pubStmt>
+<date isodate="2023-06-29" type="encoding-date">
+     2023-06-29
+    </date>
+<publisher>Au Métronome - Mon. Émile Benoit, Sulzbach, Succr. - Éditeur de Musique</publisher><pubPlace>Paris</pubPlace><date type="publication">[1884]</date><edition>6th ed.</edition><sourceType>Print</sourceType></pubStmt>
+<sourceDesc><physDesc/></sourceDesc><notes>"Les Fiancés", vaudeville. </notes></fileDesc>
+<encodingDesc xml:id="encodingdesc-1x0m3d9">
+<appInfo xml:id="appinfo-e17vw9">
+<application isodate="2023-06-29T20:05:07" version="3.14.0-1474e80" xml:id="application-1bboggw">
+<name xml:id="name-yoz69a">
+      Verovio
+     </name>
+<p xml:id="p-1atsszb">
+      Transcoded from MusicXML
+     </p>
+</application>
+</appInfo>
+</encodingDesc>
+</meiHead>
+<music>
+<body>
+<mdiv xml:id="m1l7um3i">
+<score xml:id="sbf8imh">
+<scoreDef xml:id="s2enqfa">
+<pgHead xml:id="p1e8crkl">
+<rend halign="center" valign="top" xml:id="rk6pqeb">
+        Clé_du_caveau_1850_No.0849
+       </rend>
+<rend halign="right" valign="bottom" xml:id="rn8br85">
+        Clé_du_caveau_1850
+       </rend>
+</pgHead>
+<staffGrp xml:id="sp9p3sq">
+<staffGrp xml:id="s1tbb280">
+<grpSym symbol="brace" xml:id="gkd1vvk"/>
+<staffDef lines="5" n="1" ppq="8" xml:id="P1">
+<label xml:id="l1rr1ydp">
+          Piano
+         </label>
+<labelAbbr xml:id="l6qn4e9">
+          Pno.
+         </labelAbbr>
+<instrDef midi.channel="0" midi.instrnum="0" midi.volume="78.00%" xml:id="i1pvwcld"/>
+<clef line="2" shape="G" xml:id="ckupzvi"/>
+<keySig sig="2s" xml:id="kliv5ya"/>
+<meterSig count="4" sym="common" unit="4" xml:id="m1w38bcp"/>
+</staffDef>
+</staffGrp>
+</staffGrp>
+</scoreDef>
+<section xml:id="seh2ddd">
+<pb xml:id="p38axbj"/>
+<measure n="0" xml:id="m1lg4lsn">
+<mNum xml:id="mqrk7ej"/>
+<staff n="1" xml:id="s1kb8bnw">
+<layer n="1" xml:id="l2n7kzl">
+<rest dur="8" dur.ppq="4" xml:id="ryd2a77"/>
+<note dur="8" dur.ppq="4" oct="4" pname="g" stem.dir="up" xml:id="n8feo9y"/>
+<note dur="8" dur.ppq="4" oct="4" pname="g" stem.dir="up" xml:id="n73a3js"/>
+<note dur="8" dur.ppq="4" oct="4" pname="g" stem.dir="up" xml:id="n1ohmuu7"/>
+</layer>
+</staff>
+<tempo midi.bpm="116.000000" place="above" staff="1" tstamp="1.000000" xml:id="tsb2acl" xml:lang="it">
+<rend fontweight="bold" xml:id="rjfh6te">
+         Allegretto
+        </rend>
+</tempo>
+</measure>
+<measure n="1" xml:id="mqaq7fe">
+<staff n="1" xml:id="s1l4fwhv">
+<layer n="1" xml:id="lztcm24">
+<note accid.ges="s" dots="1" dur="4" dur.ppq="12" oct="5" pname="c" stem.dir="down" xml:id="ndxr784"/>
+<note accid.ges="s" dur="8" dur.ppq="4" oct="5" pname="c" stem.dir="down" xml:id="nwuopvi"/>
+<note dur="8" dur.ppq="4" oct="5" pname="d" stem.dir="down" xml:id="nrrg98d"/>
+<note dur="8" dur.ppq="4" oct="5" pname="d" stem.dir="down" xml:id="n1bs19yt"/>
+<note dur="8" dur.ppq="4" oct="5" pname="d" stem.dir="down" xml:id="nvbz6o8"/>
+<note dur="8" dur.ppq="4" oct="5" pname="d" stem.dir="down" xml:id="nedo3ay"/>
+</layer>
+</staff>
+</measure>
+<!__________________________________________________________________________________________________>
+<!__________________________________________________________________________________________________>
+<sb xml:id="s9hje8i"/>
+<sb xml:id="s1hsvor"/>
+<measure n="12" xml:id="m1y44b14">
+<staff n="1" xml:id="s1laucd8">
+<layer n="1" xml:id="l1wx5vb2">
+<note accid.ges="s" dur="8" dur.ppq="4" oct="4" pname="f" stem.dir="up" xml:id="nc6l8dq"/>
+<note dur="8" dur.ppq="4" oct="4" pname="e" stem.dir="up" xml:id="n16inx0q"/>
+<rest dur="4" dur.ppq="8" xml:id="rbfvp4o"/>
+<rest dur="4" dur.ppq="8" xml:id="r1199ip0"/>
+<note dur="4" dur.ppq="8" oct="4" pname="g" stem.dir="up" xml:id="n1fy8lwt"/>
+</layer>
+</staff>
+</measure>
+<measure n="13" xml:id="m1jc7e9m">
+<staff n="1" xml:id="s1p35wio">
+<layer n="1" xml:id="lo1j0p1">
+<note accid.ges="s" dur="4" dur.ppq="8" oct="5" pname="c" stem.dir="down" xml:id="net4cse"/>
+<note accid.ges="s" dur="8" dur.ppq="4" oct="5" pname="c" stem.dir="down" xml:id="njcs14z"/>
+<note accid.ges="s" dur="8" dur.ppq="4" oct="5" pname="c" stem.dir="down" xml:id="n1fkhhhb"/>
+<note accid.ges="s" dur="4" dur.ppq="8" oct="5" pname="c" stem.dir="down" xml:id="n3j5r3t"/>
+<beam xml:id="bqeo2sv">
+<note dur="16" dur.ppq="0" grace="acc" oct="5" pname="d" stem.dir="up" xml:id="niz83jn"/>
+<note accid.ges="s" dur="16" dur.ppq="0" grace="acc" oct="5" pname="c" stem.dir="up" xml:id="n1ubz6qs"/>
+</beam>
+<note dur="8" dur.ppq="4" oct="4" pname="b" stem.dir="down" xml:id="n1a2jv78"/>
+<note accid.ges="s" dur="8" dur.ppq="4" oct="5" pname="c" stem.dir="down" xml:id="ntq5tub"/>
+</layer>
+</staff>
+</measure>
+<measure n="14" xml:id="mr3s5dz">
+<staff n="1" xml:id="s1vo6lik">
+<layer n="1" xml:id="l7lrz0t">
+<note dur="2" dur.ppq="16" oct="5" pname="d" stem.dir="down" xml:id="nqig061"/>
+<rest dur="8" dur.ppq="4" xml:id="r1k49gi2"/>
+<note dur="8" dur.ppq="4" oct="4" pname="g" stem.dir="up" xml:id="n1sam65f"/>
+<note dur="8" dur.ppq="4" oct="4" pname="g" stem.dir="up" xml:id="n66y3vi"/>
+<note dur="8" dur.ppq="4" oct="4" pname="g" stem.dir="up" xml:id="n1deixsd"/>
+</layer>
+</staff>
+<fermata form="norm" place="above" staff="1" startid="#nqig061" xml:id="fwabipw"/>
+</measure>
+<sb xml:id="s1nfmbx"/>
+<measure n="15" xml:id="m1sj5d6l">
+<staff n="1" xml:id="s1z0f8r9">
+<layer n="1" xml:id="l1dirijj">
+<note accid.ges="s" dots="1" dur="4" dur.ppq="12" oct="5" pname="c" stem.dir="down" xml:id="n14d3lux"/>
+<note accid.ges="s" dur="8" dur.ppq="4" oct="5" pname="c" stem.dir="down" xml:id="n1h3smrq"/>
+<note dur="8" dur.ppq="4" oct="5" pname="d" stem.dir="down" xml:id="nixnxfr"/>
+<note dur="8" dur.ppq="4" oct="5" pname="d" stem.dir="down" xml:id="nnb1s6e"/>
+<note dur="8" dur.ppq="4" oct="5" pname="d" stem.dir="down" xml:id="nbcrfjd"/>
+<note dur="8" dur.ppq="4" oct="5" pname="d" stem.dir="down" xml:id="n10e7bcw"/>
+</layer>
+</staff>
+</measure>
+<!__________________________________________________________________________________________________>
+<!__________________________________________________________________________________________________>
+</section>
+</score>
+</mdiv>
+</body>
+</music>
+</mei>
+<!__________________________________________________________________________________________________>
+}

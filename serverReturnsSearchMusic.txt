@@ -1,3 +1,5 @@
+# SEARCH_MUSIC endpoint results
+
 A json server response in looks like:
 Response = {"hits":[<Hit>],"message":null,"success":true}
     properties:
