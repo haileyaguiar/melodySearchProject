@@ -272,7 +272,7 @@
         <div id="resultContainer"></div>
         <br />
         <h3>Matching Measures:</h3>
-        <div id="mei-rendering"></div>
+        <div id="svgContainer"></div>
         
         @*for when we maybe want to get that matching file
         <form id="searchForm" action="/Home/SearchName" method="get" target="_blank">
@@ -655,53 +655,113 @@
 
 
 
-            // Function to render MEI data using Verovio
+            // Function to render MEI data using Verovio and display it on the page without downloading as SVG files
             function renderMei(meiData) {
-                // Ensure the Verovio toolkit is included and ready
-                const vrvToolkit = new verovio.toolkit();
-
                 try {
                     // Parse the response to extract the MEI content
                     var parsedData = JSON.parse(meiData);
+                    //console.log("Parsed Data (Step 1)", parsedData);
 
                     // Assuming the MEI content is inside an array as "partialMusic"
-                    var meiContent = parsedData.partialMusic.join("\n");
+                    var meiContent = parsedData.partialMusic.join();
+                    //console.log("meiContent (Step 2)", meiContent);
 
                     // Decode any escaped HTML entities (e.g., &lt; to <)
                     var decodedMeiContent = $("<textarea/>").html(meiContent).val();
+                    //console.log("decodedMeiContent (Step 3)", decodedMeiContent);
 
-                    // Load the MEI data into the toolkit
-                    vrvToolkit.loadData(decodedMeiContent, {});
+                    // Split the MEI content into chunks based on the closing measure tag followed by a comma and a new line
+                    var meiChunks = decodedMeiContent.split("</measure>\n,");
+                    //console.log("meiChunks (Step 4)", meiChunks);
 
-                    // Render the MEI data as SVG
-                    const svg = vrvToolkit.renderToSVG(1); // Renders the first page of the MEI data
+                    // Extract the prefix from the first chunk (everything before the first <measure> tag)
+                    const prefix = meiChunks[0].substring(0, meiChunks[0].indexOf('<measure'));
+                    //console.log("Extracted Prefix (Step 5)", prefix);
 
-                    // Modify the SVG to include viewBox for scaling
-                    const $svg = $(svg);
-                    const width = $svg.attr("width").replace("px", ""); // Remove 'px' if present
-                    const height = $svg.attr("height").replace("px", ""); // Remove 'px' if present
+                    // Get the container (svgContainer div)
+                    var svgContainer = document.getElementById('svgContainer');
 
-                    // Set the viewBox attribute without 'px'
-                    $svg.attr("viewBox", `0 0 ${width} ${height}`);
+                    // Clear previous SVGs from the container
+                    svgContainer.innerHTML = ''; // Clear any existing SVGs
 
-                    // Optionally, set a CSS width and height to ensure the SVG fits its container
-                    $svg.css({
-                        width: "100%",
-                        height: "100%"
-                    });
+                    // Get the dimensions of the container
+                    var containerWidth = svgContainer.clientWidth * 0.9; // 90% of the container's width
+                    var containerHeight = svgContainer.clientHeight * 0.9; // 90% of the container's height
 
-                    // Display the modified SVG inside the container
-                    $("#mei-rendering").html($svg);
+                    // Loop through each chunk, render it, and display on the page, excluding the last chunk
+                    for (let index = 0; index < meiChunks.length - 1; index++) {
+                        let chunk = meiChunks[index].trim();
+
+                        if (chunk) {
+                            // Create a new instance of the Verovio toolkit for each chunk
+                            const vrvToolkit = new verovio.toolkit();
+
+                            // Prepare the complete MEI structure for the chunk
+                            let completeChunk = chunk;
+
+                            // Add the closing measure tag back to each chunk to maintain the MEI structure
+                            completeChunk += "</measure>";
+
+                            // Prepend the prefix to all chunks except the first one
+                            if (index > 0) {
+                                completeChunk = prefix + completeChunk;
+                            }
+
+                            //console.log("Complete MEI Chunk (Before Rendering) (Step 6)", completeChunk);
+
+                            // Load the MEI chunk into the toolkit
+                            const loadResult = vrvToolkit.loadData(completeChunk, {});
+
+                            if (loadResult.error) {
+                                console.error("Verovio Load Error:", loadResult.error);
+                                alert("Failed to load MEI chunk: " + loadResult.error);
+                                continue; // Skip this chunk
+                            }
+
+                            // Render the MEI chunk as SVG with the specified options
+                            var options = {
+                                pageWidth: containerWidth, // Use 90% of the container's width
+                                scale: 5,                  // Adjust scale as necessary
+                                pageHeight: containerHeight  // Use 90% of the container's height
+                            };
+
+                            const svgString = vrvToolkit.renderToSVG(1, options); // Renders the first page of the MEI data with options
+
+                            // Check if SVG rendering was successful
+                            if (!svgString) {
+                                console.error("SVG rendering failed for chunk:", index + 1);
+                                alert("Failed to render SVG for chunk: " + (index + 1));
+                                continue; // Skip this chunk
+                            }
+
+                            // Parse the SVG string into an SVG element
+                            const parser = new DOMParser();
+                            const svgDoc = parser.parseFromString(svgString, "image/svg+xml");
+                            const svgElement = svgDoc.documentElement;
+
+                            // Set viewBox attribute based on the dimensions of the SVG
+                            var width = svgElement.getAttribute('width').replace('px', '');
+                            var height = svgElement.getAttribute('height').replace('px', '');
+                            svgElement.setAttribute('viewBox', `0 0 ${width} ${height}`);
+
+                            // Set the SVG style to fill the container
+                            svgElement.style.width = "100%";
+                            svgElement.style.height = "100%";
+
+                            // Append the SVG element to the container (do not clear it before)
+                            svgContainer.appendChild(svgElement); // Append the SVG element
+                        }
+                    }
                 } catch (error) {
                     console.error("Error rendering MEI with Verovio:", error);
-                    alert("Failed to render MEI data.");
+                    alert("Failed to render MEI data: " + error.message);
                 }
             }
 
 
 
             // Add a click event listener to the "Save as MEI" button
-            document.getElementById("saveMeiButton").addEventListener("click", saveMeiAsFile);
+            //document.getElementById("saveMeiButton").addEventListener("click", saveMeiAsFile);
 
             // Function to populate the hidden input field with MEI content
             function populateMeiContent() {
