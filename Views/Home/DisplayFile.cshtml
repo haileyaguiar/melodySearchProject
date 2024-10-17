@@ -39,13 +39,18 @@
 
 <script>
     // Function to extract content between MEI tags and handle attributes, returning all values concatenated
-    function extractMetadataTag(meiDoc, tagName, attributeName = null, attributeValue = null) {
+    function extractMetadataTag(meiDoc, tagName, attributeName = null, attributeValue = null, excludeType = null) {
         var tags = meiDoc.getElementsByTagName(tagName);
         var results = [];
 
         // Loop through all tags matching the tagName
         for (var i = 0; i < tags.length; i++) {
             var tag = tags[i];
+
+            // If excludeType is provided, ignore tags with this attribute value
+            if (excludeType && tag.getAttribute("type") === excludeType) {
+                continue;  // Skip this tag if it matches the excluded type
+            }
 
             // If attributeName and attributeValue are provided, check them
             if (attributeName && attributeValue) {
@@ -57,8 +62,8 @@
             }
         }
 
-        // Join all collected values with a comma
-        return results.length > 0 ? results.join(' ; ') : null;
+        // Join all collected values with a newline for better readability
+        return results.length > 0 ? results.join('\n') : null;
     }
 
     function renderNotation() {
@@ -101,15 +106,14 @@
         notationContainer.appendChild(svgElement); // Append the SVG element
     }
 
-    // Parse MEI content as XML and extract metadata tags
     function processMetadata() {
         var meiContent = document.getElementById('mei-data').value.trim();
         var parser = new DOMParser();
         var meiDoc = parser.parseFromString(meiContent, "application/xml");
 
-        // Extract metadata with consideration for attributes
+        // Extract metadata with consideration for attributes and exclude certain types
         var metadata = {
-            "Title(s)": extractMetadataTag(meiDoc, "title"),  // Regular title
+            "Title(s)": extractMetadataTag(meiDoc, "title", null, null, "collection"),  // Exclude collection titles
             "Text Incipit(s)": extractMetadataTag(meiDoc, "incipText"),
             "Composer": extractMetadataTag(meiDoc, "composer"),
             "Librettist": extractMetadataTag(meiDoc, "librettist"),
@@ -146,7 +150,9 @@
                 var cell1 = row.insertCell(0);
                 var cell2 = row.insertCell(1);
                 cell1.innerHTML = field;
-                cell2.innerHTML = metadata[field];
+
+                // Replace newline characters with <br> for proper HTML rendering
+                cell2.innerHTML = metadata[field].replace(/\n/g, '<br>');
             }
         }
     }
