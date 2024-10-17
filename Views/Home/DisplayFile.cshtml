@@ -110,12 +110,12 @@
         // Extract metadata with consideration for attributes
         var metadata = {
             "Title(s)": extractMetadataTag(meiDoc, "title"),  // Regular title
-            "Text Incipit": extractMetadataTag(meiDoc, "incipText"),
+            "Text Incipit(s)": extractMetadataTag(meiDoc, "incipText"),
             "Composer": extractMetadataTag(meiDoc, "composer"),
             "Librettist": extractMetadataTag(meiDoc, "librettist"),
             "Collection Editor": extractMetadataTag(meiDoc, "editor", "type", "collection"),
             "Encoding Date": extractMetadataTag(meiDoc, "date", "type", "encoding-date"),
-            "Notes": extractMetadataTag(meiDoc, "notes"),
+            "Musical Source": extractMetadataTag(meiDoc, "notes"),
             "Collection Title": extractMetadataTag(meiDoc, "title", "type", "collection"),
             "Collection Number": extractMetadataTag(meiDoc, "collection", "type", "number"),
             "Publisher": extractMetadataTag(meiDoc, "publisher"),
