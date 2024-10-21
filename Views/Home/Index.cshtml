@@ -295,10 +295,11 @@
         <!-- Result links and rendering window-->
         <h2>Results:</h2>
         <p>Click on a link to see the matching measures.</p>
-        <div id="resultContainer"></div>
-        <br />
-        <h3>Matching Measures:</h3>
-        <div id="svgContainer"></div>
+        <div id="containerWrapper">
+            <div id="resultContainer"></div>
+            <div id="svgContainer"></div>
+        </div>
+
         
         @*for when we maybe want to get that matching file
         <form id="searchForm" action="/Home/SearchName" method="get" target="_blank">
@@ -310,6 +311,44 @@
         <br>
         <br>
         <br>
+        <!-- CSS for layout -->
+        <!-- CSS for layout -->
+        <style>
+            #containerWrapper {
+                display: flex;
+                gap: 16px; /* Space between the two containers */
+            }
+
+            #resultContainer {
+                flex: 0 0 33.33%; /* Set to 1/3 of the available space */
+                min-width: 200px; /* Ensure that this container has a minimum width */
+                height: 600px; /* Set a height for the container */
+                border: 1px solid #ccc; /* Optional: border to make the container visible */
+                padding: 8px; /* Optional: padding inside the container */
+                box-sizing: border-box; /* Include padding and border in the element's width and height */
+                overflow-y: auto; /* Allow vertical scrolling for overflow content */
+            }
+
+            #svgContainer {
+                flex: 1; /* Take up remaining space */
+                min-width: 200px; /* Ensure this container has a minimum width */
+                height: 600px; /* Set a height for the container */
+                border: 1px solid #ccc; /* Optional: border to make the container visible */
+                padding: 8px; /* Optional: padding inside the container */
+                box-sizing: border-box; /* Include padding and border in the element's width and height */
+                overflow-y: auto; /* Allow vertical scrolling for overflow content */
+                display: flex;
+                flex-direction: column; /* Stack SVGs vertically */
+                align-items: center; /* Center the SVGs horizontally */
+                background: #f9f9f9; /* Light background for better contrast */
+            }
+
+            svg {
+                margin-bottom: 16px; /* Space between SVGs */
+                max-width: 100%; /* Ensure SVGs do not exceed the container width */
+            }
+        </style>
+
 
 
         <script>
@@ -686,33 +725,24 @@
                 try {
                     // Parse the response to extract the MEI content
                     var parsedData = JSON.parse(meiData);
-                    //console.log("Parsed Data (Step 1)", parsedData);
 
                     // Assuming the MEI content is inside an array as "partialMusic"
                     var meiContent = parsedData.partialMusic.join();
-                    //console.log("meiContent (Step 2)", meiContent);
 
                     // Decode any escaped HTML entities (e.g., &lt; to <)
                     var decodedMeiContent = $("<textarea/>").html(meiContent).val();
-                    //console.log("decodedMeiContent (Step 3)", decodedMeiContent);
 
                     // Split the MEI content into chunks based on the closing measure tag followed by a comma and a new line
                     var meiChunks = decodedMeiContent.split("</measure>\n,");
-                    //console.log("meiChunks (Step 4)", meiChunks);
 
                     // Extract the prefix from the first chunk (everything before the first <measure> tag)
                     const prefix = meiChunks[0].substring(0, meiChunks[0].indexOf('<measure'));
-                    //console.log("Extracted Prefix (Step 5)", prefix);
 
                     // Get the container (svgContainer div)
                     var svgContainer = document.getElementById('svgContainer');
 
                     // Clear previous SVGs from the container
                     svgContainer.innerHTML = ''; // Clear any existing SVGs
-
-                    // Get the dimensions of the container
-                    var containerWidth = svgContainer.clientWidth * 0.9; // 90% of the container's width
-                    var containerHeight = svgContainer.clientHeight * 0.9; // 90% of the container's height
 
                     // Loop through each chunk, render it, and display on the page, excluding the last chunk
                     for (let index = 0; index < meiChunks.length - 1; index++) {
@@ -723,17 +753,12 @@
                             const vrvToolkit = new verovio.toolkit();
 
                             // Prepare the complete MEI structure for the chunk
-                            let completeChunk = chunk;
-
-                            // Add the closing measure tag back to each chunk to maintain the MEI structure
-                            completeChunk += "</measure>";
+                            let completeChunk = chunk + "</measure>"; // Add the closing measure tag
 
                             // Prepend the prefix to all chunks except the first one
                             if (index > 0) {
                                 completeChunk = prefix + completeChunk;
                             }
-
-                            //console.log("Complete MEI Chunk (Before Rendering) (Step 6)", completeChunk);
 
                             // Load the MEI chunk into the toolkit
                             const loadResult = vrvToolkit.loadData(completeChunk, {});
@@ -743,6 +768,10 @@
                                 alert("Failed to load MEI chunk: " + loadResult.error);
                                 continue; // Skip this chunk
                             }
+
+                            // Get dimensions for the container
+                            var containerWidth = svgContainer.clientWidth * 0.9; // 90% of the container's width
+                            var containerHeight = svgContainer.clientHeight * 0.9; // 90% of the container's height
 
                             // Render the MEI chunk as SVG with the specified options
                             var options = {
@@ -772,9 +801,9 @@
 
                             // Set the SVG style to fill the container
                             svgElement.style.width = "100%";
-                            svgElement.style.height = "100%";
+                            svgElement.style.height = "auto"; // Set height to auto to maintain aspect ratio
 
-                            // Append the SVG element to the container (do not clear it before)
+                            // Append the SVG element to the container
                             svgContainer.appendChild(svgElement); // Append the SVG element
                         }
                     }
