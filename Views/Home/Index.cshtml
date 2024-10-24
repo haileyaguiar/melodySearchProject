@@ -720,7 +720,7 @@
 
 
 
-            // Function to render MEI data using Verovio and display it on the page without downloading as SVG files
+            // Function to render MEI data using Verovio and display it on the page
             function renderMei(meiData) {
                 try {
                     // Parse the response to extract the MEI content
@@ -732,8 +732,30 @@
                     // Decode any escaped HTML entities (e.g., &lt; to <)
                     var decodedMeiContent = $("<textarea/>").html(meiContent).val();
 
+                    // Convert MEI content to an XML document
+                    var parser = new DOMParser();
+                    var meiDoc = parser.parseFromString(decodedMeiContent, "application/xml");
+
+                    // Check for any <persName role="composer"> tags and clear their inner text
+                    var composerTags = meiDoc.querySelectorAll('persName[role="composer"]');
+                    composerTags.forEach(function (tag) {
+                        tag.textContent = ""; // Clear the inner text, but keep the tag
+                    });
+
+                    // Check for any <title> tags and clear their inner text
+                    var titleTags = meiDoc.querySelectorAll('title');
+                    titleTags.forEach(function (tag) {
+                        tag.textContent = ""; // Clear the inner text, but keep the tag
+                    });
+
+                    // Serialize the modified XML back into a string
+                    var serializer = new XMLSerializer();
+                    var modifiedMeiContent = serializer.serializeToString(meiDoc);
+
                     // Split the MEI content into chunks based on the closing measure tag followed by a comma and a new line
-                    var meiChunks = decodedMeiContent.split("</measure>\n,");
+                    var meiChunks = modifiedMeiContent.split("</measure>\n,");
+                    console.log(meiChunks);
+
 
                     // Extract the prefix from the first chunk (everything before the first <measure> tag)
                     const prefix = meiChunks[0].substring(0, meiChunks[0].indexOf('<measure'));
@@ -812,6 +834,8 @@
                     alert("Failed to render MEI data: " + error.message);
                 }
             }
+
+
 
 
 

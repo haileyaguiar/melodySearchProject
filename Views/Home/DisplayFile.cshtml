@@ -119,9 +119,10 @@
             "Librettist": extractMetadataTag(meiDoc, "librettist"),
             "Collection Editor": extractMetadataTag(meiDoc, "editor", "type", "collection"),
             "Encoding Date": extractMetadataTag(meiDoc, "date", "type", "encoding-date"),
-            "Musical Source": extractMetadataTag(meiDoc, "notes"),
+            "Musical Source": extractMetadataTag(meiDoc, "notes", null, null, "CdC Number"), //Exclude CdC Number
             "Collection Title": extractMetadataTag(meiDoc, "title", "type", "collection"),
             "Collection Number": extractMetadataTag(meiDoc, "collection", "type", "number"),
+            "Clé du caveau Number": extractMetadataTag(meiDoc, "notes", "type", "CdC Number"),
             "Publisher": extractMetadataTag(meiDoc, "publisher"),
             "Place of Publication": extractMetadataTag(meiDoc, "pubPlace"),
             "Publication Date": extractMetadataTag(meiDoc, "date", "type", "publication"),
