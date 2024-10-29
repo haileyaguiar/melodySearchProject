@@ -115,24 +115,35 @@
             "Title(s)": extractMetadataTag(meiDoc, "title", null, null, "collection"),  // Exclude collection titles
             "Text Incipit(s)": extractMetadataTag(meiDoc, "incipText"),
             "Composer": extractMetadataTag(meiDoc, "composer"),
+            "Arranger": extractMetadataTag(meiDoc, "arranger"),
             "Librettist": extractMetadataTag(meiDoc, "librettist"),
             "Collection Editor": extractMetadataTag(meiDoc, "editor", "type", "collection"),
             "Encoding Date": extractMetadataTag(meiDoc, "date", "type", "encoding-date"),
-            "Musical Source": extractMetadataTag(meiDoc, "notes", null, null, "CdC Number"), //Exclude CdC Number
+            "Musical Source": extractMetadataTag(meiDoc, "notes", "type", "musical sourve"), //Exclude CdC Number
             "Collection Title": extractMetadataTag(meiDoc, "title", "type", "collection"),
             "Collection Number": extractMetadataTag(meiDoc, "collection", "type", "number"),
             "Clé du caveau Number": extractMetadataTag(meiDoc, "notes", "type", "CdC Number"),
+            "CdC tableau": extractMetadataTag(meiDoc, "notes", "type", "CdC tableau"),
+            "CdC tableau division": extractMetadataTag(meiDoc, "notes", "type", "CdC tableau division"),
             "Publisher": extractMetadataTag(meiDoc, "publisher"),
             "Place of Publication": extractMetadataTag(meiDoc, "pubPlace"),
             "Publication Date": extractMetadataTag(meiDoc, "date", "type", "publication"),
             "Edition": extractMetadataTag(meiDoc, "edition"),
-            "Source Type": extractMetadataTag(meiDoc, "sourceType"),
+            "Source Type": extractMetadataTag(meiDoc, "media"),
             "Series Title": extractMetadataTag(meiDoc, "title", "type", "series"),
             "Series Editor": extractMetadataTag(meiDoc, "editor", "type", "series"),
-            "Publisher Plate Number": extractMetadataTag(meiDoc, "publisherPlateNumber"),
-            "Manuscript Library Location": extractMetadataTag(meiDoc, "manuscriptLibraryLocation"),
-            "Manuscript Library Call Number": extractMetadataTag(meiDoc, "manuscriptLibraryCallNumber"),
-            "RISM ID": extractMetadataTag(meiDoc, "rismId"),
+            "Series Number": extractMetadataTag(meiDoc, "number", "type", "series"),
+            "Publisher Plate Number": extractMetadataTag(meiDoc, "plateNum"),
+            "Manuscript Library Location": extractMetadataTag(meiDoc, "library"),
+            "Manuscript Classmark": extractMetadataTag(meiDoc, "classmark"),
+            "RISM ID": extractMetadataTag(meiDoc, "idno", "type", "RISM"),
+            "Musette division": extractMetadataTag(meiDoc, "notes", "type", "Musette division"),
+            "Poetic Form": extractMetadataTag(meiDoc, "notes", "type", "poetic form"),
+            "Poetic Form Associated Title": extractMetadataTag(meiDoc, "notes", "type", "poetic form associated title"),
+            "Specific Rhyme Pattern": extractMetadataTag(meiDoc, "notes", "type", "specific rhyme pattern"),
+            "Musical Form": extractMetadataTag(meiDoc, "notes", "type", "musical form"),
+            "Title by Musical Form": extractMetadataTag(meiDoc, "title", "type", "musical form"),
+
         };
 
         displayMetadata(metadata);
