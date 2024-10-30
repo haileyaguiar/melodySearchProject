@@ -157,8 +157,8 @@
                             <div>
                                 <div style="margin: 6px 13px;">
                                     <div style="padding: 0px; border-width: 0px;">
+                                        <button id="btn_delete_last_note" onclick="deleteLastNote()">Delete Last Note</button>
                                         <button type="button" onclick="resetIncipit()">Reset</button>
-
                                     </div>
                                 </div>
                             </div>
@@ -372,40 +372,44 @@
             }
 
             // function called from the SVG keyboard
-            function onpitch(pitch, oct, alteration, midi) {
-                pitch_str = '';
-                if (oct != current_oct) {
-                    switch (oct) {
-                        case 3:
-                            pitch_str += '\'';
-                        case 2:
-                            pitch_str += '\'';
-                        case 1:
-                            pitch_str += '\'';
+                function onpitch(pitch, oct, alteration, midi) {
+                    var pitch_str = '';
+                    if (oct != current_oct) {
+                        switch (oct) {
+                            case 3:
+                                pitch_str += '\'';
+                            case 2:
+                                pitch_str += '\'';
+                            case 1:
+                                pitch_str += '\'';
+                        }
                     }
-                }
-                current_oct = oct;
+                    current_oct = oct;
 
-                pitch_str += current_duration;
-                if (current_dot == 1) {
-                    pitch_str += '.';
+                    pitch_str += current_duration;
+                    if (current_dot == 1) {
+                        pitch_str += '.';
+                    }
+
+                    switch (alteration) {
+                        case 1:
+                            pitch_str += 'x';
+                            break;
+                        case -1:
+                            pitch_str += 'b';
+                            break;
+                    }
+
+                    pitch_str += pitch;
+
+                    // Save the current state to undos before updating
+                    undos.push($('#incipit_01').val());
+
+                    $('#incipit_01').val($('#incipit_01').val() + pitch_str);
+                    $("#incipit_01").trigger("input");
+                    update_incipit();
                 }
 
-                switch (alteration) {
-                    case 1:
-                        pitch_str += 'x';
-                        break;
-                    case -1:
-                        pitch_str += 'b';
-                        break;
-                }
-
-                pitch_str += pitch;
-                undos.push($('#incipit_01').val());
-                $('#incipit_01').val($('#incipit_01').val() + pitch_str);
-                $("#incipit_01").trigger("input");
-                update_incipit();
-            }
 
             function reset_undos() {
                 undos = []
@@ -610,6 +614,19 @@
                 reset_undos(); // Optional: Reset any undo history or other state
                 update_incipit(); // Update the display or perform any necessary actions
             }
+
+
+            function deleteLastNote() {
+                if (undos.length > 0) {
+                        // Remove the last entry from the undos array and restore it
+                        var lastState = undos.pop();
+                        $('#incipit_01').val(lastState); // Restore the previous incipit state
+                        $("#incipit_01").trigger("input"); // Trigger the input event to update
+                        update_incipit(); // Update the display
+                    }
+            }
+
+
 
 
             // Send MEI data to server to make links
