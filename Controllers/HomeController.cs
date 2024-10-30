@@ -230,190 +230,110 @@ public class HomeController : Controller
 
     // Text search method
     [HttpGet]
-    public async Task<IActionResult> Search(string query)
+    public async Task<IActionResult> SearchAdvanced(string keyword, string title, string composer, string librettist, string incipit, string cdcNumber, string logicalOperator)
     {
-        // Allow letters (including accented), digits, and spaces
-        if (!Regex.IsMatch(query, @"^[\p{L}\p{N}\s]*$", RegexOptions.Compiled))
+        // Prepare base query and search clauses
+        var baseQuery = "SELECT file_id, file_name, file_content FROM public.\"meiFiles\" WHERE 1=1 ";
+        var clauses = new List<string>();
+        var parameters = new List<object>();
+        var parameterIndex = 0; // To track parameter numbers for @p0, @p1, etc.
+
+        // Add search clauses based on input
+        if (!string.IsNullOrWhiteSpace(keyword))
         {
-            return BadRequest("Invalid characters in search query.");
+            clauses.Add($"CAST(file_content AS TEXT) ILIKE @p{parameterIndex}");
+            parameters.Add($"%{keyword}%");
+            parameterIndex++; // Increment the parameter index
+        }
+        if (!string.IsNullOrWhiteSpace(title))
+        {
+            clauses.Add($@"EXISTS (
+                        SELECT 1
+                        FROM unnest(xpath(
+                            '//ns:title/text()',
+                            file_content::xml,
+                            ARRAY[ARRAY['ns', 'http://www.music-encoding.org/ns/mei']]
+                        )) AS title_text
+                        WHERE title_text::text ILIKE @p{parameterIndex}
+                    )");
+            parameters.Add($"%{title}%");
+            parameterIndex++;
+        }
+        if (!string.IsNullOrWhiteSpace(composer))
+        {
+            clauses.Add($@"EXISTS (
+                        SELECT 1
+                        FROM unnest(xpath(
+                            '//ns:composer/text()',
+                            file_content::xml,
+                            ARRAY[ARRAY['ns', 'http://www.music-encoding.org/ns/mei']]
+                        )) AS composer_text
+                        WHERE composer_text::text ILIKE @p{parameterIndex}
+                    )");
+            parameters.Add($"%{composer}%");
+            parameterIndex++;
+        }
+        if (!string.IsNullOrWhiteSpace(librettist))
+        {
+            clauses.Add($@"EXISTS (
+                        SELECT 1
+                        FROM unnest(xpath(
+                            '//ns:librettist/text()',
+                            file_content::xml,
+                            ARRAY[ARRAY['ns', 'http://www.music-encoding.org/ns/mei']]
+                        )) AS librettist_text
+                        WHERE librettist_text::text ILIKE @p{parameterIndex}
+                    )");
+            parameters.Add($"%{librettist}%");
+            parameterIndex++;
+        }
+        if (!string.IsNullOrWhiteSpace(incipit))
+        {
+            clauses.Add($@"EXISTS (
+                        SELECT 1
+                        FROM unnest(xpath(
+                            '//ns:incipText/text()',
+                            file_content::xml,
+                            ARRAY[ARRAY['ns', 'http://www.music-encoding.org/ns/mei']]
+                        )) AS incipit_text
+                        WHERE incipit_text::text ILIKE @p{parameterIndex}
+                    )");
+            parameters.Add($"%{incipit}%");
+            parameterIndex++;
+        }
+        if (!string.IsNullOrWhiteSpace(cdcNumber))
+        {
+            clauses.Add($@"EXISTS (
+                        SELECT 1
+                        FROM unnest(xpath(
+                            '//ns:notes[@type=''CdC Number'']/text()',
+                            file_content::xml,
+                            ARRAY[ARRAY['ns', 'http://www.music-encoding.org/ns/mei']]
+                        )) AS cdc_number
+                        WHERE cdc_number::text ILIKE @p{parameterIndex}
+                    )");
+            parameters.Add($"%{cdcNumber}%");
+            parameterIndex++;
         }
 
-        query = query?.Trim();
-
-        // Limit the length of the search query to prevent overly long input
-        if (query.Length > 100)
+        // Combine clauses using the selected logical operator
+        if (clauses.Any())
         {
-            return BadRequest("Query is too long.");
+            // Handle 'NOT' by wrapping the combined conditions
+            if (logicalOperator == "NOT")
+            {
+                var combinedClauses = string.Join(" AND ", clauses);  // Use AND between clauses for 'NOT'
+                baseQuery += " AND NOT (" + combinedClauses + ")";
+            }
+            else
+            {
+                var combinedClauses = string.Join($" {logicalOperator} ", clauses);
+                baseQuery += " AND (" + combinedClauses + ")";
+            }
         }
-
-        if (string.IsNullOrWhiteSpace(query))
-        {
-            return View("SearchResults", new List<MeiFile>());
-        }
-
-        var parameter = $"%{query}%";
-        var results = await _context.MeiFiles
-            .FromSqlRaw("SELECT file_id, file_name, file_content FROM public.\"meiFiles\" WHERE CAST(file_content AS TEXT) ILIKE {0} ORDER BY file_name", parameter)
-            .Select(m => new MeiFile { file_id = m.file_id, file_name = m.file_name })
-            .ToListAsync();
-
-        return View("SearchResults", results);
-    }
-
-
-    //TESTING BELOW
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    [HttpGet]
-    public async Task<IActionResult> SearchTitle(string query)
-    {
-        // Allow letters (including accented), digits, and spaces
-        if (!Regex.IsMatch(query, @"^[\p{L}\p{N}\s]*$", RegexOptions.Compiled))
-        {
-            return BadRequest("Invalid characters in search query.");
-        }
-
-        query = query?.Trim();
-
-        // Limit the length of the search query to prevent overly long input
-        if (query.Length > 100)
-        {
-            return BadRequest("Query is too long.");
-        }
-
-        if (string.IsNullOrWhiteSpace(query))
-        {
-            return View("SearchResults", new List<MeiFile>());
-        }
-
-        var parameter = $"%{query}%";
-
-        var results = await _context.MeiFiles
-            .FromSqlRaw(@"
-            SELECT file_id, file_name, file_content
-            FROM public.""meiFiles""
-            WHERE EXISTS (
-                SELECT 1
-                FROM unnest(xpath(
-                    '//ns:title/text()',
-                    file_content::xml,
-                    ARRAY[ARRAY['ns', 'http://www.music-encoding.org/ns/mei']]
-                )) AS title_text
-                WHERE title_text::text ILIKE {0}
-            )
-            ORDER BY file_name", parameter)
-            .Select(m => new MeiFile { file_id = m.file_id, file_name = m.file_name })
-            .ToListAsync();
-
-        return View("SearchResults", results);
-    }
-
-
-
-
-
-
-
-    //Composer Search
-
-    [HttpGet]
-    public async Task<IActionResult> SearchComposer(string query)
-    {
-        // Allow letters (including accented), digits, and spaces
-        if (!Regex.IsMatch(query, @"^[\p{L}\p{N}\s]*$", RegexOptions.Compiled))
-        {
-            return BadRequest("Invalid characters in search query.");
-        }
-
-        query = query?.Trim();
-
-        // Limit the length of the search query to prevent overly long input
-        if (query.Length > 100)
-        {
-            return BadRequest("Query is too long.");
-        }
-
-        if (string.IsNullOrWhiteSpace(query))
-        {
-            return View("SearchResults", new List<MeiFile>());
-        }
-
-        var parameter = $"%{query}%";
 
         var results = await _context.MeiFiles
-            .FromSqlRaw(@"
-            SELECT file_id, file_name, file_content
-            FROM public.""meiFiles""
-            WHERE EXISTS (
-                SELECT 1
-                FROM unnest(xpath(
-                    '//ns:composer/text()',
-                    file_content::xml,
-                    ARRAY[ARRAY['ns', 'http://www.music-encoding.org/ns/mei']]
-                )) AS composer_text
-                WHERE composer_text::text ILIKE {0}
-            )
-            ORDER BY file_name", parameter)
-            .Select(m => new MeiFile { file_id = m.file_id, file_name = m.file_name })
-            .ToListAsync();
-
-        return View("SearchResults", results);
-    }
-
-
-    //Librettist Search
-    [HttpGet]
-    public async Task<IActionResult> SearchLibrettist(string query)
-    {
-        // Allow letters (including accented), digits, and spaces
-        if (!Regex.IsMatch(query, @"^[\p{L}\p{N}\s]*$", RegexOptions.Compiled))
-        {
-            return BadRequest("Invalid characters in search query.");
-        }
-
-        query = query?.Trim();
-
-        // Limit the length of the search query to prevent overly long input
-        if (query.Length > 100)
-        {
-            return BadRequest("Query is too long.");
-        }
-
-        if (string.IsNullOrWhiteSpace(query))
-        {
-            return View("SearchResults", new List<MeiFile>());
-        }
-
-        var parameter = $"%{query}%";
-
-        var results = await _context.MeiFiles
-            .FromSqlRaw(@"
-            SELECT file_id, file_name, file_content
-            FROM public.""meiFiles""
-            WHERE EXISTS (
-                SELECT 1
-                FROM unnest(xpath(
-                    '//ns:librettist/text()',
-                    file_content::xml,
-                    ARRAY[ARRAY['ns', 'http://www.music-encoding.org/ns/mei']]
-                )) AS librettist_text
-                WHERE librettist_text::text ILIKE {0}
-            )
-            ORDER BY file_name", parameter)
+            .FromSqlRaw(baseQuery, parameters.ToArray())
             .Select(m => new MeiFile { file_id = m.file_id, file_name = m.file_name })
             .ToListAsync();
 
@@ -422,96 +342,6 @@ public class HomeController : Controller
 
 
 
-
-    //Text Incipit Search
-    [HttpGet]
-    public async Task<IActionResult> SearchIncipit(string query)
-    {
-        // Allow letters (including accented), digits, and spaces
-        if (!Regex.IsMatch(query, @"^[\p{L}\p{N}\s]*$", RegexOptions.Compiled))
-        {
-            return BadRequest("Invalid characters in search query.");
-        }
-
-        query = query?.Trim();
-
-        // Limit the length of the search query to prevent overly long input
-        if (query.Length > 100)
-        {
-            return BadRequest("Query is too long.");
-        }
-
-        if (string.IsNullOrWhiteSpace(query))
-        {
-            return View("SearchResults", new List<MeiFile>());
-        }
-
-        var parameter = $"%{query}%";
-
-        var results = await _context.MeiFiles
-            .FromSqlRaw(@"
-            SELECT file_id, file_name, file_content
-            FROM public.""meiFiles""
-            WHERE EXISTS (
-                SELECT 1
-                FROM unnest(xpath(
-                    '//ns:incipText/text()',
-                    file_content::xml,
-                    ARRAY[ARRAY['ns', 'http://www.music-encoding.org/ns/mei']]
-                )) AS incipit_text
-                WHERE incipit_text::text ILIKE {0}
-            )
-            ORDER BY file_name", parameter)
-            .Select(m => new MeiFile { file_id = m.file_id, file_name = m.file_name })
-            .ToListAsync();
-
-        return View("SearchResults", results);
-    }
-
-    // CdC Number search
-    [HttpGet]
-    public async Task<IActionResult> SearchCdCNumber(string query)
-    {
-        // Allow letters (including accented), digits, and spaces
-        if (!Regex.IsMatch(query, @"^[\p{L}\p{N}\s]*$", RegexOptions.Compiled))
-        {
-            return BadRequest("Invalid characters in search query.");
-        }
-
-        query = query?.Trim();
-
-        // Limit the length of the search query to prevent overly long input
-        if (query.Length > 100)
-        {
-            return BadRequest("Query is too long.");
-        }
-
-        if (string.IsNullOrWhiteSpace(query))
-        {
-            return View("SearchResults", new List<MeiFile>());
-        }
-
-        var parameter = $"%{query}%";
-
-        var results = await _context.MeiFiles
-            .FromSqlRaw(@"
-        SELECT file_id, file_name, file_content
-        FROM public.""meiFiles""
-        WHERE EXISTS (
-            SELECT 1
-            FROM unnest(xpath(
-                '//ns:notes[@type=''CdC Number'']/text()',
-                file_content::xml,
-                ARRAY[ARRAY['ns', 'http://www.music-encoding.org/ns/mei']]
-            )) AS cdc_number
-            WHERE cdc_number::text ILIKE {0}
-        )
-        ORDER BY file_name", parameter)
-            .Select(m => new MeiFile { file_id = m.file_id, file_name = m.file_name })
-            .ToListAsync();
-
-        return View("SearchResults", results);
-    }
 
 
 

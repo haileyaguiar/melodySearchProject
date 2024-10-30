@@ -4,57 +4,45 @@
 
 <body>
     <br />
-    <h2 style="color: slategrey;">
-        Search the Database:</h2n>
-    <br />
-    <h2>By keyword:</h2>
-        <!--Search Stuff-->
-        <form asp-action="Search" method="get">
-            <input type="text" name="query" placeholder="Search MEI files">
-            <button type="submit">Search</button>
-        </form>
-        <br />
-    <h2>Search by title only:</h2>
-    <p>Includes collection and series titles.</p>
-    <!--SEARCH TITLE-->
-    <!--Search Stuff-->
-    <form asp-action="SearchTitle" method="get">
-        <input type="text" name="query" placeholder="Search MEI files">
-        <button type="submit">Search Title</button>
+    <h2 style="color: slategrey;">Search the Database:</h2>
+
+    <!--Search Form-->
+    <form asp-action="SearchAdvanced" method="get">
+        <h3>Search by keyword:</h3>
+        <input type="text" name="keyword" placeholder="Search by keyword">
+
+        <h3>Search by title:</h3>
+        <p>Includes collection and series titles.</p>
+        <input type="text" name="title" placeholder="Search by title">
+
+        <h3>Search by composer:</h3>
+        <input type="text" name="composer" placeholder="Search by composer">
+
+        <h3>Search by librettist:</h3>
+        <input type="text" name="librettist" placeholder="Search by librettist">
+
+        <h3>Search by text incipit:</h3>
+        <input type="text" name="incipit" placeholder="Search by text incipit">
+
+        <h3>Search by Cle du Caveau number:</h3>
+        <p>Format needs to be 0000. For example, to get number 2, search '0002'.</p>
+        <input type="text" name="cdcNumber" placeholder="Search by CdC Number">
+
+        <!-- Logical operator selection -->
+        <!-- Logical operator selection -->
+        <h3>Select how to combine fields:</h3>
+        <select name="logicalOperator">
+            <option value="AND">AND</option>
+            <option value="OR">OR</option>
+            <option value="NOT">NOT</option>
+        </select>
+
+
+        <!-- Search button -->
+        <br /><br />
+        <button type="submit">Search</button>
     </form>
-    <br />
-    <h2>Search by composer only:</h2>
-    <!--SEARCH COMPOSER-->
-    <!--Search Stuff-->
-    <form asp-action="SearchComposer" method="get">
-        <input type="text" name="query" placeholder="Search MEI files">
-        <button type="submit">Search Composer</button>
-    </form>
-    <br />
-    <h2>Search by librettist only:</h2>
-    <!--SEARCH LIBRETTIST-->
-    <!--Search Stuff-->
-    <form asp-action="SearchLibrettist" method="get">
-        <input type="text" name="query" placeholder="Search MEI files">
-        <button type="submit">Search Librettist</button>
-    </form>
-    <br />
-    <h2>Search by text incipit only:</h2>
-    <!--SEARCH TEXT INCIPIT-->
-    <!--Search Stuff-->
-    <form asp-action="SearchIncipit" method="get">
-        <input type="text" name="query" placeholder="Search MEI files">
-        <button type="submit">Search Text Incipit</button>
-    </form>
-    <br />
-    <h2>Search by Cle du Caveau number only:</h2>
-    <p>Format needs to be 0000. For example, to get number 2, search '0002'.</p>
-    <!--SEARCH Cle du Caveau number-->
-    <!--Search Stuff-->
-    <form asp-action="SearchCdCNumber" method="get">
-        <input type="text" name="query" placeholder="Search MEI files">
-        <button type="submit">Search CdC Number</button>
-    </form>
+
 
 
 
