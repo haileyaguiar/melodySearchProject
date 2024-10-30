@@ -6,8 +6,7 @@
 <div style="margin-top: 20px;">
     <button onclick="history.back()" class="btn btn-secondary">Back</button>
 </div>
-
-<h2>@ViewBag.FileName</h2>
+<br />
 
 <!-- Metadata table -->
 <table class="table table-bordered" id="metadata-table">
@@ -21,6 +20,9 @@
         <!-- Metadata rows will be added here via JavaScript -->
     </tbody>
 </table>
+<br />
+<h4>@ViewBag.FileName</h4>
+<br />
 
 <!-- Add a download button -->
 <div>
@@ -118,7 +120,6 @@
             "Arranger": extractMetadataTag(meiDoc, "arranger"),
             "Librettist": extractMetadataTag(meiDoc, "librettist"),
             "Collection Editor": extractMetadataTag(meiDoc, "editor", "type", "collection"),
-            "Encoding Date": extractMetadataTag(meiDoc, "date", "type", "encoding-date"),
             "Musical Source": extractMetadataTag(meiDoc, "notes", "type", "musical sourve"), //Exclude CdC Number
             "Collection Title": extractMetadataTag(meiDoc, "title", "type", "collection"),
             "Collection Number": extractMetadataTag(meiDoc, "collection", "type", "number"),
@@ -143,6 +144,8 @@
             "Specific Rhyme Pattern": extractMetadataTag(meiDoc, "notes", "type", "specific rhyme pattern"),
             "Musical Form": extractMetadataTag(meiDoc, "notes", "type", "musical form"),
             "Title by Musical Form": extractMetadataTag(meiDoc, "title", "type", "musical form"),
+            "Encoding Date": extractMetadataTag(meiDoc, "date", "type", "encoding-date"),
+
 
         };
 
