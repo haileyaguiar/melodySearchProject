@@ -29,8 +29,10 @@
     <a href="@Url.Action("DownloadFile", "Home", new { fileName = ViewBag.FileName })" class="btn btn-primary">Download MEI File</a>
 </div>
 
-<!-- Render the notation -->
-<div id="notation"></div>
+<!-- Fixed-size container for the notation rendering -->
+<div id="notation-container" style="max-width: 1200px; max-height: 1000px; border: 2px solid #ccc; margin: 20px auto; display: flex; justify-content: center; align-items: center; overflow: auto;">
+    <div id="notation" style="width: 1200px; height: 1000px;"></div> <!-- Fixed dimensions for SVG -->
+</div>
 
 <!-- Store the MEI content in a hidden textarea -->
 <textarea id="mei-data" style="display:none;">@Html.Raw(ViewBag.FileContent)</textarea>
@@ -74,14 +76,14 @@
         // Get the container (notation div)
         var notationContainer = document.getElementById('notation');
 
-        // Get the dimensions of the container
-        var containerWidth = notationContainer.clientWidth * 0.9; // 90% of the container's width
-        var containerHeight = notationContainer.clientHeight * 0.9; // 90% of the container's height
+        // Use fixed dimensions for the SVG
+        var svgWidth = 1000; // Increased width
+        var svgHeight = 800; // Increased height
 
         var options = {
-            pageWidth: containerWidth, // Use 90% of the container's width
+            pageWidth: svgWidth, // Use fixed width
             scale: 5,                  // Smaller scale value to make notation more compact
-            pageHeight: containerHeight  // Use 90% of the container's height
+            pageHeight: svgHeight // Use fixed height
         };
 
         // Load MEI content into the toolkit
@@ -98,9 +100,9 @@
         var height = svgElement.getAttribute('height').replace('px', '');
         svgElement.setAttribute('viewBox', `0 0 ${width} ${height}`);
 
-        // Set the SVG style to fill the container
-        svgElement.style.width = "100%";
-        svgElement.style.height = "100%";
+        // Set the SVG style to fixed dimensions
+        svgElement.style.width = svgWidth + "px";
+        svgElement.style.height = svgHeight + "px";
 
         // Clear the innerHTML of the notation container before appending new SVG
         notationContainer.innerHTML = '';
@@ -143,10 +145,8 @@
             "Poetic Form Associated Title": extractMetadataTag(meiDoc, "notes", "type", "poetic form associated title"),
             "Specific Rhyme Pattern": extractMetadataTag(meiDoc, "notes", "type", "specific rhyme pattern"),
             "Musical Form": extractMetadataTag(meiDoc, "notes", "type", "musical form"),
-            "Title by Musical Form": extractMetadataTag(meiDoc, "title", "type", "musical form"),            
+            "Title by Musical Form": extractMetadataTag(meiDoc, "title", "type", "musical form"),
             "Encoding Date": extractMetadataTag(meiDoc, "date", "type", "encoding-date"),
-
-
         };
 
         displayMetadata(metadata);
@@ -175,8 +175,10 @@
     renderNotation();
     processMetadata(); // Call processMetadata after rendering
 
-    // Redraw the notation when the window is resized
-    window.addEventListener('resize', renderNotation);
+    // Resize the frame when the window is resized
+    window.addEventListener('resize', function () {
+        var container = document.getElementById('notation-container');
+        container.style.width = Math.min(window.innerWidth * 0.9, 1200) + "px"; // Set to 90% of window width, max 1000px
+        container.style.height = Math.min(window.innerHeight * 0.9, 1000) + "px"; // Set to 90% of window height, max 800px
+    });
 </script>
-
-
