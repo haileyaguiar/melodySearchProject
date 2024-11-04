@@ -18,7 +18,8 @@ else
         @foreach (var file in Model)
         {
             <li>
-                <a href="@Url.Action("DisplayFile", new { id = file.file_id })" target="_blank">@file.file_name</a>
+                <a href="@Url.Action("DisplayFile", new { id = file.file_id })" >@file.file_name</a>
+                <!--target="_blank"-->
             </li>
         }
     </ul>
