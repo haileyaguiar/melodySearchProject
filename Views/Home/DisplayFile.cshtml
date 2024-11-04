@@ -30,8 +30,8 @@
 </div>
 
 <!-- Fixed-size container for the notation rendering -->
-<div id="notation-container" style="max-width: 1200px; max-height: 1000px; border: 2px solid #ccc; margin: 20px auto; display: flex; justify-content: center; align-items: center; overflow: auto;">
-    <div id="notation" style="width: 1200px; height: 1000px;"></div> <!-- Fixed dimensions for SVG -->
+<div id="notation-container" style="max-width: 1800px; max-height: 1400px; border: 2px solid #ccc; margin: 20px auto; display: flex; justify-content: center; align-items: center; overflow: auto;">
+    <div id="notation" style="width: 1800px; height: 1400px;"></div> <!-- Fixed dimensions for SVG -->
 </div>
 
 <!-- Store the MEI content in a hidden textarea -->
@@ -76,14 +76,14 @@
         // Get the container (notation div)
         var notationContainer = document.getElementById('notation');
 
-        // Use fixed dimensions for the SVG
-        var svgWidth = 1000; // Increased width
-        var svgHeight = 800; // Increased height
+        // Increased dimensions for the SVG
+        var svgWidth = 1800; // Increase the width for a larger PNG
+        var svgHeight = 1400; // Increase the height for a larger PNG
 
         var options = {
-            pageWidth: svgWidth, // Use fixed width
-            scale: 5,                  // Smaller scale value to make notation more compact
-            pageHeight: svgHeight // Use fixed height
+            pageWidth: svgWidth, // Use increased width
+            scale: 50,            // Increase the scale to make the notation bigger (default is usually 40, so 50 makes it larger)
+            pageHeight: svgHeight // Use increased height
         };
 
         // Load MEI content into the toolkit
@@ -108,6 +108,7 @@
         notationContainer.innerHTML = '';
         notationContainer.appendChild(svgElement); // Append the SVG element
     }
+
 
     function processMetadata() {
         var meiContent = document.getElementById('mei-data').value.trim();
@@ -178,7 +179,7 @@
     // Resize the frame when the window is resized
     window.addEventListener('resize', function () {
         var container = document.getElementById('notation-container');
-        container.style.width = Math.min(window.innerWidth * 0.9, 1200) + "px"; // Set to 90% of window width, max 1000px
-        container.style.height = Math.min(window.innerHeight * 0.9, 1000) + "px"; // Set to 90% of window height, max 800px
+        container.style.width = Math.min(window.innerWidth * 0.9, 1800) + "px"; // Set to 90% of window width, max 1000px
+        container.style.height = Math.min(window.innerHeight * 0.9, 1400) + "px"; // Set to 90% of window height, max 800px
     });
 </script>
