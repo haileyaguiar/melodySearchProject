@@ -23,12 +23,16 @@ body {
 }
 
 .navbar {
-    background-color: #0f0c49;
-    color: #fff;
-    padding: 15px 0;
+    background-image: url('/lib/img/Web_Banner.png'); /* Replace with the correct image path */
+    background-size: cover; /* Ensures the image covers the navbar */
+    background-position: center; /* Centers the image in the navbar */
+    background-repeat: no-repeat; /* Prevents the image from repeating */
+    color: black;
+    padding: 30px 0;
     text-align: center;
     width: 100%;
 }
+
 
 .footer {
     background-color: #0f0c49;
