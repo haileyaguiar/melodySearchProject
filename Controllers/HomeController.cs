@@ -5,6 +5,7 @@ using System.Text.Json.Serialization;
 using melodySearchProject.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 public class HomeController : Controller
 {
@@ -230,7 +231,7 @@ public class HomeController : Controller
 
     // Text search method
     [HttpGet]
-    public async Task<IActionResult> SearchAdvanced(string keyword, string title, string composer, string librettist, string incipit, string cdcNumber, string logicalOperator)
+    public async Task<IActionResult> SearchAdvanced(string keyword, string title, string composer, string librettist, string incipit, string musForm, string poetForm, string cdcNumber, string logicalOperator)
     {
         // Prepare base query and search clauses
         var baseQuery = "SELECT file_id, file_name, file_content FROM public.\"meiFiles\" WHERE 1=1 ";
@@ -287,18 +288,32 @@ public class HomeController : Controller
             parameters.Add($"%{librettist}%");
             parameterIndex++;
         }
-        if (!string.IsNullOrWhiteSpace(incipit))
+        if (!string.IsNullOrWhiteSpace(musForm))
         {
             clauses.Add($@"EXISTS (
                         SELECT 1
                         FROM unnest(xpath(
-                            '//ns:inciptText/text()',
+                            '//ns:notes[@type=''musical form'']/text()',
                             file_content::xml,
                             ARRAY[ARRAY['ns', 'http://www.music-encoding.org/ns/mei']]
-                        )) AS incipit_text
-                        WHERE incipit_text::text ILIKE @p{parameterIndex}
+                        )) AS musForm_text
+                        WHERE musForm_text::text ILIKE @p{parameterIndex}
                     )");
-            parameters.Add($"%{incipit}%");
+            parameters.Add($"%{musForm}%");
+            parameterIndex++;
+        }
+        if (!string.IsNullOrWhiteSpace(poetForm))
+        {
+            clauses.Add($@"EXISTS (
+                        SELECT 1
+                        FROM unnest(xpath(
+                            '//ns:notes[@type=''poetic form'']/text()',
+                            file_content::xml,
+                            ARRAY[ARRAY['ns', 'http://www.music-encoding.org/ns/mei']]
+                        )) AS poetForm_text
+                        WHERE poetForm_text::text ILIKE @p{parameterIndex}
+                    )");
+            parameters.Add($"%{poetForm}%");
             parameterIndex++;
         }
         if (!string.IsNullOrWhiteSpace(cdcNumber))
