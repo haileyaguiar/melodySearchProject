@@ -4,39 +4,40 @@
 
 <body>
     <br />
-    <h2 style="color: #0f0c49;">Search the Database:</h2>
+    <h2 style="color: deeppink;">Search the Database:</h2>
 
     <!--Search Form-->
     <form asp-action="SearchAdvanced" method="get">
-        <h3>Search by keyword:</h3>
+        <p>Keyword(s):</p>
         <input type="text" name="keyword" placeholder="Search by keyword">
 
-        <h3>Search by title:</h3>
+        <p>Title(s):</p>
         <p>Includes collection and series titles.</p>
         <input type="text" name="title" placeholder="Search by title">
 
-        <h3>Search by composer:</h3>
+        <p>Composer(s):</p>
         <input type="text" name="composer" placeholder="Search by composer">
 
-        <h3>Search by librettist:</h3>
+        <p>Librettist(s):</p>
         <input type="text" name="librettist" placeholder="Search by librettist">
 
-        <h3>Search by text incipit:</h3>
+        <p>Text Incipit Keyword(s):</p>
         <input type="text" name="incipit" placeholder="Search by text incipit">
 
-        <h3>Search by musical form:</h3>
-        <input type="text" name="musForm" placeholder="Search by musical form">
-
-        <h3>Search by poetic form:</h3>
+        <p>Poetic form:</p>
         <input type="text" name="poetForm" placeholder="Search by poetic form">
 
-        <h3>Search by Cle du Caveau number:</h3>
+        <p>Musical form:</p>
+        <input type="text" name="musForm" placeholder="Search by musical form">
+
+
+        <p>Clé du Caveau number:</p>
         <p>Format needs to be 0000. For example, to get number 2, search '0002'.</p>
         <input type="text" name="cdcNumber" placeholder="Search by CdC Number">
 
         <!-- Logical operator selection -->
         <!-- Logical operator selection -->
-        <h3>Select how to combine fields:</h3>
+        <p>Select how to combine fields:</p>
         <select name="logicalOperator">
             <option value="AND">AND</option>
             <option value="OR">OR</option>
@@ -53,7 +54,7 @@
 
 
 <br />
-<h2>By melody:</h2>
+<p>By melody:</p>
 <!--Keyboard interface:-->
     <div>
         <p>Clicking the top half of the black keys will produce a sharp. Clicking the bottom half will produce a flat.</p>
