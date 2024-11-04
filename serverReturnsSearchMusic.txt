@@ -30,3 +30,4 @@ Source = {"name":"Clé_du_caveau_1850_No.0016.mei", "intervals_text":"2 2 1 2 -
         "measure_map" = string, contains in positional order the corresponding measure number of a note. For example, if you want to find what measure note 45 is in, go to the 45th number in this list.
         "intervals_as_array" = an array of ints, the intervals between the notes in the file
         "measure_map_as_array" = an array of ints, contains in positional order the corresponding measure number of a note. For example, if you want to find what measure note 45 is in, go to the 45th number in this list.
+        "file_id" = the id of the file inside of the databse when we indexed it into elastic search
