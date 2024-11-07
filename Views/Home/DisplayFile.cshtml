@@ -166,11 +166,13 @@
                 var cell2 = row.insertCell(1);
                 cell1.innerHTML = field;
 
-                // Replace newline characters with <br> for proper HTML rendering
-                cell2.innerHTML = metadata[field].replace(/\n/g, '<br>');
+                // Split metadata values by newline and wrap them in <div> for better control
+                var values = metadata[field].split('\n').map(value => `<div class="metadata-line">${value}</div>`).join('');
+                cell2.innerHTML = values;
             }
         }
     }
+
 
     // Initial rendering
     renderNotation();

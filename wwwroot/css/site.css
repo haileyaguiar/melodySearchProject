@@ -23,7 +23,7 @@ body {
 }
 
 .navbar {
-    background-image: url('/lib/img/Web_Banner.png'); /* Replace with the correct image path */
+    background-image: url('~/lib/img/Web_Banner.png');
     background-size: cover; /* Ensures the image covers the navbar */
     background-position: center; /* Centers the image in the navbar */
     background-repeat: no-repeat; /* Prevents the image from repeating */

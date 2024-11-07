@@ -7,47 +7,75 @@
     <h2 style="color: deeppink;">Search the Database:</h2>
 
     <!--Search Form-->
-    <form asp-action="SearchAdvanced" method="get">
-        <p>Keyword(s):</p>
-        <input type="text" name="keyword" placeholder="Search by keyword">
+    <form asp-action="SearchAdvanced" method="get" style="width: 300px;">
 
-        <p>Title(s):</p>
-        <p>Includes collection and series titles.</p>
-        <input type="text" name="title" placeholder="Search by title">
+        <!-- Keyword -->
+        <div style="margin-bottom: 15px;">
+            <label for="keyword" style="font-weight: bold;">Keyword(s):</label><br />
+            <input type="text" id="keyword" name="keyword" placeholder="Search by keyword" style="width: 100%; padding: 5px;">
+        </div>
 
-        <p>Composer(s):</p>
-        <input type="text" name="composer" placeholder="Search by composer">
+        <!-- Title -->
+        <div style="margin-bottom: 15px;">
+            <label for="title" style="font-weight: bold;">Title(s):</label><br />
+            <small>Includes collection and series titles.</small><br />
+            <input type="text" id="title" name="title" placeholder="Search by title" style="width: 100%; padding: 5px;">
+        </div>
 
-        <p>Librettist(s):</p>
-        <input type="text" name="librettist" placeholder="Search by librettist">
+        <!-- Composer -->
+        <div style="margin-bottom: 15px;">
+            <label for="composer" style="font-weight: bold;">Composer(s):</label><br />
+            <input type="text" id="composer" name="composer" placeholder="Search by composer" style="width: 100%; padding: 5px;">
+        </div>
 
-        <p>Text Incipit Keyword(s):</p>
-        <input type="text" name="incipit" placeholder="Search by text incipit">
+        <!-- Librettist -->
+        <div style="margin-bottom: 15px;">
+            <label for="librettist" style="font-weight: bold;">Librettist(s):</label><br />
+            <input type="text" id="librettist" name="librettist" placeholder="Search by librettist" style="width: 100%; padding: 5px;">
+        </div>
 
-        <p>Poetic form:</p>
-        <input type="text" name="poetForm" placeholder="Search by poetic form">
+        <!-- Text Incipit Keyword -->
+        <div style="margin-bottom: 15px;">
+            <label for="incipit" style="font-weight: bold;">Text Incipit Keyword(s):</label><br />
+            <input type="text" id="incipit" name="incipit" placeholder="Search by text incipit" style="width: 100%; padding: 5px;">
+        </div>
 
-        <p>Musical form:</p>
-        <input type="text" name="musForm" placeholder="Search by musical form">
+        <!-- Poetic form -->
+        <div style="margin-bottom: 15px;">
+            <label for="poetForm" style="font-weight: bold;">Poetic form:</label><br />
+            <input type="text" id="poetForm" name="poetForm" placeholder="Search by poetic form" style="width: 100%; padding: 5px;">
+        </div>
 
+        <!-- Musical form -->
+        <div style="margin-bottom: 15px;">
+            <label for="musForm" style="font-weight: bold;">Musical form:</label><br />
+            <input type="text" id="musForm" name="musForm" placeholder="Search by musical form" style="width: 100%; padding: 5px;">
+        </div>
 
-        <p>Clé du Caveau number:</p>
-        <p>Format needs to be 0000. For example, to get number 2, search '0002'.</p>
-        <input type="text" name="cdcNumber" placeholder="Search by CdC Number">
+        <!-- Clé du Caveau number -->
+        <div style="margin-bottom: 15px;">
+            <label for="cdcNumber" style="font-weight: bold;">Clé du Caveau number:</label><br />
+            <small>Format needs to be 0000. For example, to get number 2, search '0002'.</small><br />
+            <input type="text" id="cdcNumber" name="cdcNumber" placeholder="Search by CdC Number" style="width: 100%; padding: 5px;">
+        </div>
 
         <!-- Logical operator selection -->
-        <!-- Logical operator selection -->
-        <p>Select how to combine fields:</p>
-        <select name="logicalOperator">
-            <option value="AND">AND</option>
-            <option value="OR">OR</option>
-            <option value="NOT">NOT</option>
-        </select>
-
+        <div style="margin-bottom: 15px;">
+            <label for="logicalOperator" style="font-weight: bold;">Select how to combine fields:</label><br />
+            <select id="logicalOperator" name="logicalOperator" style="width: 100%; padding: 5px;">
+                <option value="AND">AND</option>
+                <option value="OR">OR</option>
+                <option value="NOT">NOT</option>
+            </select>
+        </div>
 
         <!-- Search button -->
-        <br /><br />
-        <button type="submit">Search</button>
+        <div style="margin-top: 20px;">
+            <button type="submit" style="width: 100%; padding: 10px; background-color: deeppink; color: white; border: none; cursor: pointer;">
+                Search
+            </button>
+        </div>
+
     </form>
 
 
