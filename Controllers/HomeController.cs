@@ -274,6 +274,20 @@ public class HomeController : Controller
             parameters.Add($"%{composer}%");
             parameterIndex++;
         }
+        if (!string.IsNullOrWhiteSpace(librettist))
+        {
+            clauses.Add($@"EXISTS (
+                        SELECT 1
+                        FROM unnest(xpath(
+                            '//ns:librettist/text()',
+                            file_content::xml,
+                            ARRAY[ARRAY['ns', 'http://www.music-encoding.org/ns/mei']]
+                        )) AS librettist_text
+                        WHERE librettist_text::text ILIKE @p{parameterIndex}
+                    )");
+            parameters.Add($"%{librettist}%");
+            parameterIndex++;
+        }
         if (!string.IsNullOrWhiteSpace(incipit))
         {
             clauses.Add($@"EXISTS (
