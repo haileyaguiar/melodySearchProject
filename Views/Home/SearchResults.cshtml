@@ -15,12 +15,14 @@
 else
 {
     <ul>
-        @foreach (var file in Model)
+        @for (var i = 0; i < Model.Count; i++)
         {
             <li>
-                <a href="@Url.Action("DisplayFile", new { id = file.file_id })" >@file.file_name</a>
-                <!--target="_blank"-->
+                <a href="@Url.Action("DisplayFile", new { id = Model[i].file_id, index = i })" target="_blank">
+                    @Model[i].file_name
+                </a>
             </li>
         }
+
     </ul>
 }

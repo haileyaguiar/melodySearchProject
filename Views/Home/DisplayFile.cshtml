@@ -3,8 +3,23 @@
 }
 
 <!-- Add the back button -->
-<div style="margin-top: 20px;">
+@* <div style="margin-top: 20px;">
     <button onclick="history.back()" class="btn btn-secondary">Back</button>
+</div>
+<br /> *@
+
+<!-- Add the Previous and Next buttons -->
+<div style="margin-top: 20px;">
+
+    @if (ViewBag.HasPrevious)
+    {
+        <a href="@Url.Action("DisplayFile", new { id = ViewBag.PreviousId, index = ViewBag.CurrentIndex - 1 })" class="btn btn-primary">Previous</a>
+    }
+
+    @if (ViewBag.HasNext)
+    {
+        <a href="@Url.Action("DisplayFile", new { id = ViewBag.NextId, index = ViewBag.CurrentIndex + 1 })" class="btn btn-primary">Next</a>
+    }
 </div>
 <br />
 

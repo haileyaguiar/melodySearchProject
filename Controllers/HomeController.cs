@@ -6,6 +6,7 @@ using melodySearchProject.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Newtonsoft.Json;
 
 public class HomeController : Controller
 {
@@ -24,7 +25,7 @@ public class HomeController : Controller
     public async Task<ActionResult> SaveMeiData(string inputData)
     {
         ReqSearchMusic mei = new ReqSearchMusic(inputData);
-        var jsonInput = JsonSerializer.Serialize(mei);
+        var jsonInput = System.Text.Json.JsonSerializer.Serialize(mei);
 
         try
         {
@@ -44,8 +45,8 @@ public class HomeController : Controller
                     {
                         try
                         {
-                            Response responseObj = JsonSerializer.Deserialize<Response>(responseData);
-                            foreach(Hit hit in responseObj.hits){
+                            Response responseObj = System.Text.Json.JsonSerializer.Deserialize<Response>(responseData);
+                            foreach (Hit hit in responseObj.hits){
                                 string hit_highlight = "{";
                                 foreach(var pair in hit.highlight){
                                     hit_highlight += "\"";
@@ -111,7 +112,7 @@ public class HomeController : Controller
     [HttpPost]
     public async Task<ActionResult> HandleLinkClick([FromBody] ReqPartialMusic requestData)
     {
-        var jsonInput = JsonSerializer.Serialize(requestData);
+        var jsonInput = System.Text.Json.JsonSerializer.Serialize(requestData);
 
         try
         {
@@ -366,7 +367,11 @@ public class HomeController : Controller
             .Select(m => new MeiFile { file_id = m.file_id, file_name = m.file_name })
             .ToListAsync();
 
+        // Store the list of file IDs in the session
+        HttpContext.Session.SetString("SearchResults", JsonConvert.SerializeObject(results.Select(r => r.file_id).ToList()));
+
         return View("SearchResults", results);
+
     }
 
 
@@ -403,8 +408,18 @@ public class HomeController : Controller
 
     // Displays the MEI file when a text search link is clicked
     [HttpGet]
-    public async Task<IActionResult> DisplayFile(int id)
+    public async Task<IActionResult> DisplayFile(int id, int index)
     {
+        // Retrieve the list of file IDs from the session
+        var searchResultsJson = HttpContext.Session.GetString("SearchResults");
+        var searchResults = JsonConvert.DeserializeObject<List<int>>(searchResultsJson);
+
+        if (searchResults == null || searchResults.Count == 0)
+        {
+            return NotFound(); // No search results available
+        }
+
+        // Get the current file
         var file = await _context.MeiFiles
             .FromSqlRaw("SELECT file_id, file_name, file_content FROM public.\"meiFiles\" WHERE file_id = {0}", id)
             .Select(m => new { m.file_name, m.file_content })
@@ -418,8 +433,17 @@ public class HomeController : Controller
         ViewBag.FileName = file.file_name;
         ViewBag.FileContent = file.file_content; // Pass raw MEI content to the view
 
+        // Determine if previous and next links should be displayed
+        ViewBag.HasPrevious = index > 0;
+        ViewBag.HasNext = index < searchResults.Count - 1;
+
+        ViewBag.PreviousId = ViewBag.HasPrevious ? searchResults[index - 1] : (int?)null;
+        ViewBag.NextId = ViewBag.HasNext ? searchResults[index + 1] : (int?)null;
+        ViewBag.CurrentIndex = index;
+
         return View("DisplayFile");
     }
+
 
 
     // Downloads the file to the user's computer

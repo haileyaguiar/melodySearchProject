@@ -12,6 +12,15 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
+// Add session support
+builder.Services.AddDistributedMemoryCache(); // To store session data in memory
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // Set session timeout to 30 minutes
+    options.Cookie.HttpOnly = true; // Make the session cookie HTTP-only for security
+    options.Cookie.IsEssential = true; // Make the session cookie essential
+});
+
 builder.Services.AddScoped<IMelodyRepository, EFMelodyRepository>();
 
 var app = builder.Build();
@@ -30,6 +39,9 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+
+// Enable session middleware
+app.UseSession();
 
 app.MapControllerRoute(
     name: "default",
