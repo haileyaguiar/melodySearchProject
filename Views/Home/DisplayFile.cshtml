@@ -44,6 +44,12 @@
     <a href="@Url.Action("DownloadFile", "Home", new { fileName = ViewBag.FileName })" class="btn btn-primary">Download MEI File</a>
 </div>
 
+<!-- MIDI Playback and stop Button -->
+<div style="margin-top: 20px;">
+    <button id="play-midi" class="btn btn-success">Play MIDI</button>
+    <button id="stop-midi" class="btn btn-danger">Stop MIDI</button>
+</div>
+
 <!-- Fixed-size container for the notation rendering -->
 <div id="notation-container" style="max-width: 1800px; max-height: 1400px; border: 2px solid #ccc; margin: 20px auto; display: flex; justify-content: center; align-items: center; overflow: auto;">
     <div id="notation" style="width: 1800px; height: 1400px;"></div> <!-- Fixed dimensions for SVG -->
@@ -54,6 +60,10 @@
 
 <!-- Verovio and rendering the MEI content -->
 <script src="https://www.verovio.org/javascript/latest/verovio-toolkit.js"></script>
+
+<!-- Include the MIDI.js library -->
+<script src="https://cdn.rawgit.com/mik3y/midi.js/master/dist/MIDI.js"></script>
+<script src="https://www.midijs.net/lib/midi.js"></script>
 
 <script>
     // Function to extract content between MEI tags and handle attributes, returning all values concatenated
@@ -84,6 +94,7 @@
         return results.length > 0 ? results.join('\n') : null;
     }
 
+    // Function to render notation using Verovio
     function renderNotation() {
         var meiContent = document.getElementById('mei-data').value.trim();
         var vrvToolkit = new verovio.toolkit();
@@ -91,13 +102,12 @@
         // Get the container (notation div)
         var notationContainer = document.getElementById('notation');
 
-        // Increased dimensions for the SVG
         var svgWidth = 1800; // Increase the width for a larger PNG
         var svgHeight = 1400; // Increase the height for a larger PNG
 
         var options = {
             pageWidth: svgWidth, // Use increased width
-            scale: 50,            // Increase the scale to make the notation bigger (default is usually 40, so 50 makes it larger)
+            scale: 50,            // Increase the scale to make the notation bigger
             pageHeight: svgHeight // Use increased height
         };
 
@@ -110,11 +120,6 @@
         var svgDoc = parser.parseFromString(svgString, "image/svg+xml");
         var svgElement = svgDoc.documentElement;
 
-        // Set viewBox attribute based on the dimensions of the SVG
-        var width = svgElement.getAttribute('width').replace('px', '');
-        var height = svgElement.getAttribute('height').replace('px', '');
-        svgElement.setAttribute('viewBox', `0 0 ${width} ${height}`);
-
         // Set the SVG style to fixed dimensions
         svgElement.style.width = svgWidth + "px";
         svgElement.style.height = svgHeight + "px";
@@ -122,6 +127,25 @@
         // Clear the innerHTML of the notation container before appending new SVG
         notationContainer.innerHTML = '';
         notationContainer.appendChild(svgElement); // Append the SVG element
+    }
+
+    // Function to generate and play the MIDI from MEI content
+    function playMIDI() {
+        var meiContent = document.getElementById('mei-data').value.trim();
+        var vrvToolkit = new verovio.toolkit();
+        vrvToolkit.loadData(meiContent);
+
+        // Generate the MIDI data from MEI content
+        var midiData = vrvToolkit.renderToMIDI();
+
+        let midiString = 'data:audio/midi;base64,' + midiData
+        MIDIjs.play(midiString);
+
+    }
+
+    // Function to stop playing the MIDI
+    function stopMIDI() {
+        MIDIjs.stop()
     }
 
 
@@ -189,9 +213,19 @@
     }
 
 
-    // Initial rendering
+    // Add event listener to the Play MIDI button
+    document.getElementById("play-midi").addEventListener("click", function () {
+        playMIDI(); // Trigger the MIDI playback
+    });
+    document.getElementById("stop-midi").addEventListener("click", function () {
+        stopMIDI(); // Trigger the MIDI stop
+    });
+
+    // Initial rendering of the notation
+    processMetadata();
     renderNotation();
-    processMetadata(); // Call processMetadata after rendering
+    
+
 
     // Resize the frame when the window is resized
     window.addEventListener('resize', function () {
