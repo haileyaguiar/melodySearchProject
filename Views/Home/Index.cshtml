@@ -325,6 +325,9 @@
             <div id="svgContainer"></div>
         </div>
 
+        <div id="fileIdDisplay"></div>
+
+
         
         @*for when we maybe want to get that matching file
         <form id="searchForm" action="/Home/SearchName" method="get" target="_blank">
@@ -682,7 +685,12 @@
                                 var measureMap = $(this).data("measure-map");
                                 var measureMapAsArray = $(this).data("measure-map-as-array");
                                 var highlight = $(this).data("highlight");
+                                var fileId = $(this).data("file-id");
                                 var highlightData = highlight.split(',');
+
+                                // Display the file_id on the screen (you can customize this)
+                                $("#fileIdDisplay").text("File ID: " + fileId);  // Assuming you have an element with id="fileIdDisplay"
+
 
                                 // Log extracted data
                                 //console.log("Hit ID:", hitId);

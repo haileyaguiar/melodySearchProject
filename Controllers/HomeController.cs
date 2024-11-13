@@ -67,6 +67,8 @@ public class HomeController : Controller
                                     $"data-intervals-as-array='{string.Join(",", hit.source.intervals_as_array)}' " +
                                     $"data-measure-map='{string.Join(" ", hit.source.measure_map)}' " +
                                     $"data-measure-map-as-array='{string.Join(",", hit.source.measure_map_as_array)}' " +
+                                    $"data-file-id='{hit.source.file_id}' " +
+                                    $"data-file-id='{hit.source.file_id}' " +
                                     $"data-highlight='{string.Join(" ", hit.highlight["intervals_text"])}'>{hit.id}</a><br/>");
 
                                 string linksHtml = string.Join("\n", links);
@@ -200,6 +202,9 @@ public class HomeController : Controller
 
         [JsonPropertyName("measure_map_as_array")]
         public int[] measure_map_as_array { get; set; }
+
+        [JsonPropertyName("file_id")]
+        public string file_id { get; set; }
     }
 
     public class ReqSearchMusic
