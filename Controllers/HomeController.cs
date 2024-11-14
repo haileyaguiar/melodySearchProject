@@ -413,16 +413,23 @@ public class HomeController : Controller
 
     // Displays the MEI file when a text search link is clicked
     [HttpGet]
+
     public async Task<IActionResult> DisplayFile(int id, int index)
     {
         // Retrieve the list of file IDs from the session
         var searchResultsJson = HttpContext.Session.GetString("SearchResults");
-        var searchResults = JsonConvert.DeserializeObject<List<int>>(searchResultsJson);
 
-        if (searchResults == null || searchResults.Count == 0)
-        {
-            return NotFound(); // No search results available
-        }
+        // Safely handle null or empty search results
+        var searchResults = string.IsNullOrEmpty(searchResultsJson)
+            ? new List<int>()  // Initialize an empty list if null
+            : JsonConvert.DeserializeObject<List<int>>(searchResultsJson);
+
+        // Determine if previous and next links should be displayed
+        ViewBag.HasPrevious = index > 0;
+        ViewBag.HasNext = index < searchResults.Count - 1;
+
+        ViewBag.PreviousId = ViewBag.HasPrevious ? searchResults.ElementAtOrDefault(index - 1) : (int?)null;
+        ViewBag.NextId = ViewBag.HasNext ? searchResults.ElementAtOrDefault(index + 1) : (int?)null;
 
         // Get the current file
         var file = await _context.MeiFiles
@@ -432,22 +439,16 @@ public class HomeController : Controller
 
         if (file == null)
         {
-            return NotFound(); // File doesn't exist
+            return NotFound("File doesn't exist.");
         }
 
         ViewBag.FileName = file.file_name;
         ViewBag.FileContent = file.file_content; // Pass raw MEI content to the view
-
-        // Determine if previous and next links should be displayed
-        ViewBag.HasPrevious = index > 0;
-        ViewBag.HasNext = index < searchResults.Count - 1;
-
-        ViewBag.PreviousId = ViewBag.HasPrevious ? searchResults[index - 1] : (int?)null;
-        ViewBag.NextId = ViewBag.HasNext ? searchResults[index + 1] : (int?)null;
         ViewBag.CurrentIndex = index;
 
         return View("DisplayFile");
     }
+
 
 
 

@@ -326,6 +326,9 @@
         </div>
 
         <div id="fileIdDisplay"></div>
+         <!-- Button to redirect to /Home/DisplayFile/{fileId} -->
+        <button id="viewCurrentFileButton">View Current File</button>
+
 
 
         
@@ -884,6 +887,32 @@
                     alert("Failed to render MEI data: " + error.message);
                 }
             }
+
+
+$(document).ready(function() {
+        // Add click event listener for the button
+        $("#viewCurrentFileButton").on("click", function(event) {
+            event.preventDefault();
+
+            // Extract the fileId from the text of #fileIdDisplay
+            var fileIdText = $("#fileIdDisplay").text(); // Example: "File ID: 12345"
+
+            // Extract the numeric part of the fileId using a regular expression
+            var fileId = fileIdText.match(/\d+/); // This will extract "12345" from the string
+
+            // Check if fileId was found
+            if (fileId) {
+                // Construct the URL to call the DisplayFile action with id and index=0
+                var url = "/Home/DisplayFile?id=" + fileId + "&index=0";
+
+                // Open the DisplayFile view in a new tab
+                window.open(url, '_blank');
+            } else {
+                alert("File ID not found.");
+            }
+        });
+    });
+
 
 
 
