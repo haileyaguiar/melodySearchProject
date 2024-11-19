@@ -13,12 +13,12 @@
 
     @if (ViewBag.HasPrevious)
     {
-        <a href="@Url.Action("DisplayFile", new { id = ViewBag.PreviousId, index = ViewBag.CurrentIndex - 1 })" class="btn btn-primary">Previous</a>
+        <a href="@Url.Action("DisplayFile", new { id = ViewBag.PreviousId, index = ViewBag.CurrentIndex - 1 })" class="btn btn-secondary">Previous</a>
     }
 
     @if (ViewBag.HasNext)
     {
-        <a href="@Url.Action("DisplayFile", new { id = ViewBag.NextId, index = ViewBag.CurrentIndex + 1 })" class="btn btn-primary">Next</a>
+        <a href="@Url.Action("DisplayFile", new { id = ViewBag.NextId, index = ViewBag.CurrentIndex + 1 })" class="btn btn-secondary">Next</a>
     }
 </div>
 <br />
@@ -41,7 +41,11 @@
 
 <!-- Add a download button -->
 <div>
-    <a href="@Url.Action("DownloadFile", "Home", new { fileName = ViewBag.FileName })" class="btn btn-primary">Download MEI File</a>
+    <a href="@Url.Action("DownloadFile", "Home", new { fileName = ViewBag.FileName })"
+       class="btn"
+       style="width: 10%; padding: 10px; background-color: deeppink; color: white; border: none; text-align: center; cursor: pointer; display: inline-block;">
+        Download MEI File
+    </a>
 </div>
 <br />
 <p>MIDI player: </p>
