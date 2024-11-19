@@ -52,25 +52,26 @@ body {
 
 #containerWrapper {
     display: flex;
-    margin-top: 10px;
     gap: 20px; /* Space between the result and svg containers */
 }
 
+
+
 #resultContainer {
-    flex: 0 0 20%; /* Fixed 30% width, does not grow or shrink */
-    background-color: #f0f0f0; /* Optional: light background */
+    flex: 0 0 20%;  /*Fixed 30% width, does not grow or shrink */
+    background-color: #f0f0f0;  /*Optional: light background */
     padding: 10px;
-    border: 1px solid #ddd; /* Optional: border for clarity */
-    overflow-y: auto; /* Scroll if content overflows */
-    max-height: 500px; /* Maximum height for scrolling */
+    border: 1px solid #ddd;  /*Optional: border for clarity */
+    overflow-y: auto;  /*Scroll if content overflows */
+    min-height: 500px; /* Maximum height for scrolling */
 }
 
 #svgContainer {
     flex: 1; /* Takes up remaining space */
     background-color: #fff; /* Optional: white background */
     padding: 10px;
-    border: 1px solid #ddd; /* Optional: border for clarity */
-    overflow: auto; /* Enable scrolling if content overflows */
-    min-height: 500px; /* Ensure a minimum height for better display */
+    border: 1px solid #ddd;  /*Optional: border for clarity */
+    overflow: auto;  /*Enable scrolling if content overflows */
+    min-height: 500px;  /*Ensure a minimum height for better display */
 }
 

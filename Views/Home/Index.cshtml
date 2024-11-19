@@ -326,30 +326,41 @@
         </div>
 
         <!-- Result links and rendering window-->
-        <h2>Results:</h2>
-        <p>Click on a link to see the matching measures.</p>
+        <label style="font-weight: bold; margin-left: 200px;">Results:</label>
+        <p style="margin-left: 200px;">Click on a link to see the matching measures.</p>
+        
+        <!-- Button to redirect to /Home/DisplayFile/{fileId} -->
+        <div style="display: flex; justify-content: flex-end; gap: 16px; padding-right: 200px;">
+            <div id="fileIdDisplay"></div>
+            <button id="viewCurrentFileButton"
+                    style="width: 10%;
+               padding: 10px;
+               background-color: deeppink;
+               color: white;
+               border: none;
+               cursor: pointer;
+               text-align: center;">
+                View Current File
+            </button>
+        </div>
+        <br />
         <div id="containerWrapper">
             <div id="resultContainer"></div>
             <div id="svgContainer"></div>
         </div>
-
-        <div id="fileIdDisplay"></div>
-         <!-- Button to redirect to /Home/DisplayFile/{fileId} -->
-        <button id="viewCurrentFileButton">View Current File</button>
-
-
-
         
         <br>
         <br>
         <br>
         <br>
-        <!-- CSS for layout -->
+
         <!-- CSS for layout -->
         <style>
             #containerWrapper {
                 display: flex;
                 gap: 16px; /* Space between the two containers */
+                width: 75%; /* Take up 3/4 of the available screen width */
+                margin: 0 auto; /* Center the container on the screen */
             }
 
             #resultContainer {
@@ -380,6 +391,7 @@
                 margin-bottom: 16px; /* Space between SVGs */
                 max-width: 100%; /* Ensure SVGs do not exceed the container width */
             }
+
         </style>
 
 
