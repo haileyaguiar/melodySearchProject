@@ -4,88 +4,96 @@
 
 <body>
     <br />
-    <h2 style="color: deeppink;">Search the Database:</h2>
+    <h2 style="color: deeppink; margin-left: 150px;">Search the Database:</h2>
+    <div style="display: flex; flex-wrap: wrap; gap: 5px; align-items: flex-start;">
+        <!--Search Form-->
+        <form asp-action="SearchAdvanced" method="get" style="max-width: 600px; margin: 0 auto;">
 
-    <!--Search Form-->
-    <form asp-action="SearchAdvanced" method="get" style="width: 300px;">
+            <!-- Form container with two-column layout -->
+            <div style="display: flex; flex-wrap: wrap; gap: 20px;">
 
-        <!-- Keyword -->
-        <div style="margin-bottom: 15px;">
-            <label for="keyword" style="font-weight: bold;">Keyword(s):</label><br />
-            <input type="text" id="keyword" name="keyword" placeholder="Search by keyword" style="width: 100%; padding: 5px;">
-        </div>
+                <!-- Keyword -->
+                <div style="flex: 1 1 calc(50% - 20px);">
+                    <label for="keyword" style="font-weight: bold;">Keyword(s):</label><br />
+                    <small> </small><br />
+                    <input type="text" id="keyword" name="keyword" placeholder="Search by keyword" style="width: 100%; padding: 5px;">
+                </div>
 
-        <!-- Title -->
-        <div style="margin-bottom: 15px;">
-            <label for="title" style="font-weight: bold;">Title(s):</label><br />
-            <small>Includes collection and series titles.</small><br />
-            <input type="text" id="title" name="title" placeholder="Search by title" style="width: 100%; padding: 5px;">
-        </div>
+                <!-- Title -->
+                <div style="flex: 1 1 calc(50% - 20px);">
+                    <label for="title" style="font-weight: bold;">Title(s):</label><br />
+                    <small>Includes collection and series titles.</small><br />
+                    <input type="text" id="title" name="title" placeholder="Search by title" style="width: 100%; padding: 5px;">
+                </div>
 
-        <!-- Composer -->
-        <div style="margin-bottom: 15px;">
-            <label for="composer" style="font-weight: bold;">Composer(s):</label><br />
-            <input type="text" id="composer" name="composer" placeholder="Search by composer" style="width: 100%; padding: 5px;">
-        </div>
+                <!-- Composer -->
+                <div style="flex: 1 1 calc(50% - 20px);">
+                    <label for="composer" style="font-weight: bold;">Composer(s):</label><br />
+                    <input type="text" id="composer" name="composer" placeholder="Search by composer" style="width: 100%; padding: 5px;">
+                </div>
 
-        <!-- Librettist -->
-        <div style="margin-bottom: 15px;">
-            <label for="librettist" style="font-weight: bold;">Librettist(s):</label><br />
-            <input type="text" id="librettist" name="librettist" placeholder="Search by librettist" style="width: 100%; padding: 5px;">
-        </div>
+                <!-- Librettist -->
+                <div style="flex: 1 1 calc(50% - 20px);">
+                    <label for="librettist" style="font-weight: bold;">Librettist(s):</label><br />
+                    <input type="text" id="librettist" name="librettist" placeholder="Search by librettist" style="width: 100%; padding: 5px;">
+                </div>
 
-        <!-- Text Incipit Keyword -->
-        <div style="margin-bottom: 15px;">
-            <label for="incipit" style="font-weight: bold;">Text Incipit Keyword(s):</label><br />
-            <input type="text" id="incipit" name="incipit" placeholder="Search by text incipit" style="width: 100%; padding: 5px;">
-        </div>
+                <!-- Text Incipit Keyword -->
+                <div style="flex: 1 1 calc(50% - 20px);">
+                    <label for="incipit" style="font-weight: bold;">Text Incipit Keyword(s):</label><br />
+                    <input type="text" id="incipit" name="incipit" placeholder="Search by text incipit" style="width: 100%; padding: 5px;">
+                </div>
 
-        <!-- Poetic form -->
-        <div style="margin-bottom: 15px;">
-            <label for="poetForm" style="font-weight: bold;">Poetic form:</label><br />
-            <input type="text" id="poetForm" name="poetForm" placeholder="Search by poetic form" style="width: 100%; padding: 5px;">
-        </div>
+                <!-- Poetic form -->
+                <div style="flex: 1 1 calc(50% - 20px);">
+                    <label for="poetForm" style="font-weight: bold;">Poetic form:</label><br />
+                    <input type="text" id="poetForm" name="poetForm" placeholder="Search by poetic form" style="width: 100%; padding: 5px;">
+                </div>
 
-        <!-- Musical form -->
-        <div style="margin-bottom: 15px;">
-            <label for="musForm" style="font-weight: bold;">Musical form:</label><br />
-            <input type="text" id="musForm" name="musForm" placeholder="Search by musical form" style="width: 100%; padding: 5px;">
-        </div>
+                <!-- Musical form -->
+                <div style="flex: 1 1 calc(50% - 20px);">
+                    <label for="musForm" style="font-weight: bold;">Musical form:</label><br />
+                    <input type="text" id="musForm" name="musForm" placeholder="Search by musical form" style="width: 100%; padding: 5px;">
+                </div>
 
-        <!-- Clé du Caveau number -->
-        <div style="margin-bottom: 15px;">
-            <label for="cdcNumber" style="font-weight: bold;">Clé du Caveau number:</label><br />
-            <small>Format needs to be 0000. For example, to get number 2, search '0002'.</small><br />
-            <input type="text" id="cdcNumber" name="cdcNumber" placeholder="Search by CdC Number" style="width: 100%; padding: 5px;">
-        </div>
+                <!-- Clé du Caveau number -->
+                <div style="flex: 1 1 calc(50% - 20px);">
+                    <label for="cdcNumber" style="font-weight: bold;">Clé du Caveau number:</label><br />
+                    <small>Format needs to be 0000. For example, to get number 2, search '0002'.</small><br />
+                    <input type="text" id="cdcNumber" name="cdcNumber" placeholder="Search by CdC Number" style="width: 100%; padding: 5px;">
+                </div>
 
-        <!-- Logical operator selection -->
-        <div style="margin-bottom: 15px;">
-            <label for="logicalOperator" style="font-weight: bold;">Select how to combine fields:</label><br />
-            <select id="logicalOperator" name="logicalOperator" style="width: 100%; padding: 5px;">
-                <option value="AND">AND</option>
-                <option value="OR">OR</option>
-                <option value="NOT">NOT</option>
-            </select>
-        </div>
+                <!-- Logical operator selection -->
+                <div style="flex: 1 1 calc(50% - 20px);">
+                    <label for="logicalOperator" style="font-weight: bold;">Select how to combine fields:</label><br />
+                    <select id="logicalOperator" name="logicalOperator" style="width: 100%; padding: 5px;">
+                        <option value="AND">AND</option>
+                        <option value="OR">OR</option>
+                        <option value="NOT">NOT</option>
+                    </select>
+                </div>
 
-        <!-- Search button -->
-        <div style="margin-top: 20px;">
-            <button type="submit" style="width: 100%; padding: 10px; background-color: deeppink; color: white; border: none; cursor: pointer;">
-                Search
-            </button>
-        </div>
+            </div>
 
-    </form>
+            <!-- Search button -->
+            <div style="margin-top: 20px; text-align: center;">
+                <button type="submit" style="padding: 10px 20px; background-color: deeppink; color: white; border: none; cursor: pointer;">
+                    Search
+                </button>
+            </div>
+
+        </form>
 
 
+    </div>
 
 
 <br />
-<p>By melody:</p>
+    <label style="font-weight: bold; margin-left: 500px;">Melody:</label>
 <!--Keyboard interface:-->
     <div>
-        <p>Clicking the top half of the black keys will produce a sharp. Clicking the bottom half will produce a flat.</p>
+        <p style="margin-left: 500px;">Clicking the top half of the black keys will produce a sharp. 
+            <br /> Clicking the bottom half will produce a flat.</p>
         <div style="text-align: center;">
             <div style="display: inline-block; overflow-x: scroll; overflow-y: hidden;">
                 <table>
@@ -180,8 +188,8 @@
                             <div>
                                 <div style="margin: 6px 13px;">
                                     <div style="padding: 0px; border-width: 0px;">
-                                        <button id="btn_delete_last_note" onclick="deleteLastNote()">Delete Last Note</button>
-                                        <button type="button" onclick="resetIncipit()">Reset</button>
+                                        <button style="padding: 10px; background-color: deeppink; color: white; border: none; cursor: pointer;" id="btn_delete_last_note" onclick="deleteLastNote()">Delete Last Note</button>
+                                        <button style="padding: 10px; background-color: deeppink; color: white; border: none; cursor: pointer;" type="button" onclick="resetIncipit()">Reset</button>
                                     </div>
                                 </div>
                             </div>
@@ -309,7 +317,7 @@
             </div>
   
             <!-- Search the MEI incipit button-->
-            <button onclick="saveMeiAsFile()">Search MEI</button>
+                <button style="width: 10%; padding: 10px; background-color: deeppink; color: white; border: none; cursor: pointer;" onclick="saveMeiAsFile()">Search MEI</button>
             <br>
             <br>
             <br>
@@ -332,12 +340,6 @@
 
 
         
-        @*for when we maybe want to get that matching file
-        <form id="searchForm" action="/Home/SearchName" method="get" target="_blank">
-            <input type="text" id="nameBar" name="query" placeholder="" readonly/>
-            <button type="submit">Get Full File</button>
-        </form> *@
-
         <br>
         <br>
         <br>
