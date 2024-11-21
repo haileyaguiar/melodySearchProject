@@ -785,6 +785,12 @@
                 });
             }
 
+            function sanitizeXml(xmlString) {
+                // Replace '&' not followed by a valid entity with '&amp;'
+                return xmlString.replace(/&(?!amp;|lt;|gt;|quot;|apos;)/g, "and");
+            }
+
+
 
 
             // Function to render MEI data using Verovio and display it on the page
@@ -799,9 +805,17 @@
                     // Decode any escaped HTML entities (e.g., &lt; to <)
                     var decodedMeiContent = $("<textarea/>").html(meiContent).val();
 
+                    console.log(decodedMeiContent);
+
+                    var sanitizedMeiContent = sanitizeXml(decodedMeiContent);
+
+                    console.log("Sanitized: " + sanitizedMeiContent);
+
                     // Convert MEI content to an XML document
                     var parser = new DOMParser();
-                    var meiDoc = parser.parseFromString(decodedMeiContent, "application/xml");
+                    var meiDoc = parser.parseFromString(sanitizedMeiContent, "application/xml");
+
+                    console.log(meiDoc);
 
                     // Check for any <persName role="composer"> tags and clear their inner text
                     var composerTags = meiDoc.querySelectorAll('persName[role="composer"]');
@@ -848,6 +862,8 @@
                             if (index > 0) {
                                 completeChunk = prefix + completeChunk;
                             }
+
+                            console.log(completeChunk)
 
                             // Load the MEI chunk into the toolkit
                             const loadResult = vrvToolkit.loadData(completeChunk, {});
