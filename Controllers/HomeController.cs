@@ -299,7 +299,7 @@ public class HomeController : Controller
             clauses.Add($@"EXISTS (
                         SELECT 1
                         FROM unnest(xpath(
-                            '//ns:inciptText/text()',
+                            '//ns:incipText/text()',
                             file_content::xml,
                             ARRAY[ARRAY['ns', 'http://www.music-encoding.org/ns/mei']]
                         )) AS incipit_text
