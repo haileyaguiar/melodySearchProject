@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
+using System.Text;
+using System.Net;
 
 public class HomeController : Controller
 {
@@ -18,6 +20,10 @@ public class HomeController : Controller
     {
         _context = context;
     }
+
+
+
+
 
 
     // Post called when MEI is searched to make dynamic links
@@ -32,14 +38,14 @@ public class HomeController : Controller
             using (var client = new HttpClient())
             {
                 var content = new StringContent(jsonInput, System.Text.Encoding.UTF8, "application/json");
-                //Debug.WriteLine($"Sending POST request to {javaServerUrl} with content: {jsonInput}");
+                Debug.WriteLine($"Sending POST request to {javaServerUrl} with content: {jsonInput}");
                 HttpResponseMessage response = await client.PostAsync(javaServerUrl, content);
 
-                //Debug.WriteLine($"Received response: {response.StatusCode}");
+                Debug.WriteLine($"Received response: {response.StatusCode}");
                 if (response.IsSuccessStatusCode)
                 {
                     string responseData = await response.Content.ReadAsStringAsync();
-                    //Debug.WriteLine($"Response Data: {responseData}");
+                    Debug.WriteLine($"Response Data: {responseData}");
 
                     if (!string.IsNullOrEmpty(responseData))
                     {
@@ -156,66 +162,95 @@ public class HomeController : Controller
     }
 
     // Server deserialization response objects
-    public class Response
+    //public class Response
+    //{
+    //    [JsonPropertyName("hits")]
+    //    public Hit[] hits { get; set; }
+
+    //    [JsonPropertyName("message")]
+    //    public string message { get; set; }
+
+    //    [JsonPropertyName("success")]
+    //    public bool success { get; set; }
+    //}
+
+    //public class Hit
+    //{
+    //    [JsonPropertyName("index")]
+    //    public string index { get; set; }
+
+    //    [JsonPropertyName("id")]
+    //    public string id { get; set; }
+
+    //    [JsonPropertyName("score")]
+    //    public float score { get; set; }
+
+    //    [JsonPropertyName("highlight")]
+    //    public Dictionary<string, string[]> highlight { get; set; }
+
+    //    [JsonPropertyName("source")]
+    //    public Source source { get; set; }
+    //}
+
+    //public class Source
+    //{
+    //    [JsonPropertyName("name")]
+    //    public string name { get; set; }
+
+    //    [JsonPropertyName("intervals_text")]
+    //    public string intervals_text { get; set; }
+
+    //    [JsonPropertyName("measure_map")]
+    //    public string measure_map { get; set; }
+
+    //    [JsonPropertyName("intervals_as_array")]
+    //    public int[] intervals_as_array { get; set; }
+
+    //    [JsonPropertyName("measure_map_as_array")]
+    //    public int[] measure_map_as_array { get; set; }
+
+    //    [JsonPropertyName("file_id")]
+    //    public string file_id { get; set; }
+    //}
+
+
+
+
+
+public class ReqSearchMusic
+{
+    public ReqSearchMusic()
     {
-        [JsonPropertyName("hits")]
-        public Hit[] hits { get; set; }
-
-        [JsonPropertyName("message")]
-        public string message { get; set; }
-
-        [JsonPropertyName("success")]
-        public bool success { get; set; }
+        andMap = new Dictionary<string, List<string>>();
+        orMap = new Dictionary<string, List<string>>();
+        notMap = new Dictionary<string, List<string>>();
     }
 
-    public class Hit
+    public ReqSearchMusic(string meiChunk) : this()
     {
-        [JsonPropertyName("index")]
-        public string index { get; set; }
-
-        [JsonPropertyName("id")]
-        public string id { get; set; }
-
-        [JsonPropertyName("score")]
-        public float score { get; set; }
-
-        [JsonPropertyName("highlight")]
-        public Dictionary<string, string[]> highlight { get; set; }
-
-        [JsonPropertyName("source")]
-        public Source source { get; set; }
+        this.meiChunk = meiChunk;
     }
 
-    public class Source
-    {
-        [JsonPropertyName("name")]
-        public string name { get; set; }
+    [JsonPropertyName("meiChunk")]
+    public string meiChunk { get; set; }
 
-        [JsonPropertyName("intervals_text")]
-        public string intervals_text { get; set; }
+    [JsonPropertyName("andMap")]
+    public Dictionary<string, List<string>> andMap { get; set; }
 
-        [JsonPropertyName("measure_map")]
-        public string measure_map { get; set; }
+    [JsonPropertyName("orMap")]
+    public Dictionary<string, List<string>> orMap { get; set; }
 
-        [JsonPropertyName("intervals_as_array")]
-        public int[] intervals_as_array { get; set; }
+    [JsonPropertyName("notMap")]
+    public Dictionary<string, List<string>> notMap { get; set; }
+}
 
-        [JsonPropertyName("measure_map_as_array")]
-        public int[] measure_map_as_array { get; set; }
 
-        [JsonPropertyName("file_id")]
-        public string file_id { get; set; }
-    }
 
-    public class ReqSearchMusic
-    {
-        public ReqSearchMusic(string v) => meiChunk = v;
 
-        [JsonPropertyName("meiChunk")]
-        public string meiChunk { get; set; }
-    }
 
-    public class ReqPartialMusic
+
+
+public class ReqPartialMusic
     {
         [JsonPropertyName("source")]
         public Source source { get; set; }
@@ -233,6 +268,161 @@ public class HomeController : Controller
         HttpContext.Response.Headers["Expires"] = "0";
         return View();
     }
+    
+    public IActionResult SearchWords()
+    {
+        return View();
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //TESTING DO NOT TOUCH ANYTHING ELSE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+
+
+    [HttpPost]
+    public async Task<ActionResult> SearchMusic([FromBody] ReqSearchMusic searchRequest)    //[FromBody]
+    {
+        if (searchRequest == null)
+        {
+            return Json(new { success = false, message = "Invalid search request" });
+        }
+
+
+        var jsonInput = System.Text.Json.JsonSerializer.Serialize(searchRequest);
+
+        try
+        {
+            using (var client = new HttpClient())
+            {
+                //client.DefaultRequestVersion = HttpVersion.Version11; // Try forcing HTTP 1.1
+
+                var content = new StringContent(jsonInput, System.Text.Encoding.UTF8, "application/json");
+
+                Debug.WriteLine($"Sending POST request to {javaServerUrl} with content: {jsonInput}");
+
+
+                HttpResponseMessage response = await client.PostAsync(javaServerUrl, content);
+
+                Debug.WriteLine($"Received response: {response.StatusCode}");
+
+
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string responseData = await response.Content.ReadAsStringAsync();
+                    Debug.WriteLine($"Response Data: {responseData}");
+
+                    // Return the response to the client
+                    return Json(new { success = true, data = responseData });
+                }
+                else
+                {
+                    Debug.WriteLine($"Error: {response.ReasonPhrase}");
+                    return Json(new { success = false, message = response.ReasonPhrase });
+                }
+
+            }
+        }
+        catch (HttpRequestException ex)
+        {
+            Debug.WriteLine($"Request error: {ex.Message}");
+            return Json($"An error occurred: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"General error: {ex.Message}");
+            return Json($"An error occurred: {ex.Message}");
+        }
+
+        return Json("Unexpected error occurred. No data processed.");
+    }
+
+
+
+
+    public ActionResult TextSearchResults(List<string> fileIds)
+    {
+        if (fileIds == null || !fileIds.Any())
+        {
+            // If there are no file IDs to display, return to the previous page with a message.
+            ViewBag.Message = "No results found.";
+            return View();
+        }
+
+        // Pass the fileIds list to the view to display the results
+        return View(fileIds);
+    }
+
+    //public ActionResult TextSearchResults(string fileIds)
+    //{
+    //    // Decode the fileIds parameter from the query string
+    //    if (string.IsNullOrEmpty(fileIds))
+    //    {
+    //        ViewBag.Message = "No results found.";
+    //        return View();
+    //    }
+
+    //    List<string> fileIdsList = JsonConvert.DeserializeObject<List<string>>(fileIds);
+
+    //    return View(fileIdsList);
+    //}
+
+
+
+
+
+
+
+    //    string responseBody = await response.Content.ReadAsStringAsync();
+    //Debug.WriteLine($"Response Status: {response.StatusCode}");
+    //Debug.WriteLine($"Response Body: {responseBody}");
+
+    //return Json(new { success = response.IsSuccessStatusCode, message = responseBody });
+
+
+    //catch (HttpRequestException ex)
+    //{
+    //    Debug.WriteLine($"Request error: {ex.Message}");
+    //    return Json(new { success = false, message = $"Request error: {ex.Message}" });
+    //}
+    //catch (Exception ex)
+    //{
+    //    Debug.WriteLine($"Unexpected error: {ex.Message}");
+    //    return Json(new { success = false, message = $"Unexpected error: {ex.Message}" });
+    //}
+
+
+
+
+
+
+
+
+
+    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+
+
+
+
 
 
     // Text search method
@@ -265,6 +455,13 @@ public class HomeController : Controller
                     )");
             parameters.Add($"%{title}%");
             parameterIndex++;
+
+
+
+
+
+
+
         }
         if (!string.IsNullOrWhiteSpace(composer))
         {

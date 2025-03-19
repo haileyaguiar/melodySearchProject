@@ -6,7 +6,17 @@
     <br />
     <h2 style="color: deeppink; margin-left: 150px;">Search the Database:</h2>
     <div style="display: flex; flex-wrap: wrap; gap: 5px; align-items: flex-start;">
-        <!--Search Form-->
+
+
+        <div style="margin-top: 20px; text-align: center;">
+            <a href="@Url.Action("SearchWords", "Home")"
+               style="padding: 10px 20px; background-color: deeppink; color: white; border: none; cursor: pointer; margin-left: 450px; font-weight: bold; text-decoration: none;">
+                By Keyword
+            </a>
+        </div>
+
+
+       @*  <!--Search Form-->
         <form asp-action="SearchAdvanced" method="get" style="max-width: 600px; margin: 0 auto;">
 
             <!-- Form container with two-column layout -->
@@ -83,13 +93,13 @@
             </div>
 
         </form>
-
+ *@
 
     </div>
 
 
 <br />
-    <label style="font-weight: bold; margin-left: 500px;">Melody:</label>
+    <label style="font-weight: bold; margin-left: 500px;">By Melody:</label>
 <!--Keyboard interface:-->
     <div>
         <p style="margin-left: 500px;">Clicking the top half of the black keys will produce a sharp. 
@@ -784,6 +794,12 @@
                     }
                 });
             }
+
+
+
+
+
+
 
             function sanitizeXml(xmlString) {
                 // Replace '&' not followed by a valid entity with '&amp;'

@@ -1,0 +1,23 @@
+﻿@model List<string>
+
+@{
+    ViewBag.Title = "Text Search Results";
+}
+
+<h2>Text Search Results</h2>
+
+@if (Model != null && Model.Any())
+{
+    <div>
+        @foreach (var fileId in Model)
+        {
+            <a href="/Home/TextSearchResults?id=@fileId">@fileId</a>
+
+            <br />
+        }
+    </div>
+}
+else
+{
+    <p>No results found.</p>
+}

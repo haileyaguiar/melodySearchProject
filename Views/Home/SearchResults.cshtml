@@ -1,4 +1,4 @@
-﻿@model List<MeiFile>
+﻿@* @model List<MeiFile>
 <br />
 <h2>Search Results</h2>
 
@@ -25,4 +25,47 @@ else
         }
 
     </ul>
+}
+ *@
+
+
+
+ @model IEnumerable<Hit>
+
+@{
+    ViewData["Title"] = "Search Results";
+}
+
+<h2>Search Results</h2>
+
+@if (Model == null || !Model.Any())
+{
+    <p>No results found.</p>
+}
+else
+{
+    <table border="1" style="width: 100%; border-collapse: collapse;">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Score</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.Count(); i++)
+            {
+                var hit = Model.ElementAt(i);
+                <tr>
+                    <td>@hit.source.name</td>
+                    <td>@hit.score</td>
+                    <td>
+                        <a href="@Url.Action("DisplayFile", "Home", new { id = hit.source.file_id, index = i })">
+                            View File
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 }
