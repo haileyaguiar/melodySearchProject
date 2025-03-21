@@ -8,19 +8,32 @@
 </div>
 <br /> *@
 
-<!-- Add the Previous and Next buttons -->
-<div style="margin-top: 20px;">
 
-    @if (ViewBag.HasPrevious)
+
+<div style="margin: 20px;">
+    @if (ViewBag.CurrentIndex > 0)
     {
-        <a href="@Url.Action("DisplayFile", new { id = ViewBag.PreviousId, index = ViewBag.CurrentIndex - 1 })" class="btn btn-secondary">Previous</a>
+        <a href="@Url.Action("DisplayFile", "Home", new { id = ViewBag.FileIds[ViewBag.CurrentIndex - 1], index = ViewBag.CurrentIndex - 1 })"
+           class="btn"
+           style="background-color: deeppink; color: white; padding: 10px; margin-right: 10px;">Previous</a>
     }
+@*     <form method="get" asp-controller="Home" asp-action="ResultsList">
+        <input type="hidden" name="searchTerm" value="@ViewBag.SearchTerm" />
+        <button type="submit" class="btn btn-primary">Results List</button>
+    </form> *@
 
-    @if (ViewBag.HasNext)
+
+    @if (ViewBag.CurrentIndex < (ViewBag.TotalResults - 1))
     {
-        <a href="@Url.Action("DisplayFile", new { id = ViewBag.NextId, index = ViewBag.CurrentIndex + 1 })" class="btn btn-secondary">Next</a>
+        <a href="@Url.Action("DisplayFile", "Home", new { id = ViewBag.FileIds[ViewBag.CurrentIndex + 1], index = ViewBag.CurrentIndex + 1 })"
+           class="btn"
+           style="background-color: deeppink; color: white; padding: 10px;">Next</a>
     }
 </div>
+
+
+
+
 <br />
 
 <!-- Metadata table -->

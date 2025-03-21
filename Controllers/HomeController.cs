@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using System.Text;
 using System.Net;
+using Elastic.Clients.Elasticsearch;
 
 public class HomeController : Controller
 {
@@ -291,19 +292,17 @@ public class ReqPartialMusic
 
 
 
-    //TESTING DO NOT TOUCH ANYTHING ELSE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+// KEYWORDS SEARCH METHODS
 
 
 
     [HttpPost]
-    public async Task<ActionResult> SearchMusic([FromBody] ReqSearchMusic searchRequest)    //[FromBody]
+    public async Task<ActionResult> SearchMusic([FromBody] ReqSearchMusic searchRequest)
     {
         if (searchRequest == null)
         {
             return Json(new { success = false, message = "Invalid search request" });
         }
-
 
         var jsonInput = System.Text.Json.JsonSerializer.Serialize(searchRequest);
 
@@ -311,48 +310,51 @@ public class ReqPartialMusic
         {
             using (var client = new HttpClient())
             {
-                //client.DefaultRequestVersion = HttpVersion.Version11; // Try forcing HTTP 1.1
-
                 var content = new StringContent(jsonInput, System.Text.Encoding.UTF8, "application/json");
 
-                Debug.WriteLine($"Sending POST request to {javaServerUrl} with content: {jsonInput}");
-
+                //Debug.WriteLine($"Sending POST request to {javaServerUrl} with content: {jsonInput}");
 
                 HttpResponseMessage response = await client.PostAsync(javaServerUrl, content);
 
-                Debug.WriteLine($"Received response: {response.StatusCode}");
-
-
+                //Debug.WriteLine($"Received response: {response.StatusCode}");
 
                 if (response.IsSuccessStatusCode)
                 {
                     string responseData = await response.Content.ReadAsStringAsync();
-                    Debug.WriteLine($"Response Data: {responseData}");
+                    //Debug.WriteLine($"Response Data: {responseData}");
 
-                    // Return the response to the client
+                    var responseJson = System.Text.Json.JsonSerializer.Deserialize<Response>(responseData);
+
+                    var fileIds = responseJson?.hits?.Select(hit => hit.source.file_id).ToList();
+
+                    // Store the list of file IDs in the session
+                    if (fileIds != null)
+                    {
+                        HttpContext.Session.SetString("SearchResults", System.Text.Json.JsonSerializer.Serialize(fileIds));
+                    }
+
                     return Json(new { success = true, data = responseData });
                 }
                 else
                 {
-                    Debug.WriteLine($"Error: {response.ReasonPhrase}");
+                    //Debug.WriteLine($"Error: {response.ReasonPhrase}");
                     return Json(new { success = false, message = response.ReasonPhrase });
                 }
-
             }
         }
         catch (HttpRequestException ex)
         {
-            Debug.WriteLine($"Request error: {ex.Message}");
-            return Json($"An error occurred: {ex.Message}");
+            //Debug.WriteLine($"Request error: {ex.Message}");
+            return Json(new { success = false, message = $"An error occurred: {ex.Message}" });
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"General error: {ex.Message}");
-            return Json($"An error occurred: {ex.Message}");
+            //Debug.WriteLine($"General error: {ex.Message}");
+            return Json(new { success = false, message = $"An error occurred: {ex.Message}" });
         }
-
-        return Json("Unexpected error occurred. No data processed.");
     }
+
+
 
 
 
@@ -370,50 +372,7 @@ public class ReqPartialMusic
         return View(fileIds);
     }
 
-    //public ActionResult TextSearchResults(string fileIds)
-    //{
-    //    // Decode the fileIds parameter from the query string
-    //    if (string.IsNullOrEmpty(fileIds))
-    //    {
-    //        ViewBag.Message = "No results found.";
-    //        return View();
-    //    }
-
-    //    List<string> fileIdsList = JsonConvert.DeserializeObject<List<string>>(fileIds);
-
-    //    return View(fileIdsList);
-    //}
-
-
-
-
-
-
-
-    //    string responseBody = await response.Content.ReadAsStringAsync();
-    //Debug.WriteLine($"Response Status: {response.StatusCode}");
-    //Debug.WriteLine($"Response Body: {responseBody}");
-
-    //return Json(new { success = response.IsSuccessStatusCode, message = responseBody });
-
-
-    //catch (HttpRequestException ex)
-    //{
-    //    Debug.WriteLine($"Request error: {ex.Message}");
-    //    return Json(new { success = false, message = $"Request error: {ex.Message}" });
-    //}
-    //catch (Exception ex)
-    //{
-    //    Debug.WriteLine($"Unexpected error: {ex.Message}");
-    //    return Json(new { success = false, message = $"Unexpected error: {ex.Message}" });
-    //}
-
-
-
-
-
-
-
+   
 
 
     //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -425,156 +384,156 @@ public class ReqPartialMusic
 
 
 
-    // Text search method
-    [HttpGet]
-    public async Task<IActionResult> SearchAdvanced(string keyword, string title, string composer, string librettist, string incipit, string musForm, string poetForm, string cdcNumber, string logicalOperator)
-    {
-        // Prepare base query and search clauses
-        var baseQuery = "SELECT file_id, file_name, file_content FROM public.\"meiFiles\" WHERE 1=1 ";
-        var clauses = new List<string>();
-        var parameters = new List<object>();
-        var parameterIndex = 0; // To track parameter numbers for @p0, @p1, etc.
+    //// Text search method
+    //[HttpGet]
+    //public async Task<IActionResult> SearchAdvanced(string keyword, string title, string composer, string librettist, string incipit, string musForm, string poetForm, string cdcNumber, string logicalOperator)
+    //{
+    //    // Prepare base query and search clauses
+    //    var baseQuery = "SELECT file_id, file_name, file_content FROM public.\"meiFiles\" WHERE 1=1 ";
+    //    var clauses = new List<string>();
+    //    var parameters = new List<object>();
+    //    var parameterIndex = 0; // To track parameter numbers for @p0, @p1, etc.
 
-        // Add search clauses based on input
-        if (!string.IsNullOrWhiteSpace(keyword))
-        {
-            clauses.Add($"CAST(file_content AS TEXT) ILIKE @p{parameterIndex}");
-            parameters.Add($"%{keyword}%");
-            parameterIndex++; // Increment the parameter index
-        }
-        if (!string.IsNullOrWhiteSpace(title))
-        {
-            clauses.Add($@"EXISTS (
-                        SELECT 1
-                        FROM unnest(xpath(
-                            '//ns:title/text()',
-                            file_content::xml,
-                            ARRAY[ARRAY['ns', 'http://www.music-encoding.org/ns/mei']]
-                        )) AS title_text
-                        WHERE title_text::text ILIKE @p{parameterIndex}
-                    )");
-            parameters.Add($"%{title}%");
-            parameterIndex++;
-
-
+    //    // Add search clauses based on input
+    //    if (!string.IsNullOrWhiteSpace(keyword))
+    //    {
+    //        clauses.Add($"CAST(file_content AS TEXT) ILIKE @p{parameterIndex}");
+    //        parameters.Add($"%{keyword}%");
+    //        parameterIndex++; // Increment the parameter index
+    //    }
+    //    if (!string.IsNullOrWhiteSpace(title))
+    //    {
+    //        clauses.Add($@"EXISTS (
+    //                    SELECT 1
+    //                    FROM unnest(xpath(
+    //                        '//ns:title/text()',
+    //                        file_content::xml,
+    //                        ARRAY[ARRAY['ns', 'http://www.music-encoding.org/ns/mei']]
+    //                    )) AS title_text
+    //                    WHERE title_text::text ILIKE @p{parameterIndex}
+    //                )");
+    //        parameters.Add($"%{title}%");
+    //        parameterIndex++;
 
 
 
 
 
-        }
-        if (!string.IsNullOrWhiteSpace(composer))
-        {
-            clauses.Add($@"EXISTS (
-                        SELECT 1
-                        FROM unnest(xpath(
-                            '//ns:composer/text()',
-                            file_content::xml,
-                            ARRAY[ARRAY['ns', 'http://www.music-encoding.org/ns/mei']]
-                        )) AS composer_text
-                        WHERE composer_text::text ILIKE @p{parameterIndex}
-                    )");
-            parameters.Add($"%{composer}%");
-            parameterIndex++;
-        }
-        if (!string.IsNullOrWhiteSpace(librettist))
-        {
-            clauses.Add($@"EXISTS (
-                        SELECT 1
-                        FROM unnest(xpath(
-                            '//ns:librettist/text()',
-                            file_content::xml,
-                            ARRAY[ARRAY['ns', 'http://www.music-encoding.org/ns/mei']]
-                        )) AS librettist_text
-                        WHERE librettist_text::text ILIKE @p{parameterIndex}
-                    )");
-            parameters.Add($"%{librettist}%");
-            parameterIndex++;
-        }
-        if (!string.IsNullOrWhiteSpace(incipit))
-        {
-            clauses.Add($@"EXISTS (
-                        SELECT 1
-                        FROM unnest(xpath(
-                            '//ns:incipText/text()',
-                            file_content::xml,
-                            ARRAY[ARRAY['ns', 'http://www.music-encoding.org/ns/mei']]
-                        )) AS incipit_text
-                        WHERE incipit_text::text ILIKE @p{parameterIndex}
-                    )");
-            parameters.Add($"%{incipit}%");
-            parameterIndex++;
-        }
-        if (!string.IsNullOrWhiteSpace(musForm))
-        {
-            clauses.Add($@"EXISTS (
-                        SELECT 1
-                        FROM unnest(xpath(
-                            '//ns:notes[@type=''musical form'']/text()',
-                            file_content::xml,
-                            ARRAY[ARRAY['ns', 'http://www.music-encoding.org/ns/mei']]
-                        )) AS musForm_text
-                        WHERE musForm_text::text ILIKE @p{parameterIndex}
-                    )");
-            parameters.Add($"%{musForm}%");
-            parameterIndex++;
-        }
-        if (!string.IsNullOrWhiteSpace(poetForm))
-        {
-            clauses.Add($@"EXISTS (
-                        SELECT 1
-                        FROM unnest(xpath(
-                            '//ns:notes[@type=''poetic form'']/text()',
-                            file_content::xml,
-                            ARRAY[ARRAY['ns', 'http://www.music-encoding.org/ns/mei']]
-                        )) AS poetForm_text
-                        WHERE poetForm_text::text ILIKE @p{parameterIndex}
-                    )");
-            parameters.Add($"%{poetForm}%");
-            parameterIndex++;
-        }
-        if (!string.IsNullOrWhiteSpace(cdcNumber))
-        {
-            clauses.Add($@"EXISTS (
-                        SELECT 1
-                        FROM unnest(xpath(
-                            '//ns:notes[@type=''CdC Number'']/text()',
-                            file_content::xml,
-                            ARRAY[ARRAY['ns', 'http://www.music-encoding.org/ns/mei']]
-                        )) AS cdc_number
-                        WHERE cdc_number::text ILIKE @p{parameterIndex}
-                    )");
-            parameters.Add($"%{cdcNumber}%");
-            parameterIndex++;
-        }
 
-        // Combine clauses using the selected logical operator
-        if (clauses.Any())
-        {
-            // Handle 'NOT' by wrapping the combined conditions
-            if (logicalOperator == "NOT")
-            {
-                var combinedClauses = string.Join(" AND ", clauses);  // Use AND between clauses for 'NOT'
-                baseQuery += " AND NOT (" + combinedClauses + ")";
-            }
-            else
-            {
-                var combinedClauses = string.Join($" {logicalOperator} ", clauses);
-                baseQuery += " AND (" + combinedClauses + ")";
-            }
-        }
 
-        var results = await _context.MeiFiles
-            .FromSqlRaw(baseQuery, parameters.ToArray())
-            .Select(m => new MeiFile { file_id = m.file_id, file_name = m.file_name })
-            .ToListAsync();
+    //    }
+    //    if (!string.IsNullOrWhiteSpace(composer))
+    //    {
+    //        clauses.Add($@"EXISTS (
+    //                    SELECT 1
+    //                    FROM unnest(xpath(
+    //                        '//ns:composer/text()',
+    //                        file_content::xml,
+    //                        ARRAY[ARRAY['ns', 'http://www.music-encoding.org/ns/mei']]
+    //                    )) AS composer_text
+    //                    WHERE composer_text::text ILIKE @p{parameterIndex}
+    //                )");
+    //        parameters.Add($"%{composer}%");
+    //        parameterIndex++;
+    //    }
+    //    if (!string.IsNullOrWhiteSpace(librettist))
+    //    {
+    //        clauses.Add($@"EXISTS (
+    //                    SELECT 1
+    //                    FROM unnest(xpath(
+    //                        '//ns:librettist/text()',
+    //                        file_content::xml,
+    //                        ARRAY[ARRAY['ns', 'http://www.music-encoding.org/ns/mei']]
+    //                    )) AS librettist_text
+    //                    WHERE librettist_text::text ILIKE @p{parameterIndex}
+    //                )");
+    //        parameters.Add($"%{librettist}%");
+    //        parameterIndex++;
+    //    }
+    //    if (!string.IsNullOrWhiteSpace(incipit))
+    //    {
+    //        clauses.Add($@"EXISTS (
+    //                    SELECT 1
+    //                    FROM unnest(xpath(
+    //                        '//ns:incipText/text()',
+    //                        file_content::xml,
+    //                        ARRAY[ARRAY['ns', 'http://www.music-encoding.org/ns/mei']]
+    //                    )) AS incipit_text
+    //                    WHERE incipit_text::text ILIKE @p{parameterIndex}
+    //                )");
+    //        parameters.Add($"%{incipit}%");
+    //        parameterIndex++;
+    //    }
+    //    if (!string.IsNullOrWhiteSpace(musForm))
+    //    {
+    //        clauses.Add($@"EXISTS (
+    //                    SELECT 1
+    //                    FROM unnest(xpath(
+    //                        '//ns:notes[@type=''musical form'']/text()',
+    //                        file_content::xml,
+    //                        ARRAY[ARRAY['ns', 'http://www.music-encoding.org/ns/mei']]
+    //                    )) AS musForm_text
+    //                    WHERE musForm_text::text ILIKE @p{parameterIndex}
+    //                )");
+    //        parameters.Add($"%{musForm}%");
+    //        parameterIndex++;
+    //    }
+    //    if (!string.IsNullOrWhiteSpace(poetForm))
+    //    {
+    //        clauses.Add($@"EXISTS (
+    //                    SELECT 1
+    //                    FROM unnest(xpath(
+    //                        '//ns:notes[@type=''poetic form'']/text()',
+    //                        file_content::xml,
+    //                        ARRAY[ARRAY['ns', 'http://www.music-encoding.org/ns/mei']]
+    //                    )) AS poetForm_text
+    //                    WHERE poetForm_text::text ILIKE @p{parameterIndex}
+    //                )");
+    //        parameters.Add($"%{poetForm}%");
+    //        parameterIndex++;
+    //    }
+    //    if (!string.IsNullOrWhiteSpace(cdcNumber))
+    //    {
+    //        clauses.Add($@"EXISTS (
+    //                    SELECT 1
+    //                    FROM unnest(xpath(
+    //                        '//ns:notes[@type=''CdC Number'']/text()',
+    //                        file_content::xml,
+    //                        ARRAY[ARRAY['ns', 'http://www.music-encoding.org/ns/mei']]
+    //                    )) AS cdc_number
+    //                    WHERE cdc_number::text ILIKE @p{parameterIndex}
+    //                )");
+    //        parameters.Add($"%{cdcNumber}%");
+    //        parameterIndex++;
+    //    }
 
-        // Store the list of file IDs in the session
-        HttpContext.Session.SetString("SearchResults", JsonConvert.SerializeObject(results.Select(r => r.file_id).ToList()));
+    //    // Combine clauses using the selected logical operator
+    //    if (clauses.Any())
+    //    {
+    //        // Handle 'NOT' by wrapping the combined conditions
+    //        if (logicalOperator == "NOT")
+    //        {
+    //            var combinedClauses = string.Join(" AND ", clauses);  // Use AND between clauses for 'NOT'
+    //            baseQuery += " AND NOT (" + combinedClauses + ")";
+    //        }
+    //        else
+    //        {
+    //            var combinedClauses = string.Join($" {logicalOperator} ", clauses);
+    //            baseQuery += " AND (" + combinedClauses + ")";
+    //        }
+    //    }
 
-        return View("SearchResults", results);
+    //    var results = await _context.MeiFiles
+    //        .FromSqlRaw(baseQuery, parameters.ToArray())
+    //        .Select(m => new MeiFile { file_id = m.file_id, file_name = m.file_name })
+    //        .ToListAsync();
 
-    }
+    //    // Store the list of file IDs in the session
+    //    HttpContext.Session.SetString("SearchResults", JsonConvert.SerializeObject(results.Select(r => r.file_id).ToList()));
+
+    //    return View("SearchResults", results);
+
+    //}
 
 
 
@@ -608,43 +567,132 @@ public class ReqPartialMusic
 
 
 
-    // Displays the MEI file when a text search link is clicked
-    [HttpGet]
 
-    public async Task<IActionResult> DisplayFile(int id, int index)
+    public IActionResult ResultsList(string searchTerm)
     {
-        // Retrieve the list of file IDs from the session
-        var searchResultsJson = HttpContext.Session.GetString("SearchResults");
+        if (string.IsNullOrEmpty(searchTerm))
+        {
+            return RedirectToAction("SearchWords"); // Simply redirect if no term is provided
+        }
 
-        // Safely handle null or empty search results
-        var searchResults = string.IsNullOrEmpty(searchResultsJson)
-            ? new List<int>()  // Initialize an empty list if null
-            : JsonConvert.DeserializeObject<List<int>>(searchResultsJson);
+        return RedirectToAction("SearchWords", new { searchTerm = searchTerm });
+    }
 
-        // Determine if previous and next links should be displayed
-        ViewBag.HasPrevious = index > 0;
-        ViewBag.HasNext = index < searchResults.Count - 1;
 
-        ViewBag.PreviousId = ViewBag.HasPrevious ? searchResults.ElementAtOrDefault(index - 1) : (int?)null;
-        ViewBag.NextId = ViewBag.HasNext ? searchResults.ElementAtOrDefault(index + 1) : (int?)null;
 
-        // Get the current file
+
+
+    private async Task<string> FetchFileContentById(string fileId)
+    {
+        if (!int.TryParse(fileId, out int fileIdInt))
+        {
+            return $"Invalid file ID: {fileId}";
+        }
+
         var file = await _context.MeiFiles
-            .FromSqlRaw("SELECT file_id, file_name, file_content FROM public.\"meiFiles\" WHERE file_id = {0}", id)
+            .FromSqlRaw("SELECT file_id, file_name, file_content FROM public.\"meiFiles\" WHERE file_id = {0}", fileIdInt)
             .Select(m => new { m.file_name, m.file_content })
             .FirstOrDefaultAsync();
 
         if (file == null)
         {
-            return NotFound("File doesn't exist.");
+            return $"File with ID {fileId} not found.";
         }
 
-        ViewBag.FileName = file.file_name;
-        ViewBag.FileContent = file.file_content; // Pass raw MEI content to the view
-        ViewBag.CurrentIndex = index;
-
-        return View("DisplayFile");
+        return file.file_content;
     }
+
+
+
+
+
+
+
+    public async Task<ActionResult> DisplayFile(string id, int index)
+    {
+        var fileIdsJson = HttpContext.Session.GetString("SearchResults");
+
+        List<string> fileIds = fileIdsJson != null
+            ? System.Text.Json.JsonSerializer.Deserialize<List<string>>(fileIdsJson)
+            : new List<string>();
+
+        if (index < 0 || index >= fileIds.Count)
+        {
+            return RedirectToAction("TextSearchResults", new { fileIds });
+        }
+
+        string currentFileId = fileIds[index];
+        ViewBag.CurrentIndex = index;
+        ViewBag.TotalResults = fileIds.Count;
+        ViewBag.FileIds = fileIds;
+
+        // Fetch the file content from the database
+        var fileContent = await FetchFileContentById(currentFileId);
+
+        ViewBag.FileContent = fileContent;
+        ViewBag.FileName = $"File_{index + 1}.mei";
+
+        return View();
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //// Displays the MEI file when a text search link is clicked
+    //[HttpGet]
+
+    //public async Task<IActionResult> DisplayFile(int id, int index)
+    //{
+    //    // Retrieve the list of file IDs from the session
+    //    var searchResultsJson = HttpContext.Session.GetString("SearchResults");
+
+    //    // Safely handle null or empty search results
+    //    var searchResults = string.IsNullOrEmpty(searchResultsJson)
+    //        ? new List<int>()  // Initialize an empty list if null
+    //        : JsonConvert.DeserializeObject<List<int>>(searchResultsJson);
+
+    //    // Determine if previous and next links should be displayed
+    //    ViewBag.HasPrevious = index > 0;
+    //    ViewBag.HasNext = index < searchResults.Count - 1;
+
+    //    ViewBag.PreviousId = ViewBag.HasPrevious ? searchResults.ElementAtOrDefault(index - 1) : (int?)null;
+    //    ViewBag.NextId = ViewBag.HasNext ? searchResults.ElementAtOrDefault(index + 1) : (int?)null;
+
+    //    // Get the current file
+    //    var file = await _context.MeiFiles
+    //        .FromSqlRaw("SELECT file_id, file_name, file_content FROM public.\"meiFiles\" WHERE file_id = {0}", id)
+    //        .Select(m => new { m.file_name, m.file_content })
+    //        .FirstOrDefaultAsync();
+
+    //    if (file == null)
+    //    {
+    //        return NotFound("File doesn't exist.");
+    //    }
+
+    //    ViewBag.FileName = file.file_name;
+    //    ViewBag.FileContent = file.file_content; // Pass raw MEI content to the view
+    //    ViewBag.CurrentIndex = index;
+
+    //    return View("DisplayFile");
+    //}
 
 
 
