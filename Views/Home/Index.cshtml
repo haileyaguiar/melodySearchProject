@@ -8,12 +8,68 @@
     <div style="display: flex; flex-wrap: wrap; gap: 5px; align-items: flex-start;">
 
 
-        <div style="margin-top: 20px; text-align: center;">
+@*         <div style="margin-top: 20px; text-align: center;">
             <a href="@Url.Action("SearchWords", "Home")"
                style="padding: 10px 20px; background-color: deeppink; color: white; border: none; cursor: pointer; margin-left: 450px; font-weight: bold; text-decoration: none;">
                 By Keyword
             </a>
+        </div> *@
+
+
+    </div>
+        <label style="font-weight: bold; margin-left: 500px;">By Keyword:</label>
+        <p style="margin-left: 500px;">
+            Note: For Clé du Caveau number, the format needs to be 0000.
+            <br /> For example, to get number 2, search '0002'.
+        </p>
+
+
+        <div style="display: flex; flex-wrap: wrap; gap: 5px; align-items: flex-start;">
+            <form id="dynamicSearchForm" style="max-width: 600px; margin: 0 auto;">
+                <div id="searchContainer">
+                    <!-- First search row -->
+                    <div class="search-row" style="display: flex; align-items: center; margin-bottom: 10px;">
+                        <!-- Logical Operator -->
+                        <select name="logicalOperator[]" style="margin-right: 10px; padding: 5px;">
+                            <option value="AND">AND</option>
+                            <option value="OR">OR</option>
+                            <option value="NOT">NOT</option>
+                        </select>
+
+                        <!-- Search Method -->
+                        <select name="searchMethod[]" style="margin-right: 10px; padding: 5px;">
+                            <option value="keyword">Keyword</option>
+                            <option value="title">Title</option>
+                            <option value="composer">Composer</option>
+                            <option value="librettist">Librettist</option>
+                            <option value="incipit">Text Incipit</option>
+                            <option value="musForm">Musical Form</option>
+                            <option value="poetForm">Poetic Form</option>
+                            <option value="cdcNumber">Clé du Caveau Number</option>
+                        </select>
+
+                        <!-- Search Input -->
+                        <input type="text" name="searchValue[]" placeholder="Enter search value" style="flex-grow: 1; padding: 5px; margin-right: 10px;">
+
+                        <!-- Add button -->
+                        <button type="button" onclick="addSearchRow()" style="padding: 5px;">+</button>
+                    </div>
+                </div>
+
+                <!-- Search button -->
+                <div style="margin-top: 20px; text-align: center;">
+                    <button type="button" onclick="collectAndSendData()" style="padding: 10px 20px; background-color: deeppink; color: white; border: none; cursor: pointer;">
+                        Search
+                    </button>
+                </div>
+            </form>
         </div>
+
+        <label style="font-weight: bold; margin-left: 500px;">Results:</label>
+        <div style="margin-left: 500px;">
+            <div id="linkContainer"></div>
+        </div>
+
 
 
        @*  <!--Search Form-->
@@ -95,7 +151,7 @@
         </form>
  *@
 
-    </div>
+    
 
 
 <br />
@@ -403,6 +459,179 @@
             }
 
         </style>
+
+
+
+
+
+
+
+        <script>
+            function addSearchRow() {
+                const container = document.getElementById("searchContainer");
+
+                // Create a new search row
+                const row = document.createElement("div");
+                row.className = "search-row";
+                row.style = "display: flex; align-items: center; margin-bottom: 10px;";
+
+                // Logical Operator dropdown
+                const operatorSelect = document.createElement("select");
+                operatorSelect.name = "logicalOperator[]";
+                operatorSelect.style = "margin-right: 10px; padding: 5px;";
+                operatorSelect.innerHTML = `
+                    <option value="AND">AND</option>
+                    <option value="OR">OR</option>
+                    <option value="NOT">NOT</option>
+                `;
+                row.appendChild(operatorSelect);
+
+                // Search Method dropdown
+                const methodSelect = document.createElement("select");
+                methodSelect.name = "searchMethod[]";
+                methodSelect.style = "margin-right: 10px; padding: 5px;";
+                methodSelect.innerHTML = `
+                    <option value="keyword">Keyword</option>
+                    <option value="title">Title</option>
+                    <option value="composer">Composer</option>
+                    <option value="librettist">Librettist</option>
+                    <option value="incipit">Text Incipit</option>
+                    <option value="musForm">Musical Form</option>
+                    <option value="poetForm">Poetic Form</option>
+                    <option value="cdcNumber">Clé du Caveau Number</option>
+                `;
+                row.appendChild(methodSelect);
+
+                // Search Value input
+                const input = document.createElement("input");
+                input.type = "text";
+                input.name = "searchValue[]";
+                input.placeholder = "Enter search value";
+                input.style = "flex-grow: 1; padding: 5px; margin-right: 10px;";
+                row.appendChild(input);
+
+                // Remove button
+                const removeButton = document.createElement("button");
+                removeButton.type = "button";
+                removeButton.style = "padding: 5px;";
+                removeButton.innerText = "-";
+                removeButton.onclick = () => container.removeChild(row);
+                row.appendChild(removeButton);
+
+                // Append the new row to the container
+                container.appendChild(row);
+            }
+
+
+
+
+            function collectAndSendData() {
+                let searchRows = document.querySelectorAll(".search-row");
+                let requestData = {
+                    meiChunk:"",
+                    //meiChunk: "\u003C?xml version=\u00221.0\u0022 encoding=\u0022UTF-8\u0022?\u003E\n\u003C?xml-model href=\u0022https://music-encoding.org/schema/5.1/mei-all.rng\u0022 type=\u0022application/xml\u0022 schematypens=\u0022http://relaxng.org/ns/structure/1.0\u0022?\u003E\n\u003C?xml-model href=\u0022https://music-encoding.org/schema/5.1/mei-all.rng\u0022 type=\u0022application/xml\u0022 schematypens=\u0022http://purl.oclc.org/dsdl/schematron\u0022?\u003E\n\u003Cmei xmlns=\u0022http://www.music-encoding.org/ns/mei\u0022 meiversion=\u00225.1\u0022\u003E\n   \u003CmeiHead\u003E\n      \u003CfileDesc\u003E\n         \u003CtitleStmt\u003E\n            \u003Ctitle /\u003E\n         \u003C/titleStmt\u003E\n         \u003CpubStmt\u003E\n            \u003Cdate isodate=\u00222025-02-28-11:08:44\u0022 /\u003E\n         \u003C/pubStmt\u003E\n      \u003C/fileDesc\u003E\n      \u003CencodingDesc\u003E\n         \u003CappInfo\u003E\n            \u003Capplication xml:id=\u0022verovio\u0022 version=\u00225.1.0-8c3069d\u0022\u003E\n               \u003Cname\u003EVerovio (5.1.0-8c3069d)\u003C/name\u003E\n            \u003C/application\u003E\n         \u003C/appInfo\u003E\n         \u003CprojectDesc\u003E\n            \u003Cp\u003EMEI encoded with Verovio\u003C/p\u003E\n            \u003Cp\u003EConverted from Plaine and Easie to MEI\u003C/p\u003E\n         \u003C/projectDesc\u003E\n      \u003C/encodingDesc\u003E\n   \u003C/meiHead\u003E\n   \u003Cmusic\u003E\n      \u003Cbody\u003E\n         \u003Cmdiv xml:id=\u0022m1blotdo\u0022\u003E\n            \u003Cscore xml:id=\u0022s98porn\u0022\u003E\n               \u003CscoreDef xml:id=\u0022ssm35er\u0022\u003E\n                  \u003CstaffGrp xml:id=\u0022smwwo00\u0022\u003E\n                     \u003CstaffDef xml:id=\u0022s1s4ffnc\u0022 n=\u00221\u0022 lines=\u00225\u0022 clef.shape=\u0022G\u0022 clef.line=\u00222\u0022 /\u003E\n                  \u003C/staffGrp\u003E\n               \u003C/scoreDef\u003E\n               \u003Csection xml:id=\u0022s2rcrlx\u0022\u003E\n                  \u003Cmeasure xml:id=\u0022mmlovzj\u0022 right=\u0022invis\u0022\u003E\n                     \u003Cstaff xml:id=\u0022sa56g6u\u0022 n=\u00221\u0022\u003E\n                        \u003Clayer xml:id=\u0022l4ks4fv\u0022 n=\u00221\u0022\u003E\n                           \u003Cnote xml:id=\u0022nmyzslu\u0022 dur=\u00224\u0022 oct=\u00225\u0022 pname=\u0022c\u0022 /\u003E\n                           \u003Cnote xml:id=\u0022n6ug31v\u0022 dur=\u00224\u0022 oct=\u00225\u0022 pname=\u0022d\u0022 /\u003E\n                           \u003Cnote xml:id=\u0022n1bcu6sn\u0022 dur=\u00224\u0022 oct=\u00225\u0022 pname=\u0022e\u0022 /\u003E\n                        \u003C/layer\u003E\n                     \u003C/staff\u003E\n                  \u003C/measure\u003E\n               \u003C/section\u003E\n            \u003C/score\u003E\n         \u003C/mdiv\u003E\n      \u003C/body\u003E\n   \u003C/music\u003E\n\u003C/mei\u003E\n",
+                    andMap: {},
+                    orMap: {},
+                    notMap: {}
+                };
+
+                const keyMapping = {
+                    "keyword": "keywords",
+                    "composer": "composers",
+                    "title": "titles",
+                    "librettist": "librettists",
+                    "incipit": "incipits",
+                    "musForm": "musical_form_notes",
+                    "poetForm": "poetic_form_notes",
+                    "cdcNumber": "cdc_number"
+                };
+
+                searchRows.forEach(row => {
+                    let operatorSelect = row.querySelector("select[name='logicalOperator[]']");
+                    let methodSelect = row.querySelector("select[name='searchMethod[]']");
+                    let inputField = row.querySelector("input[name='searchValue[]']");
+
+                    if (operatorSelect && methodSelect && inputField) {
+                        let operator = operatorSelect.value;
+                        let key = keyMapping[methodSelect.value];
+                        let value = inputField.value.trim();
+
+                        if (key && value) {
+                            let map;
+                            if (operator === "AND") map = requestData.andMap;
+                            else if (operator === "OR") map = requestData.orMap;
+                            else if (operator === "NOT") map = requestData.notMap;
+
+                            if (!map[key]) {
+                                map[key] = [];
+                            }
+
+                            map[key].push(value);
+                        }
+                    }
+                });
+
+
+                    //                 var requestData = {
+                    //     "meiChunk": "\u003C?xml version=\u00221.0\u0022 encoding=\u0022UTF-8\u0022?\u003E\n\u003C?xml-model href=\u0022https://music-encoding.org/schema/5.1/mei-all.rng\u0022 type=\u0022application/xml\u0022 schematypens=\u0022http://relaxng.org/ns/structure/1.0\u0022?\u003E\n\u003C?xml-model href=\u0022https://music-encoding.org/schema/5.1/mei-all.rng\u0022 type=\u0022application/xml\u0022 schematypens=\u0022http://purl.oclc.org/dsdl/schematron\u0022?\u003E\n\u003Cmei xmlns=\u0022http://www.music-encoding.org/ns/mei\u0022 meiversion=\u00225.1\u0022\u003E\n   \u003CmeiHead\u003E\n      \u003CfileDesc\u003E\n         \u003CtitleStmt\u003E\n            \u003Ctitle /\u003E\n         \u003C/titleStmt\u003E\n         \u003CpubStmt\u003E\n            \u003Cdate isodate=\u00222025-03-17-09:50:08\u0022 /\u003E\n         \u003C/pubStmt\u003E\n      \u003C/fileDesc\u003E\n      \u003CencodingDesc\u003E\n         \u003CappInfo\u003E\n            \u003Capplication xml:id=\u0022verovio\u0022 version=\u00225.1.0-8c3069d\u0022\u003E\n               \u003Cname\u003EVerovio (5.1.0-8c3069d)\u003C/name\u003E\n            \u003C/application\u003E\n         \u003C/appInfo\u003E\n         \u003CprojectDesc\u003E\n            \u003Cp\u003EMEI encoded with Verovio\u003C/p\u003E\n            \u003Cp\u003EConverted from Plaine and Easie to MEI\u003C/p\u003E\n         \u003C/projectDesc\u003E\n      \u003C/encodingDesc\u003E\n   \u003C/meiHead\u003E\n   \u003Cmusic\u003E\n      \u003Cbody\u003E\n         \u003Cmdiv xml:id=\u0022m1blotdo\u0022\u003E\n            \u003Cscore xml:id=\u0022s98porn\u0022\u003E\n               \u003CscoreDef xml:id=\u0022ssm35er\u0022\u003E\n                  \u003CstaffGrp xml:id=\u0022smwwo00\u0022\u003E\n                     \u003CstaffDef xml:id=\u0022s1s4ffnc\u0022 n=\u00221\u0022 lines=\u00225\u0022 clef.shape=\u0022G\u0022 clef.line=\u00222\u0022 /\u003E\n                  \u003C/staffGrp\u003E\n               \u003C/scoreDef\u003E\n               \u003Csection xml:id=\u0022s2rcrlx\u0022\u003E\n                  \u003Cmeasure xml:id=\u0022mmlovzj\u0022 right=\u0022invis\u0022\u003E\n                     \u003Cstaff xml:id=\u0022sa56g6u\u0022 n=\u00221\u0022\u003E\n                        \u003Clayer xml:id=\u0022l4ks4fv\u0022 n=\u00221\u0022\u003E\n                           \u003Cnote xml:id=\u0022nmyzslu\u0022 dur=\u00224\u0022 oct=\u00225\u0022 pname=\u0022c\u0022 /\u003E\n                           \u003Cnote xml:id=\u0022n6ug31v\u0022 dur=\u00224\u0022 oct=\u00225\u0022 pname=\u0022d\u0022 /\u003E\n                           \u003Cnote xml:id=\u0022n1bcu6sn\u0022 dur=\u00224\u0022 oct=\u00225\u0022 pname=\u0022e\u0022 /\u003E\n                        \u003C/layer\u003E\n                     \u003C/staff\u003E\n                  \u003C/measure\u003E\n               \u003C/section\u003E\n            \u003C/score\u003E\n         \u003C/mdiv\u003E\n      \u003C/body\u003E\n   \u003C/music\u003E\n\u003C/mei\u003E\n",
+                    //       "andMap": {"keywords": ["doche"]},
+                    //     "orMap": {},
+                    //     "notMap": {}
+                    // };
+
+                console.log("📤 Sending request data:", JSON.stringify(requestData));
+
+                // Send data to HomeController action
+
+            // Send data to HomeController action
+            $.ajax({
+                url: "/Home/SearchMusic",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(requestData),
+                success: function (response) {
+                    console.log("📥 Response from server:", response);
+
+                    if (!response.success) {
+                        console.error("🚨 API Error:", response.message);
+                        return;
+                    }
+
+                    // Assuming the response contains the file ids inside the 'hits' array
+                    let hits = JSON.parse(response.data).hits;
+                    let linkContainer = document.getElementById('linkContainer'); // Create this container in your HTML
+
+                    linkContainer.innerHTML = '';
+
+                    hits.forEach((hit, index) => {
+                        if (hit.source && hit.source.file_id) {
+                            let fileId = hit.source.file_id;
+                            let name = hit.source.name
+                            let link = document.createElement('a');
+                            link.href = `/Home/DisplayFile?id=${fileId}&index=0`;
+                            link.innerText = `${name}`;
+                            link.target = "_blank"; // Open in a new tab
+
+                            // Append the link to the container
+                            linkContainer.appendChild(link);
+                            linkContainer.appendChild(document.createElement('br')); // Add a line break after each link
+                        }
+                    });
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.error("🚨 AJAX Error:", textStatus, errorThrown);
+                    console.log("📤 Response Text:", jqXHR.responseText);
+                }
+            });
+            }
+
+
+
+
+
+
+        </script>
+
 
 
 
