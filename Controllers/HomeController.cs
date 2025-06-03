@@ -291,7 +291,6 @@ public class ReqPartialMusic
 
 
 
-    //TESTING DO NOT TOUCH ANYTHING ELSE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
 
@@ -370,43 +369,6 @@ public class ReqPartialMusic
         return View(fileIds);
     }
 
-    //public ActionResult TextSearchResults(string fileIds)
-    //{
-    //    // Decode the fileIds parameter from the query string
-    //    if (string.IsNullOrEmpty(fileIds))
-    //    {
-    //        ViewBag.Message = "No results found.";
-    //        return View();
-    //    }
-
-    //    List<string> fileIdsList = JsonConvert.DeserializeObject<List<string>>(fileIds);
-
-    //    return View(fileIdsList);
-    //}
-
-
-
-
-
-
-
-    //    string responseBody = await response.Content.ReadAsStringAsync();
-    //Debug.WriteLine($"Response Status: {response.StatusCode}");
-    //Debug.WriteLine($"Response Body: {responseBody}");
-
-    //return Json(new { success = response.IsSuccessStatusCode, message = responseBody });
-
-
-    //catch (HttpRequestException ex)
-    //{
-    //    Debug.WriteLine($"Request error: {ex.Message}");
-    //    return Json(new { success = false, message = $"Request error: {ex.Message}" });
-    //}
-    //catch (Exception ex)
-    //{
-    //    Debug.WriteLine($"Unexpected error: {ex.Message}");
-    //    return Json(new { success = false, message = $"Unexpected error: {ex.Message}" });
-    //}
 
 
 
@@ -416,16 +378,9 @@ public class ReqPartialMusic
 
 
 
-    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-
-
-
-
-
-
-    // Text search method
+    // Text search method - OLD
     [HttpGet]
     public async Task<IActionResult> SearchAdvanced(string keyword, string title, string composer, string librettist, string incipit, string musForm, string poetForm, string cdcNumber, string logicalOperator)
     {
@@ -587,24 +542,24 @@ public class ReqPartialMusic
 
 
 
-    // Method called when the Name search bar is used
-    // Currently the name search bar is not in use
-    [HttpGet]
-    public async Task<IActionResult> SearchName(string query)
-    {
-        if (string.IsNullOrWhiteSpace(query))
-        {
-            return View("SearchResults", new List<MeiFile>());
-        }
+    //// Method called when the Name search bar is used
+    //// Currently the name search bar is not in use
+    //[HttpGet]
+    //public async Task<IActionResult> SearchName(string query)
+    //{
+    //    if (string.IsNullOrWhiteSpace(query))
+    //    {
+    //        return View("SearchResults", new List<MeiFile>());
+    //    }
 
-        var parameter = $"%{query}%";
-        var results = await _context.MeiFiles
-            .FromSqlRaw("SELECT file_id, file_name, file_content FROM public.\"meiFiles\" WHERE CAST(file_content AS TEXT) ILIKE {0} ORDER BY file_name", parameter)
-            .Select(m => new MeiFile { file_id = m.file_id, file_name = m.file_name })
-            .ToListAsync();
+    //    var parameter = $"%{query}%";
+    //    var results = await _context.MeiFiles
+    //        .FromSqlRaw("SELECT file_id, file_name, file_content FROM public.\"meiFiles\" WHERE CAST(file_content AS TEXT) ILIKE {0} ORDER BY file_name", parameter)
+    //        .Select(m => new MeiFile { file_id = m.file_id, file_name = m.file_name })
+    //        .ToListAsync();
 
-        return View("SearchResults", results);
-    }
+    //    return View("SearchResults", results);
+    //}
 
 
 
